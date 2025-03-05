@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/question")
+@RequestMapping("/api/topics")
 public interface QuestionController {
 
     @GetMapping

@@ -1,0 +1,406 @@
+/* Общие стили */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #dedee9;
+
+}
+
+header {
+
+    background-color: #333;
+    justify-content: space-between; /* Разделяем левую и правую части */
+    padding: 10px;
+    display: flex;
+        /*justify-content: flex-end; !* Выравниваем элементы по правому краю *!*/
+    align-items: center;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Тень для header */
+}
+/* Левая часть (картинка) */
+.left-section {
+    display: flex;
+    align-items: center;
+}
+
+/* Правая часть (кнопки) */
+.right-section {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Расстояние между кнопками */
+}
+
+/*!* Меню пользователя *!*/
+/*.user-menu {*/
+/*    position: relative;*/
+/*    display: inline-block;*/
+/*    margin-right: 10px; !* Отступ между кнопками *!*/
+/*}*/
+
+#user-button-1,
+#user-button-2,
+#user-button-3,
+#user-button-4,
+#user-button-5,
+#user-button-6
+{
+    background-color: #444;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease; /* Плавное изменение цвета */
+}
+
+#user-button-1:hover,
+#user-button-2:hover,
+#user-button-3:hover,
+#user-button-4:hover,
+#user-button-5:hover,
+#user-button-6:hover
+{
+    background-color: #555;
+}
+
+#user-button-1 img {
+    width: 24px;
+    height: 24px;
+}
+
+#user-button-2,
+#user-button-3,
+#user-button-4,
+#user-button-5,
+#user-button-6
+
+{
+    color: #e4e2c7;
+    font-size: 20px;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+}
+
+
+/* Общий контейнер для меню */
+.dropdown-content {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 60px; /* Опускаем меню на 60px от верхнего края header */
+    background-color: #ffffff;
+    min-width: 200px; /* Увеличиваем ширину меню */
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+    z-index: 2;
+    border-radius: 10px; /* Скругляем углы */
+    overflow: hidden;
+    border: 1px solid #e0e0e0; /* Граница для меню */
+
+}
+
+/* Стили для ссылок в меню */
+.dropdown-content a {
+    color: #333;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    text-align: left;
+    font-size: 16px; /* Увеличиваем размер шрифта */
+    transition: background-color 0.3s ease, color 0.3s ease; /* Плавные переходы */
+}
+
+.dropdown-content a:hover {
+    background-color: #6c757d; /* Цвет фона при наведении */
+    color: white; /* Цвет текста при наведении */
+}
+
+/* Показ меню */
+.show {
+    display: block;
+}
+
+/* Форма для добавления теста */
+.add-test-form {
+    display: none; /* Скрываем форму по умолчанию */
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+    z-index: 2;
+    width: 300px;
+}
+
+.add-test-form h2 {
+    margin-top: 0;
+    text-align: center;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.form-group input[type="text"] {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.form-group input[type="radio"] {
+    margin-left: 10px;
+}
+
+.create-button {
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+
+
+.create-button:hover {
+    background-color: #0056b3;
+}
+
+/* Добавьте эти стили в ваш CSS-файл или в <style> в HTML */
+.topic-content-container {
+    width: 55%;
+    font-family: Verdana, sans-serif;
+    letter-spacing: 1px; /* Расстояние между буквами */
+    line-height: 1.3; /* Высота строки */
+    border: 1px solid #ccc; /* Тонкая рамка */
+    border-radius: 10px; /* Закругленные края */
+    padding: 50px; /* Отступы внутри контейнера */
+    margin: 40px 40px; /* Отступы снаружи контейнера */
+    background-color: #f8f8f8; /* Легкий фон для контраста */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Легкая тень для объема */
+    position: absolute;
+    z-index: 1; /* Устанавливаем z-index, чтобы контейнер был поверх */
+    top: 8%; /* Отступ сверху */
+
+}
+
+
+
+
+
+/* Стили для блока кода */
+pre {
+    background-color: #f4f4f4; /* Светлый фон */
+    border: 1px solid #ccc; /* Тонкая рамка */
+    border-radius: 8px; /* Закругленные углы */
+    padding: 15px; /* Отступы внутри блока */
+    font-size: 14px; /* Размер шрифта */
+    font-family: "Courier New", monospace; /* Моноширинный шрифт */
+    overflow-x: auto; /* Горизонтальная прокрутка, если код слишком широкий */
+    margin: 20px 0; /* Отступы снаружи */
+    line-height: 1.5; /* Межстрочный интервал */
+}
+
+code {
+    color: #d63384; /* Цвет текста кода */
+    background-color: transparent; /* Прозрачный фон */
+    padding: 0; /* Убираем внутренние отступы */
+}
+
+/* Стили для кнопок областей */
+.area-button {
+    width: 200px; /* Ширина кнопки */
+    height: 100px; /* Высота кнопки */
+    background-color: #444444; /* Цвет фона */
+    color: #fff; /* Цвет текста */
+    border: none; /* Убираем рамку */
+    border-radius: 10px; /* Закругленные углы */
+    font-size: 18px; /* Размер шрифта */
+    font-weight: bold; /* Жирный шрифт */
+    cursor: pointer; /* Курсор-указатель */
+    transition: background-color 0.3s, transform 0.3s; /* Плавные переходы */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Тень */
+}
+
+/* Анимация при наведении */
+.area-button:hover {
+    background-color: #333333; /* Темнее при наведении */
+    transform: scale(1.05); /* Легкое увеличение */
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2); /* Увеличиваем тень */
+}
+
+/* Анимация при нажатии */
+.area-button:active {
+    transform: scale(0.95); /* Легкое уменьшение */
+}
+
+
+
+/* Контейнер для списка тем */
+.topics-list-container {
+    margin-left: 60%;
+    width: 35%;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: absolute; /* Абсолютное позиционирование */
+    top: 10%; /* Отступ сверху */
+    right: 20px; /* Отступ справа */
+    z-index: 1; /* Устанавливаем z-index, чтобы контейнер был поверх */
+
+
+
+    font-size: 18px; /* Увеличьте размер шрифта, если необходимо */
+}
+
+/* Контейнер для списка тем */
+.topics-list-containerEdit {
+    margin-left: 60%;
+    width: 35%;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: absolute; /* Абсолютное позиционирование */
+    top: 10%; /* Отступ сверху */
+    right: 20px; /* Отступ справа */
+    z-index: 1; /* Устанавливаем z-index, чтобы контейнер был поверх */
+
+
+
+    font-size: 18px; /* Увеличьте размер шрифта, если необходимо */
+}
+
+/* Стили для элемента темы */
+.topic-item {
+    margin: 1px 1px;
+    padding: 1px;
+    background-color: #ffffff;
+    border-radius: 5px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: background-color 0.3s;
+
+}
+
+.topic-item:hover {
+    background-color: #f1f1f1;
+}
+
+/* Стили для содержимого темы */
+.topic-content-container {
+    margin: 20px;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.topic-item.active {
+    background-color: #9ea3a8; /* Цвет активной темы */
+    color: #fff; /* Цвет текста активной темы */
+}
+
+
+
+#add-topic-form {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 20px;
+    border: 1px solid #ccc;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    width: 80%;
+    max-width: 600px;
+}
+
+#topic-form label {
+    display: block;
+    margin-top: 10px;
+}
+
+#topic-form input,
+#topic-form textarea,
+#topic-form select {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+#topic-form button {
+    margin-top: 10px;
+    padding: 10px 20px;
+    border: none;
+    background-color: #6c757d;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#topic-form button[type="button"] {
+    background-color: #6c757d;
+    margin-left: 10px;
+}
+
+/* Общий стиль для контейнера пагинации */
+.pagination-container {
+    display: flex; /* Используем flexbox для выравнивания элементов */
+    justify-content: flex-end; /* Выравниваем содержимое по правому краю */
+    margin-right: 20px; /* Внешние отступы для контейнера */
+}
+
+/* Стили для кнопок пагинации */
+.pagination-button {
+    background-color:  #6c757d; /* Цвет фона */
+    color: white; /* Цвет текста */
+    border: none; /* Убираем рамку */
+    border-radius: 5px; /* Скругление углов */
+    padding: 2px 2px; /* Внутренние отступы */
+    margin: 2px; /* Внешние отступы */
+    cursor: pointer; /* Изменяем курсор на указатель */
+    font-size: 20px; /* Размер шрифта */
+    transition: background-color 0.3s; /* Плавный переход фона */
+}
+
+
+
+/* Эффект при наведении */
+.pagination-button:hover {
+    background-color: #333333; /* Темнее фон при наведении */
+}
+
+/* Эффект для отключенной кнопки */
+.pagination-button:disabled {
+    background-color: #cccccc; /* Серый фон */
+    cursor: not-allowed; /* Курсор для отключенной кнопки */
+}
+
+/* Добавляем стили для эффекта увеличения при наведении */
+.hover-zoom {
+    transition: transform 0.3s ease; /* Плавное увеличение за 0.3 секунды */
+}
+
+.hover-zoom:hover {
+    transform: scale(1.1); /* Увеличиваем картинку на 10% */
+}

@@ -16,9 +16,9 @@ databaseChangeLog:
                     nullable: false
 
               - column:
-                  name: theme
+                  name: themes
                   type: varchar(50)
-                  remarks: "topic_library theme"
+                  remarks: "topic_library themes"
                   constraints:
                     nullable: true
               - column:

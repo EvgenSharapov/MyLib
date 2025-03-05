@@ -6,7 +6,6 @@ import org.hibernate.annotations.GenericGenerator;
 
 import java.util.UUID;
 
-
 @Getter
 @Setter
 @Entity
@@ -18,11 +17,10 @@ public class Question {
     @GeneratedValue(generator = "UUID")
     private UUID id;
 
-    @Column(name = "theme")
-    private String theme;
+    @Column(name = "themes")
+    private String tableOfContents;
 
-    @Lob
-    @Column(name = "content")
+    @Column(name = "content", columnDefinition = "TEXT")
     private String content;
 
     @Enumerated(EnumType.STRING)
@@ -33,19 +31,5 @@ public class Question {
     public Question() {
     }
 
-    public UUID getId() {
-        return id;
-    }
 
-    public String getTheme() {
-        return theme;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public TopicArea getTopicArea() {
-        return topicArea;
-    }
 }

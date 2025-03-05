@@ -6,9 +6,10 @@ import org.example.lib.model.TopicArea;
 
 @Builder
 public record QuestionRequestDTO (
-        String theme,
+
         String content,
-        TopicArea topicArea
+        TopicArea topicArea,
+        String tableOfContents
 
 ){
 }

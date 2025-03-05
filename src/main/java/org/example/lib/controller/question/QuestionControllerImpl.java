@@ -1,6 +1,7 @@
 package org.example.lib.controller.question;
 
 
+import ch.qos.logback.core.model.Model;
 import lombok.RequiredArgsConstructor;
 import org.example.lib.dto.QuestionRequestDTO;
 import org.example.lib.model.Question;
@@ -17,6 +18,7 @@ public class QuestionControllerImpl implements QuestionController{
 private final QuestionService questionService;
 
 
+
     @Override
     public List<QuestionRequestDTO> getAllQuestions() {
         return questionService.getAll();
@@ -28,7 +30,7 @@ private final QuestionService questionService;
     }
 
     @Override
-    public QuestionRequestDTO createQuestion(Question question) {
+    public QuestionRequestDTO createQuestion(@RequestBody Question question) {
         return questionService.save(question);
     }
 
@@ -36,4 +38,6 @@ private final QuestionService questionService;
     public void deleteAddress(UUID id) {
         questionService.delete(id);
     }
+
+
 }
