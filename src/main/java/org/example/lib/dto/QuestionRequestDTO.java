@@ -9,7 +9,7 @@ public record QuestionRequestDTO (
 
         String content,
         TopicArea topicArea,
-        String tableOfContents
+        String tableOfContent
 
 ){
 }

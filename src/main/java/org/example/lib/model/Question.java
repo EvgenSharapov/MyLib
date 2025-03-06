@@ -18,7 +18,7 @@ public class Question {
     private UUID id;
 
     @Column(name = "themes")
-    private String tableOfContents;
+    private String tableOfContent;
 
     @Column(name = "content", columnDefinition = "TEXT")
     private String content;
