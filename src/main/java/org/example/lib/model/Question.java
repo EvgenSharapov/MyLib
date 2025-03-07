@@ -17,7 +17,7 @@ public class Question {
     @GeneratedValue(generator = "UUID")
     private UUID id;
 
-    @Column(name = "themes")
+    @Column(name = "themes",length = 50)
     private String tableOfContent;
 
     @Column(name = "content", columnDefinition = "TEXT")

@@ -223,6 +223,13 @@ code {
     padding: 0; /* Убираем внутренние отступы */
 }
 
+
+
+
+
+
+
+
 /* Стили для кнопок областей */
 .area-button {
     width: 200px; /* Ширина кнопки */
@@ -308,7 +315,8 @@ code {
 .topic-content-container {
     margin: 20px;
     padding: 20px;
-    background-color: #f9f9f9;
+    background-color: #ffffff;
+
     border-radius: 10px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
