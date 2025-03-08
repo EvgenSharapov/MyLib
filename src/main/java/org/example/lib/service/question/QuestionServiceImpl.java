@@ -54,19 +54,32 @@ public class QuestionServiceImpl implements QuestionService{
     }
 
     @Override
-    public List<Question> getQuestionsByArea(TopicArea topicArea) {
-        return questionRepo.findByTopicArea(topicArea);
+    public List<QuestionRequestDTO> getQuestionsByArea(TopicArea topicArea) {
+        List<Question>questions =questionRepo.findByTopicArea(topicArea);
+        return questionMapper.mapToQuestionRequestDTO(questions);
     }
 
     @Override
-    public Question getRandomQuestion() {
-        List<Question> topics = questionRepo.findAll();
-        if (topics.isEmpty()) {
+    public QuestionRequestDTO getRandomQuestion() {
+        List<Question> questions = questionRepo.findAll();
+        if (questions.isEmpty()) {
             throw new RuntimeException("Нет доступных тем");
         }
         Random random = new Random();
-        return topics.get(random.nextInt(topics.size()));
+        Question question = questions.get(random.nextInt(questions.size()));
+        return questionMapper.mapToQuestionRequestDTO(question);
     }
 
+    @Override
+    public List<QuestionRequestDTO> findThemeByText(String text) {
+        List<Question>questions =questionRepo.findByTableOfContentContainingIgnoreCase(text);
+        return questionMapper.mapToQuestionRequestDTO(questions);
+    }
+
+    @Override
+    public List<QuestionRequestDTO> findContentByText(String text) {
+        List<Question>questions =questionRepo.findByContentContainingIgnoreCase(text);
+        return questionMapper.mapToQuestionRequestDTO(questions);
+    }
 
 }

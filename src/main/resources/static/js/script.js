@@ -66,12 +66,12 @@ const menuContent3 = `
 const menuContent4 = `
     <a href="#" id="edit-library-button">Редактировать библиотеку</a>
 `;
+
 // Содержимое меню для 5 кнопки
 const menuContent5 = `
-    <a href="#">Поиск темы</a>
+    <a href="#" id="find-by-theme">Поиск тем по названию</a>
+    <a href="#" id="find-by-content">Поиск тем по содержанию</a>  
 `;
-
-
 
 // Обработчик для кнопки "Выход"
 document.addEventListener('click', function(event) {
@@ -111,65 +111,58 @@ userButton4.addEventListener('click', function(event) {
     dropdownMenu.innerHTML = menuContent4; // Устанавливаем содержимое меню
     dropdownMenu.classList.add('show'); // Показываем меню
 });
-// Обработчик для 5 кнопки
-const userButton5 = document.getElementById('user-button-5');
-userButton5.addEventListener('click', function(event) {
-    event.stopPropagation(); // Останавливаем всплытие события
-    dropdownMenu.innerHTML = menuContent5; // Устанавливаем содержимое меню
-    dropdownMenu.classList.add('show'); // Показываем меню
+
+
+
+// Обработчик для кнопки "Добавить тест"
+document.addEventListener('click', function(event) {
+    if (event.target.id === 'add-test-button') {
+        event.preventDefault(); // Предотвращаем стандартное поведение ссылки
+        addTestForm.style.display = 'block'; // Показываем форму
+        dropdownMenu.classList.remove('show'); // Скрываем меню
+        clearContainers();
+        clearContainersFull();// Очищаем старые контейнеры
+    }
 });
 
 
+document.getElementById('test-form').addEventListener('submit', function(event) {
+    event.preventDefault(); // Предотвращаем стандартную отправку формы
 
+    // Собираем данные из формы
+    const question = document.getElementById('question').value;
+    const option1 = document.getElementById('option1').value;
+    const option2 = document.getElementById('option2').value;
+    const option3 = document.getElementById('option3').value;
+    const option4 = document.getElementById('option4').value;
+    const correctAnswer = document.querySelector('input[name="correct-answer"]:checked').value;
 
-// // Обработчик для кнопки "Добавить тест"
-// document.addEventListener('click', function(event) {
-//     if (event.target.id === 'add-test-button') {
-//         event.preventDefault(); // Предотвращаем стандартное поведение ссылки
-//         addTestForm.style.display = 'block'; // Показываем форму
-//         dropdownMenu.classList.remove('show'); // Скрываем меню
-//         clearContainers(); // Очищаем старые контейнеры
-//     }
-// });
-//
-//
-// document.getElementById('test-form').addEventListener('submit', function(event) {
-//     event.preventDefault(); // Предотвращаем стандартную отправку формы
-//
-//     // Собираем данные из формы
-//     const question = document.getElementById('question').value;
-//     const option1 = document.getElementById('option1').value;
-//     const option2 = document.getElementById('option2').value;
-//     const option3 = document.getElementById('option3').value;
-//     const option4 = document.getElementById('option4').value;
-//     const correctAnswer = document.querySelector('input[name="correct-answer"]:checked').value;
-//
-//     // Создаем объект с данными
-//     const data = {
-//         text: question,
-//         options: [option1, option2, option3, option4],
-//         correctAnswerIndex: parseInt(correctAnswer) - 1 // Преобразуем в индекс (0-based)
-//     };
-//     console.log(data);
-//
-//     // Отправляем данные на сервер
-//     fetch('/api/topics', {
-//         method: 'POST',
-//         headers: {
-//             'Content-Type': 'application/json'
-//         },
-//         body: JSON.stringify(data)
-//     })
-//         .then(response => response.json())
-//         .then(result => {
-//             alert('Вопрос успешно добавлен!');
-//             console.log(result);
-//         })
-//         .catch(error => {
-//             console.error('Ошибка:', error);
-//             alert('Произошла ошибка при добавлении вопроса.');
-//         });
-// });
+    // Создаем объект с данными
+    const data = {
+        text: question,
+        options: [option1, option2, option3, option4],
+        correctAnswerIndex: parseInt(correctAnswer) - 1 // Преобразуем в индекс (0-based)
+    };
+    console.log(data);
+
+    // Отправляем данные на сервер
+    fetch('/api/topics', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+        .then(response => response.json())
+        .then(result => {
+            alert('Вопрос успешно добавлен!');
+            console.log(result);
+        })
+        .catch(error => {
+            console.error('Ошибка:', error);
+            alert('Произошла ошибка при добавлении вопроса.');
+        });
+});
 
 // // Находим кнопку user-button-6
 // const userButton6 = document.getElementById('user-button-6');
@@ -414,9 +407,7 @@ function displayTopic(topics) {
             const topicDiv = document.createElement('div');
             topicDiv.className = 'topic-item';
             topicDiv.innerHTML = `
-            <p class="topic-title" data-topic-id="${topic.id}">${topic.tableOfContent}</p>
-        `;
-            console.log(topic.id)
+            <p class="topic-title" data-topic-id="${topic.id}">${topic.tableOfContent}</p>`;
             topicDiv.querySelector('.topic-title').addEventListener('click', () => {
                 loadTopicContent(topic.id); // Загружаем содержимое темы
                 setActiveTopic(topicDiv); // Выделяем активную тему
@@ -518,7 +509,7 @@ function displayTopic(topics) {
             'questions-container',
             'topics-container',
             'topic-content-container',
-            'areas-container',
+            'areas-container'
 
 
         ];
@@ -543,7 +534,8 @@ function displayTopic(topics) {
             'topic-content-container',
             'areas-container',
             'topics-list-container',
-            'areas-containerEdit'
+            'areas-containerEdit',
+
 
 
         ];
@@ -899,6 +891,64 @@ function displayTopic(topics) {
     }
 
 
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('search-input');
+    const searchThemeButton = document.getElementById('search-theme-button');
+    const searchContentButton = document.getElementById('search-content-button');
 
+    let searchType = 'theme'; // По умолчанию выбран поиск по темам
+    searchThemeButton.classList.add('active'); // Подсвечиваем кнопку поиска по темам
+
+    // Обработчик для кнопки "Поиск по темам"
+    searchThemeButton.addEventListener('click', function() {
+        if (!searchThemeButton.classList.contains('active')) {
+            searchThemeButton.classList.add('active');
+            searchContentButton.classList.remove('active');
+            searchType = 'theme'; // Устанавливаем тип поиска
+        }
+    });
+
+    // Обработчик для кнопки "Поиск по содержанию"
+    searchContentButton.addEventListener('click', function() {
+        if (!searchContentButton.classList.contains('active')) {
+            searchContentButton.classList.add('active');
+            searchThemeButton.classList.remove('active');
+            searchType = 'content'; // Устанавливаем тип поиска
+        }
+    });
+
+    // Обработчик нажатия Enter в поле поиска
+    searchInput.addEventListener('keypress', function(event) {
+        if (event.key === 'Enter') {
+            const searchText = searchInput.value.trim();
+            if (searchText) {
+                loadTopicsBySearch(searchText, searchType); // Выполняем поиск
+            }
+            searchInput.value = ''; // Очищаем поле ввода
+        }
+    });
+});
+
+// Функция для загрузки тем по поисковому запросу
+function loadTopicsBySearch(query, searchType) {
+    clearContainers(); // Очищаем контейнеры перед загрузкой новых данных
+    const addTestForm = document.getElementById('add-test-form');
+    addTestForm.style.display = 'none'; // Скрываем форму
+
+    // Определяем URL в зависимости от типа поиска
+    const url = searchType === 'theme'
+        ? `/api/topics/search/theme?query=${encodeURIComponent(query)}`
+        : `/api/topics/search/content?query=${encodeURIComponent(query)}`;
+
+    fetch(url) // Отправляем запрос на сервер
+        .then(response => response.json())
+        .then(topics => {
+            displayTopics(topics); // Отображаем темы
+        })
+        .catch(error => {
+            console.error('Ошибка:', error);
+            alert('Произошла ошибка при загрузке тем.');
+        });
+}
 
 

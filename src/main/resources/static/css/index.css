@@ -123,26 +123,24 @@ header {
     display: block;
 }
 
-/* Форма для добавления теста */
+/* Общие стили для формы */
 .add-test-form {
-    display: none; /* Скрываем форму по умолчанию */
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: #ffffff;
+    max-width: 500px;
+    margin: 20px auto;
     padding: 20px;
+    border: 1px solid #ccc;
     border-radius: 10px;
-    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
-    z-index: 2;
-    width: 300px;
+    background-color: #f9f9f9;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .add-test-form h2 {
-    margin-top: 0;
     text-align: center;
+    margin-bottom: 20px;
+    color: #333;
 }
 
+/* Стили для групп формы */
 .form-group {
     margin-bottom: 15px;
 }
@@ -151,6 +149,7 @@ header {
     display: block;
     margin-bottom: 5px;
     font-weight: bold;
+    color: #555;
 }
 
 .form-group input[type="text"] {
@@ -158,29 +157,86 @@ header {
     padding: 8px;
     border: 1px solid #ccc;
     border-radius: 5px;
+    font-size: 14px;
+    transition: border-color 0.3s ease;
 }
 
+.form-group input[type="text"]:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+/* Стили для кастомных радио-кнопок */
 .form-group input[type="radio"] {
-    margin-left: 10px;
+    display: none; /* Скрываем стандартные радио-кнопки */
 }
 
+.form-group input[type="radio"] + label {
+    display: inline-block;
+    margin-left: 10px;
+    cursor: pointer;
+    position: relative;
+    padding-left: 25px;
+    font-size: 14px;
+    color: #555;
+}
+
+/* Создаем кастомный круг для радио-кнопки */
+.form-group input[type="radio"] + label::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 16px;
+    border: 2px solid #ccc;
+    border-radius: 50%;
+    background-color: #fff;
+    transition: border-color 0.3s ease, background-color 0.3s ease;
+}
+
+#add-test-form {
+    display: none; /* Форма скрыта по умолчанию */
+}
+/* Стили для активной радио-кнопки */
+.form-group input[type="radio"]:checked + label::before {
+    border-color: #6c757d;
+    background-color: #1f4f82;
+}
+
+/* Внутренний круг для активной радио-кнопки */
+.form-group input[type="radio"]:checked + label::after {
+    content: '';
+    position: absolute;
+    left: 4px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #fff;
+}
+
+/* Стили для кнопки "Создать" */
 .create-button {
+    display: block;
     width: 100%;
     padding: 10px;
-    background-color: #007bff;
-    color: white;
+    background-color: #6c757d;
+    color: #fff;
     border: none;
     border-radius: 5px;
-    cursor: pointer;
     font-size: 16px;
+    cursor: pointer;
     transition: background-color 0.3s ease;
 }
 
-
-
 .create-button:hover {
-    background-color: #0056b3;
+    background-color: #444444;
 }
+
+
 
 /* Добавьте эти стили в ваш CSS-файл или в <style> в HTML */
 .topic-content-container {
@@ -217,11 +273,7 @@ pre {
     line-height: 1.5; /* Межстрочный интервал */
 }
 
-code {
-    color: #d63384; /* Цвет текста кода */
-    background-color: transparent; /* Прозрачный фон */
-    padding: 0; /* Убираем внутренние отступы */
-}
+
 
 
 
@@ -414,3 +466,78 @@ code {
     transform: scale(1.1); /* Увеличиваем картинку на 10% */
 }
 
+/* Контейнер для поиска и кнопок */
+.search-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Поле ввода */
+.search-input {
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    font-size: 14px;
+    outline: none;
+    width: 200px;
+    transition: width 0.3s ease, border-color 0.3s ease;
+}
+
+.search-input:focus {
+    border-color: #1f4f82;
+    width: 250px;
+}
+
+/* Контейнер для кнопок */
+.search-buttons {
+    display: flex;
+    gap: 5px;
+}
+
+/* Круглые кнопки */
+.search-toggle-button {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.search-toggle-button:hover {
+    border-color: #1f4f82;
+    background-color: #f0f0f0;
+}
+
+/* Активная кнопка */
+.search-toggle-button.active {
+    background-color: #1f4f82;
+    color: #fff;
+    border-color: #1f4f82;
+}
+
+/* Всплывающие подсказки */
+.search-toggle-button[title] {
+    position: relative;
+}
+
+.search-toggle-button[title]:hover::after {
+    content: attr(title);
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 5px;
+    background-color: #333;
+    color: #fff;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+    z-index: 1000;
+}

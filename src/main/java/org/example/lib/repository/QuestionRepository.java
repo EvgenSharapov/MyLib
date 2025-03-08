@@ -12,4 +12,6 @@ import java.util.UUID;
 public interface QuestionRepository extends JpaRepository<Question, UUID> {
 
     List<Question> findByTopicArea(TopicArea topicArea);
+    List<Question> findByTableOfContentContainingIgnoreCase(String text);
+    List<Question> findByContentContainingIgnoreCase(String text);
 }

@@ -19,14 +19,10 @@ public class QuestionControllerImpl implements QuestionController{
 private final QuestionService questionService;
 
 
-
-    @GetMapping("/all")
     @Override
     public List<QuestionRequestDTO> getAllQuestions() {
         return questionService.getAll();
     }
-
-
 
     @Override
     public QuestionRequestDTO getQuestionById(UUID id) {
@@ -39,24 +35,33 @@ private final QuestionService questionService;
     }
 
     @Override
-    public void deleteAddress(UUID id) {
+    public void deleteQuestion(UUID id) {
         questionService.delete(id);
     }
 
-    @GetMapping("/titles")
-    public List<String> getAllTopicTitles() {
+    @Override
+    public List<String> getAllQuestionThemes() {
         return questionService.getAllTopicTitles();
     }
 
-    @GetMapping("/by-area/{topicArea}")
-    public List<Question> getTopicsByArea(@PathVariable TopicArea topicArea) {
+    @Override
+    public List<QuestionRequestDTO> getQuestionsByArea(@PathVariable TopicArea topicArea) {
         return questionService.getQuestionsByArea(topicArea);
     }
 
-    @GetMapping("/random")
-    public Question getRandomTopic() {
+    @Override
+    public QuestionRequestDTO getRandomQuestion() {
         return questionService.getRandomQuestion();
     }
 
+    @Override
+    public List<QuestionRequestDTO> searchQuestionsByTheme(String query) {
+        return questionService.findThemeByText(query);
+    }
+
+    @Override
+    public List<QuestionRequestDTO> searchQuestionsByContent(String query) {
+        return questionService.findContentByText(query);
+    }
 
 }

@@ -13,6 +13,7 @@ public class QuestionMapper {
 
     public QuestionRequestDTO mapToQuestionRequestDTO(Question question) {
         return QuestionRequestDTO.builder()
+                .id(question.getId())
                 .content(question.getContent())
                 .tableOfContent(question.getTableOfContent())
                 .topicArea(question.getTopicArea())

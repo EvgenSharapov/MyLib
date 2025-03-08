@@ -19,7 +19,12 @@ public interface QuestionService {
 
     List<String> getAllTopicTitles();
 
-    List<Question> getQuestionsByArea(TopicArea topicArea);
+    List<QuestionRequestDTO> getQuestionsByArea(TopicArea topicArea);
 
-    public Question getRandomQuestion();
+    QuestionRequestDTO getRandomQuestion();
+
+    List<QuestionRequestDTO> findThemeByText(String text);
+
+    List<QuestionRequestDTO> findContentByText(String text);
+
 }
