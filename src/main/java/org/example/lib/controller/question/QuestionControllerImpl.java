@@ -4,7 +4,7 @@ package org.example.lib.controller.question;
 import lombok.RequiredArgsConstructor;
 import org.example.lib.dto.QuestionRequestDTO;
 import org.example.lib.handler.ErrorResponses;
-import org.example.lib.handler.exeptions.QuestionNotFoundException;
+import org.example.lib.handler.exeptions.question.QuestionNotFoundException;
 import org.example.lib.model.Question;
 import org.example.lib.model.TopicArea;
 import org.example.lib.service.question.QuestionService;

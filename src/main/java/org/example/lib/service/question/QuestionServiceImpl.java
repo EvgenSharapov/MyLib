@@ -2,10 +2,9 @@ package org.example.lib.service.question;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.lib.dto.QuestionRequestDTO;
-import org.example.lib.handler.exeptions.QuestionNotFoundException;
+import org.example.lib.handler.exeptions.question.QuestionNotFoundException;
 import org.example.lib.mapper.QuestionMapper;
 import org.example.lib.model.Question;
 import org.example.lib.model.TopicArea;
@@ -17,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -33,9 +33,9 @@ public class QuestionServiceImpl implements QuestionService{
         System.out.println("Initializing QuestionService...");
         questionCache = new HashMap<>();
         List<Question> questions = questionRepo.findAll();
-        questions.forEach(question -> {
-            questionCache.put(question.getId(), questionMapper.mapToQuestionRequestDTO(question));
-        });
+        questions.forEach(question ->
+                questionCache.put(question.getId(), questionMapper.mapToQuestionRequestDTO(question))
+        );
         System.out.println("Loaded " + questionCache.size() + " questions into cache.");
     }
 
@@ -48,7 +48,7 @@ public class QuestionServiceImpl implements QuestionService{
 
 
     @Override
-    @Retryable(maxAttempts = 3, backoff = @Backoff(delay = 1000))
+    @Retryable(maxAttempts = 5, backoff = @Backoff(delay = 1000))
     public QuestionRequestDTO findById(UUID id) {
         if (questionCache.containsKey(id)) {
             return questionCache.get(id);
@@ -59,10 +59,13 @@ public class QuestionServiceImpl implements QuestionService{
     }
 
     @Override
-    @Retryable(maxAttempts = 3, backoff = @Backoff(delay = 1000))
+    @Retryable(backoff = @Backoff(delay = 1000))
     public List<QuestionRequestDTO> getAll() {
         List<Question>questions =questionRepo.findAll();
-        return questionMapper.mapToQuestionRequestDTO(questions);
+        return questions.stream()
+                .filter(Objects::nonNull)
+                .map(questionMapper::mapToQuestionRequestDTO)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -83,7 +86,7 @@ public class QuestionServiceImpl implements QuestionService{
     }
 
     @Override
-    @Retryable(maxAttempts = 3, backoff = @Backoff(delay = 1000))
+    @Retryable(backoff = @Backoff(delay = 1000))
     public List<String> getAllTopicTitles() {
         return questionRepo.findAll().stream()
                 .map(Question::getTableOfContent)
@@ -91,14 +94,14 @@ public class QuestionServiceImpl implements QuestionService{
     }
 
     @Override
-    @Retryable(maxAttempts = 3, backoff = @Backoff(delay = 1000))
+    @Retryable(backoff = @Backoff(delay = 1000))
     public List<QuestionRequestDTO> getQuestionsByArea(TopicArea topicArea) {
         List<Question>questions =questionRepo.findByTopicArea(topicArea);
         return questionMapper.mapToQuestionRequestDTO(questions);
     }
 
     @Override
-    @Retryable(maxAttempts = 3, backoff = @Backoff(delay = 1000))
+    @Retryable(backoff = @Backoff(delay = 1000))
     public QuestionRequestDTO getRandomQuestion() {
         if (questionCache.isEmpty()) {
             throw new QuestionNotFoundException("Нет доступных тем");
@@ -109,14 +112,14 @@ public class QuestionServiceImpl implements QuestionService{
     }
 
     @Override
-    @Retryable(maxAttempts = 3, backoff = @Backoff(delay = 1000))
+    @Retryable(backoff = @Backoff(delay = 1000))
     public List<QuestionRequestDTO> findThemeByText(String text) {
         List<Question>questions =questionRepo.findByTableOfContentContainingIgnoreCase(text);
         return questionMapper.mapToQuestionRequestDTO(questions);
     }
 
     @Override
-    @Retryable(maxAttempts = 3, backoff = @Backoff(delay = 1000))
+    @Retryable(backoff = @Backoff(delay = 1000))
     public List<QuestionRequestDTO> findContentByText(String text) {
         List<Question>questions =questionRepo.findByContentContainingIgnoreCase(text);
         return questionMapper.mapToQuestionRequestDTO(questions);

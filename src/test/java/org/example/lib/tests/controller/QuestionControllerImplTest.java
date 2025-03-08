@@ -3,7 +3,7 @@ package org.example.lib.tests.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.example.lib.controller.question.QuestionControllerImpl;
 import org.example.lib.dto.QuestionRequestDTO;
-import org.example.lib.handler.exeptions.QuestionNotFoundException;
+import org.example.lib.handler.exeptions.question.QuestionNotFoundException;
 import org.example.lib.model.Question;
 import org.example.lib.model.TopicArea;
 import org.example.lib.service.question.QuestionService;
@@ -19,6 +19,9 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+
+import static org.example.lib.tests.utils.CreateEntityForTests.createQuestion;
+import static org.example.lib.tests.utils.CreateEntityForTests.createQuestionRequestDTO;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -41,22 +44,6 @@ public class QuestionControllerImplTest {
     @BeforeEach
     void setUp() {
         mockMvc = MockMvcBuilders.standaloneSetup(questionController).build();
-    }
-
-
-    private Question createQuestion(){
-        UUID id = UUID.randomUUID();
-        Question question = new Question();
-        question.setId(id);
-        question.setContent("Content");
-        question.setTableOfContent("Table of Content");
-        question.setTopicArea(TopicArea.TEST);
-        return question;
-    }
-
-    private QuestionRequestDTO createQuestionRequestDTO(){
-        UUID id = UUID.randomUUID();
-        return new QuestionRequestDTO(id, "Content", TopicArea.TEST, "Table of Content");
     }
 
     @Test
