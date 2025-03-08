@@ -4,6 +4,7 @@ package org.example.lib.controller.question;
 import org.example.lib.dto.QuestionRequestDTO;
 import org.example.lib.model.Question;
 import org.example.lib.model.TopicArea;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,6 +27,7 @@ public interface QuestionController {
             @RequestBody Question question);
 
     @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     void deleteQuestion(
             @PathVariable UUID id);
 
