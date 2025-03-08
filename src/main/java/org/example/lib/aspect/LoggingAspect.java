@@ -16,20 +16,6 @@ public class LoggingAspect {
 
     private static final Logger logger = LoggerFactory.getLogger(LoggingAspect.class);
 
-//    @Around("execution(* org.example.lib.service.question.QuestionServiceImpl.*(..))")
-//    public Object logMethodCall(ProceedingJoinPoint joinPoint) throws Throwable {
-//        String methodName = joinPoint.getSignature().getName();
-//        logger.info("Method {} called with arguments: {}", methodName, joinPoint.getArgs());
-//
-//        try {
-//            Object result = joinPoint.proceed();
-//            logger.info("Method {} returned: {}", methodName, result);
-//            return result;
-//        } catch (Exception e) {
-//            logger.error("Exception in method {}: {}", methodName, e.getMessage());
-//            throw e;
-//        }
-//    }
 
 
     @Around("execution(* org.example.lib.service.question.QuestionServiceImpl.*(..))")

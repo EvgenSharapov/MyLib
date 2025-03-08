@@ -6,7 +6,6 @@ import org.example.lib.model.Question;
 import org.example.lib.model.TopicArea;
 import org.example.lib.repository.QuestionRepository;
 import org.example.lib.service.question.QuestionServiceImpl;
-import org.example.lib.tests.utils.CreateEntityForTests;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

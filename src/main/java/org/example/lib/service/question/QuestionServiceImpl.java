@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 @Service
@@ -106,9 +107,9 @@ public class QuestionServiceImpl implements QuestionService{
         if (questionCache.isEmpty()) {
             throw new QuestionNotFoundException("Нет доступных тем");
         }
+        System.out.println(questionCache.size());
         List<QuestionRequestDTO> questions = new ArrayList<>(questionCache.values());
-        Random random = new Random();
-        return questions.get(random.nextInt(questions.size()));
+        return questions.get(ThreadLocalRandom.current().nextInt(questions.size()));
     }
 
     @Override
