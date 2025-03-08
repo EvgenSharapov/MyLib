@@ -1,7 +1,6 @@
 package org.example.lib.controller.question;
 
 
-import ch.qos.logback.core.model.Model;
 import lombok.RequiredArgsConstructor;
 import org.example.lib.dto.QuestionRequestDTO;
 import org.example.lib.handler.ErrorResponses;
@@ -11,7 +10,6 @@ import org.example.lib.model.TopicArea;
 import org.example.lib.service.question.QuestionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

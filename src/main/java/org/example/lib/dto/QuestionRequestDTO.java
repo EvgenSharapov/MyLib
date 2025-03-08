@@ -14,5 +14,8 @@ public record QuestionRequestDTO (
         String tableOfContent
 
 ){
-
+    @Override
+    public String toString() {
+        return "Theme: " + tableOfContent;
+    }
 }

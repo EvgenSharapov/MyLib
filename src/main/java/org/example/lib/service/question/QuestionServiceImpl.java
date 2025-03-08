@@ -1,5 +1,8 @@
 package org.example.lib.service.question;
 
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.lib.dto.QuestionRequestDTO;
 import org.example.lib.handler.exeptions.QuestionNotFoundException;
@@ -7,46 +10,80 @@ import org.example.lib.mapper.QuestionMapper;
 import org.example.lib.model.Question;
 import org.example.lib.model.TopicArea;
 import org.example.lib.repository.QuestionRepository;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
+@Validated
 public class QuestionServiceImpl implements QuestionService{
 
     private final QuestionRepository questionRepo;
     private final QuestionMapper questionMapper;
 
+    private Map<UUID, QuestionRequestDTO> questionCache;
+
+    @PostConstruct
+    public void init() {
+        System.out.println("Initializing QuestionService...");
+        questionCache = new HashMap<>();
+        List<Question> questions = questionRepo.findAll();
+        questions.forEach(question -> {
+            questionCache.put(question.getId(), questionMapper.mapToQuestionRequestDTO(question));
+        });
+        System.out.println("Loaded " + questionCache.size() + " questions into cache.");
+    }
+
+    @PreDestroy
+    public void cleanup() {
+        System.out.println("Destroying QuestionService...");
+        questionCache.clear();
+        System.out.println("Cache cleared.");
+    }
+
 
     @Override
+    @Retryable(maxAttempts = 3, backoff = @Backoff(delay = 1000))
     public QuestionRequestDTO findById(UUID id) {
+        if (questionCache.containsKey(id)) {
+            return questionCache.get(id);
+        }
         Question question =questionRepo.findById(id).orElseThrow(
                 () -> new QuestionNotFoundException(id));
         return questionMapper.mapToQuestionRequestDTO(question);
     }
 
     @Override
+    @Retryable(maxAttempts = 3, backoff = @Backoff(delay = 1000))
     public List<QuestionRequestDTO> getAll() {
         List<Question>questions =questionRepo.findAll();
         return questionMapper.mapToQuestionRequestDTO(questions);
     }
 
     @Override
+    @Transactional
     public QuestionRequestDTO save(Question question) {
         questionRepo.save(question);
-        return questionMapper.mapToQuestionRequestDTO(question);
+        QuestionRequestDTO dto = questionMapper.mapToQuestionRequestDTO(question);
+        questionCache.put(question.getId(), dto);
+        return dto;
     }
 
     @Override
+    @Transactional
     public void delete(UUID id) {
         questionRepo.deleteById(id);
+        questionCache.remove(id);
 
     }
 
     @Override
+    @Retryable(maxAttempts = 3, backoff = @Backoff(delay = 1000))
     public List<String> getAllTopicTitles() {
         return questionRepo.findAll().stream()
                 .map(Question::getTableOfContent)
@@ -54,29 +91,32 @@ public class QuestionServiceImpl implements QuestionService{
     }
 
     @Override
+    @Retryable(maxAttempts = 3, backoff = @Backoff(delay = 1000))
     public List<QuestionRequestDTO> getQuestionsByArea(TopicArea topicArea) {
         List<Question>questions =questionRepo.findByTopicArea(topicArea);
         return questionMapper.mapToQuestionRequestDTO(questions);
     }
 
     @Override
+    @Retryable(maxAttempts = 3, backoff = @Backoff(delay = 1000))
     public QuestionRequestDTO getRandomQuestion() {
-        List<Question> questions = questionRepo.findAll();
-        if (questions.isEmpty()) {
-            throw new RuntimeException("Нет доступных тем");
+        if (questionCache.isEmpty()) {
+            throw new QuestionNotFoundException("Нет доступных тем");
         }
+        List<QuestionRequestDTO> questions = new ArrayList<>(questionCache.values());
         Random random = new Random();
-        Question question = questions.get(random.nextInt(questions.size()));
-        return questionMapper.mapToQuestionRequestDTO(question);
+        return questions.get(random.nextInt(questions.size()));
     }
 
     @Override
+    @Retryable(maxAttempts = 3, backoff = @Backoff(delay = 1000))
     public List<QuestionRequestDTO> findThemeByText(String text) {
         List<Question>questions =questionRepo.findByTableOfContentContainingIgnoreCase(text);
         return questionMapper.mapToQuestionRequestDTO(questions);
     }
 
     @Override
+    @Retryable(maxAttempts = 3, backoff = @Backoff(delay = 1000))
     public List<QuestionRequestDTO> findContentByText(String text) {
         List<Question>questions =questionRepo.findByContentContainingIgnoreCase(text);
         return questionMapper.mapToQuestionRequestDTO(questions);
