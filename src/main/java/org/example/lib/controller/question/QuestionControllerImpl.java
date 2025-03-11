@@ -54,7 +54,6 @@ private final QuestionService questionService;
         question.setContent(quest.getContent());
         question.setTableOfContent(quest.getTableOfContent());
         question.setTopicArea(quest.getTopicArea());
-        System.out.println(quest);
         return questionService.save(question);
     }
 

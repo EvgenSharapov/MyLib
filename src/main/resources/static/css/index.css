@@ -571,7 +571,7 @@ pre {
 /* Основной контейнер для таблицы и контента */
 #main-container {
     display: flex;
-    width: 100%;
+    width: 95%;
     gap: 20px;
     padding: 20px;
     align-items: flex-start; /* Вертикальное выравнивание по верхнему краю */
@@ -589,7 +589,7 @@ pre {
 
 /* Стили для таблицы */
 #topics-table {
-    width: 100%;
+    width: 95%;
     border-collapse: collapse;
 }
 
@@ -701,7 +701,7 @@ pre {
 /* Контейнер для контента */
 #content-display {
     display: none; /* Скрываем поле по умолчанию */
-    width: 35%;
+    width: 30%;
     background-color: #fff;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);

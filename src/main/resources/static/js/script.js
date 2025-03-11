@@ -61,16 +61,14 @@ const menuContent3 = `
     <a href="#" id="add-test-button">Добавить тест</a>
     <a href="#" id="add-library-button">Добавить тему</a>
 `;
-// // Содержимое меню для 4 кнопки
-// const menuContent4 = `
-//     <a href="#" id="edit-library-button">Редактировать библиотеку</a>
-// `;
+// // // Содержимое меню для 4 кнопки
+// const menuContent4 = document.getElementById('menu-content-4');
 
-// Содержимое меню для 5 кнопки
-const menuContent5 = `
-    <a href="#" id="find-by-theme">Поиск тем по названию</a>
-    <a href="#" id="find-by-content">Поиск тем по содержанию</a>  
-`;
+// // Содержимое меню для 5 кнопки
+// const menuContent5 = `
+//     <a href="#" id="find-by-theme">Поиск тем по названию</a>
+//     <a href="#" id="find-by-content">Поиск тем по содержанию</a>
+// `;
 
 // Обработчик для кнопки "Выход"
 document.addEventListener('click', function(event) {
@@ -103,13 +101,13 @@ userButton3.addEventListener('click', function(event) {
     dropdownMenu.classList.add('show'); // Показываем меню
 });
 
-// Обработчик для 4 кнопки
-const userButton4 = document.getElementById('user-button-4');
-userButton4.addEventListener('click', function(event) {
-    event.stopPropagation(); // Останавливаем всплытие события
-    dropdownMenu.innerHTML = menuContent4; // Устанавливаем содержимое меню
-    dropdownMenu.classList.add('show'); // Показываем меню
-});
+// // Обработчик для 4 кнопки
+// const userButton4 = document.getElementById('user-button-4');
+// userButton4.addEventListener('click', function(event) {
+//     event.stopPropagation(); // Останавливаем всплытие события
+//     dropdownMenu.innerHTML = menuContent4; // Устанавливаем содержимое меню
+//     dropdownMenu.classList.add('show'); // Показываем меню
+// });
 
 
 
@@ -119,7 +117,6 @@ document.addEventListener('click', function(event) {
         event.preventDefault(); // Предотвращаем стандартное поведение ссылки
         addTestForm.style.display = 'block'; // Показываем форму
         dropdownMenu.classList.remove('show'); // Скрываем меню
-        clearContainers();
         clearContainersFull();// Очищаем старые контейнеры
     }
 });
@@ -485,7 +482,7 @@ function displayTopic(topics) {
 
 
 // Функция для очистки старых контейнеров
-    function clearContainersFull() {
+    function clearContainersForEdit() {
         const containers = [
             'questions-container',
             'topics-container',
@@ -494,7 +491,6 @@ function displayTopic(topics) {
             'topics-list-container',
             'areas-containerEdit',
             "topics-list-containerEdit",
-            'table-container'
 
         ];
 
@@ -509,6 +505,43 @@ function displayTopic(topics) {
 
 
     }
+
+
+// Функция для очистки старых контейнеров
+function clearContainersFull() {
+    const containers = [
+        'questions-container',
+        'topics-container',
+        'topic-content-container',
+        'areas-container',
+        'topics-list-container',
+        'areas-containerEdit',
+        'topics-list-containerEdit',
+        'table-container' // Добавляем table-container в список
+    ];
+
+    containers.forEach(id => {
+        const container = document.getElementById(id);
+        if (container) {
+            if (id === 'table-container') {
+                // Для table-container скрываем, а не удаляем
+                container.style.display = 'none';
+            } else {
+                // Для остальных контейнеров вызываем remove
+                container.remove();
+            }
+        }
+    });
+
+    hideAddTopicForm();
+    clearPagination();
+}
+
+
+
+
+
+
 
 
     function clearPagination() {
@@ -527,7 +560,6 @@ function displayTopic(topics) {
             // 'topic-content-container',
             'areas-container',
             'topics-list-container',
-            'table-container'
 
 
         ];
@@ -948,8 +980,31 @@ async function confirmDelete(topic) {
     }
 }
 
-// Обработчик для кнопки редактирования
+
+// function showTableContainer() {
+//     const tableContainer = document.getElementById('table-container');
+//     if (tableContainer) {
+//         tableContainer.style.display = 'block';
+//     } else {
+//         console.error('Элемент table-container не найден');
+//     }
+// }
+//
+// function showDropdownMenu() {
+//     const dropdownMenu = document.getElementById('dropdown-menu');
+//     if (dropdownMenu) {
+//         dropdownMenu.classList.add('show');
+//     } else {
+//         console.error('Элемент dropdown-menu не найден');
+//     }
+// }
+
 document.getElementById('user-button-4').addEventListener('click', async () => {
+    clearContainersForEdit();
+    // Скрываем форму добавления теста
+    hideAddTestForm();
+
+
     const tableContainer = document.getElementById('table-container');
     tableContainer.style.display = 'block';
 
