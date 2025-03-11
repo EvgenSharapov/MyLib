@@ -613,34 +613,52 @@ pre {
     cursor: pointer;
 }
 
-/* Стили для кнопок действий */
+.action-buttons {
+    display: flex; /* Устанавливаем flexbox для горизонтального размещения */
+    gap: 10px; /* Промежуток между кнопками */
+}
+
 .action-buttons button {
-    padding: 5px 10px;
-    margin: 2px;
+    width: 100px; /* Установите фиксированную ширину */
+    height: 40px; /* Установите фиксированную высоту */
     border: none;
-    border-radius: 5px;
+    border-radius: 5px; /* Установим радиус закругления */
+    color: white;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease, transform 0.3s ease; /* Плавный переход */
+    font-size: 16px; /* Установите размер текста */
+    display: flex; /* Используем flexbox для центровки */
+    align-items: center; /* Вертикальное выравнивание текста */
+    justify-content: center; /* Горизонтальное выравнивание текста */
 }
 
 .action-buttons button.edit {
-    background-color: #ffc107;
-    color: black;
+    background-color: #225e9f; /* Основной цвет для кнопки редактирования */
+}
+
+.action-buttons button.edit:hover {
+    background-color: #1a4f73; /* Цвет при наведении */
+    transform: scale(1.1); /* Увеличение самой кнопки */
 }
 
 .action-buttons button.save {
-    background-color: #28a745;
-    color: white;
+    background-color: #04671b; /* Основной цвет для кнопки сохранения */
+}
+
+.action-buttons button.save:hover {
+    background-color: #034e14; /* Цвет при наведении */
+    transform: scale(1.1); /* Увеличение самой кнопки */
 }
 
 .action-buttons button.delete {
-    background-color: #dc3545;
-    color: white;
+    background-color: #730611; /* Основной цвет для кнопки удаления */
 }
 
-.action-buttons button:hover {
-    opacity: 0.8;
+.action-buttons button.delete:hover {
+    background-color: #5a040a; /* Цвет при наведении */
+    transform: scale(1.1); /* Увеличение самой кнопки */
 }
+
 
 /* Пагинация */
 .pagination-controls {
@@ -656,12 +674,23 @@ pre {
 }
 
 .pagination button {
-    padding: 5px 10px;
+    width: 100px; /* Установите фиксированную ширину */
+    height: 40px; /* Установите фиксированную высоту */
     border: none;
-    border-radius: 5px;
-    background-color: #007bff;
+    border-radius: 5px; /* Установим радиус закругления */
     color: white;
+    background-color: #225e9f;
     cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease; /* Плавный переход */
+    font-size: 16px; /* Установите размер текста */
+    display: flex; /* Используем flexbox для центровки */
+    align-items: center; /* Вертикальное выравнивание текста */
+    justify-content: center; /* Горизонтальное выравнивание текста */
+}
+
+.pagination button:hover {
+    background-color: #1f4f82;
+    transform: scale(1.1); /* Увеличиваем кнопку на 5% при наведении */
 }
 
 .pagination button:disabled {
@@ -671,12 +700,59 @@ pre {
 
 /* Контейнер для контента */
 #content-display {
-    width: 35%; /* Фиксированная ширина */
+    display: none; /* Скрываем поле по умолчанию */
+    width: 35%;
     background-color: #fff;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     padding: 20px;
-    height: auto; /* Высота зависит от содержимого */
-    overflow-y: auto; /* Добавляем прокрутку, если контент слишком большой */
-    display: none; /* Скрыта по умолчанию */
+    height: auto;
+    overflow-y: auto;
+}
+
+
+.pagination-controls-container {
+    display: flex;
+    align-items: center;
+    margin: 5px 0; /* Отступы сверху и снизу */
+    gap: 30%;
+
+}
+
+.pagination-controls label {
+    margin-right: 50px; /* Отступ справа от метки */
+}
+
+
+.pagination-controls {
+    display: flex;
+    align-items: center;
+    margin: 20px 0; /* Отступы сверху и снизу */
+}
+
+.pagination-controls label {
+    margin-right: 10px; /* Отступ справа от метки */
+    font-weight: bold; /* Жирный шрифт для метки */
+}
+
+.pagination-controls select {
+    padding: 10px; /* Внутренние отступы */
+    border: 1px solid #ccc; /* Цвет границы */
+    border-radius: 5px; /* Закругленные углы */
+    background-color: #f8f8f8; /* Цвет фона */
+    color: #333; /* Цвет текста */
+    cursor: pointer; /* Курсор при наведении */
+    transition: border-color 0.3s ease; /* Плавный переход для изменения цвета границы */
+}
+
+/* Эффект наведения на select */
+.pagination-controls select:hover {
+    border-color: #225e9f; /* Цвет границы при наведении */
+}
+
+/* Эффект фокуса на select */
+.pagination-controls select:focus {
+    border-color: #007bff; /* Цвет границы при фокусе */
+    outline: none; /* Убираем стандартное обрамление */
+    box-shadow: 0 0 5px rgba(34, 94, 159, 0.5); /* Легкая тень при фокусе */
 }

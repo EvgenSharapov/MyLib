@@ -713,7 +713,7 @@ function loadTopicsBySearch(query, searchType) {
 
 
 let currentPage = 1;
-let itemsPerPage = 5;
+let itemsPerPage = 10;
 let allData = [];
 let editingRow = null; // Текущая строка в режиме редактирования
 
@@ -738,30 +738,55 @@ function displayData() {
             </td>
         `;
 
-        // Обработчик для отображения content
-        row.addEventListener('click', () => {
+        // Обработчик для отображения content при нажатии на строку
+        row.addEventListener('click', (e) => {
+            // Проверяем, был ли клик по кнопке
+            if (e.target.tagName === 'BUTTON') {
+                return; // Игнорируем клик по кнопке
+            }
+
+            // Отображаем поле content-display
             document.getElementById('content-display').style.display = 'block';
-            document.getElementById('content-text').value = topic.content;
+
+            // Устанавливаем значение content
+            document.getElementById('content-text').value = topic.content || "Нет данных";
         });
-
-
 
         // Обработчик для кнопки редактирования
         row.querySelector('.edit').addEventListener('click', (e) => {
             e.stopPropagation(); // Останавливаем всплытие события
+
+            // Отображаем поле content-display
+            document.getElementById('content-display').style.display = 'block';
+
+            // Устанавливаем значение content
+            document.getElementById('content-text').value = topic.content || "Нет данных";
+
+            // Делаем поле content-text редактируемым
+            document.getElementById('content-text').disabled = false;
+
+            // Включаем режим редактирования для строки
             enableEditMode(row, topic);
         });
 
         // Обработчик для кнопки сохранения
         row.querySelector('.save').addEventListener('click', (e) => {
             e.stopPropagation();
+
+            // Сохраняем изменения
             saveChanges(row, topic);
+
+            // Блокируем поле content-text после сохранения
+            document.getElementById('content-text').disabled = true;
         });
 
         // Обработчик для кнопки удаления
         row.querySelector('.delete').addEventListener('click', (e) => {
             e.stopPropagation();
             confirmDelete(topic);
+
+            // Скрываем поле content-display при удалении
+            document.getElementById('content-display').style.display = 'none';
         });
 
         tableBody.appendChild(row);
@@ -769,41 +794,11 @@ function displayData() {
 
     // Обновление информации о странице
     document.getElementById('page-info').textContent = `Страница ${currentPage} из ${Math.ceil(allData.length / itemsPerPage)}`;
+
 }
 
 
-let topicAreas = []; // Массив для хранения значений перечисления
 
-// Функция для загрузки значений перечисления
-async function loadTopicAreas() {
-    try {
-        const response = await fetch('/api/topics/topic-areas');
-        if (!response.ok) {
-            throw new Error('Ошибка при загрузке значений перечисления');
-        }
-        topicAreas = await response.json();
-    } catch (error) {
-        console.error('Ошибка:', error);
-    }
-}
-
-// Функция для создания <select> с динамическими <option>
-function createTopicAreaSelect(selectedValue) {
-    const select = document.createElement('select');
-    select.style.width = '100%';
-
-    topicAreas.forEach(area => {
-        const option = document.createElement('option');
-        option.value = area;
-        option.textContent = area;
-        if (area === selectedValue) {
-            option.selected = true;
-        }
-        select.appendChild(option);
-    });
-
-    return select;
-}
 
 // Включение режима редактирования
 function enableEditMode(row, topic) {
@@ -814,22 +809,76 @@ function enableEditMode(row, topic) {
     editingRow = { row, topic };
 
     const cells = row.querySelectorAll('td');
-    cells[0].innerHTML = `<input type="text" value="${topic.tableOfContent}" style="width: 100%;">`;
-    cells[1].innerHTML = ''; // Очищаем ячейку перед добавлением <select>
-    cells[1].appendChild(createTopicAreaSelect(topic.topicArea)); // Добавляем динамический <select>
+
+    // Создаем input с стилями
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.value = topic.tableOfContent;
+    input.style.width = '100%';
+    input.style.padding = '8px'; // Добавляем внутренний отступ
+    input.style.border = '1px solid #ccc'; // Устанавливаем границу
+    input.style.borderRadius = '4px'; // Закругляем углы
+    input.style.fontSize = '14px'; // Устанавливаем размер шрифта
+
+    cells[0].innerHTML = ''; // Очищаем ячейку перед добавлением input
+    cells[0].appendChild(input); // Добавляем input в ячейку
+
+    // Создаем <select> с оставшимися опциями
+    const select = document.createElement('select');
+    select.style.width = '100%';
+    select.style.padding = '8px';
+    select.style.border = '1px solid #ccc';
+    select.style.borderRadius = '4px';
+    select.style.fontSize = '14px';
+
+    const options = [
+        'OOP',
+        'JAVA_CORE',
+        'GIT',
+        'SPRING',
+        'DATA_BASE',
+        'MULTITHREADING',
+        'OTHER',
+        'COLLECTIONS',
+        'TEST',
+        'STREAM',
+        'SQL',
+        'SERVLET',
+        'JMS',
+        'JDBC',
+        'HTTP',
+        'ALGORITHMS'
+    ];
+
+    options.forEach(optionValue => {
+        const option = document.createElement('option');
+        option.value = optionValue;
+        option.textContent = optionValue;
+        if (optionValue === topic.topicArea) {
+            option.selected = true; // Устанавливаем выбранным элемент, если он соответствует
+        }
+        select.appendChild(option);
+    });
+
+    // Очищаем ячейку перед добавлением <select>
+    cells[1].innerHTML = '';
+    cells[1].appendChild(select); // Добавляем динамический <select> в ячейку
 
     // Показываем кнопку "Сохранить" и скрываем "Редактировать"
     row.querySelector('.edit').style.display = 'none';
     row.querySelector('.save').style.display = 'inline-block';
-
-    // Разблокируем textarea для редактирования
-    document.getElementById('content-text').disabled = false;
 }
 
-// Загрузка значений перечисления при загрузке страницы
-window.addEventListener('load', async () => {
-    await loadTopicAreas();
-});
+
+
+
+
+
+
+
+
+
+
 
 // Отключение режима редактирования
 function disableEditMode() {
@@ -843,9 +892,6 @@ function disableEditMode() {
     // Показываем кнопку "Редактировать" и скрываем "Сохранить"
     row.querySelector('.edit').style.display = 'inline-block';
     row.querySelector('.save').style.display = 'none';
-
-    // Блокируем textarea
-    document.getElementById('content-text').disabled = true;
 
     editingRow = null;
 }
@@ -877,6 +923,7 @@ async function saveChanges(row, topic) {
         alert('Не удалось сохранить изменения');
     }
 }
+
 
 // Подтверждение удаления
 async function confirmDelete(topic) {
@@ -938,3 +985,96 @@ document.getElementById('next-page').addEventListener('click', () => {
         displayData();
     }
 });
+
+
+
+
+// let currentPage = 1;
+// let itemsPerPage = 5;
+// let allData = [];
+//
+// // Функция для отображения данных на текущей странице
+// function displayData() {
+//     const tableBody = document.querySelector('#topics-table tbody');
+//     tableBody.innerHTML = '';
+//
+//     const start = (currentPage - 1) * itemsPerPage;
+//     const end = start + itemsPerPage;
+//     const pageData = allData.slice(start, end);
+//
+//     pageData.forEach(topic => {
+//         const row = document.createElement('tr');
+//         row.innerHTML = `
+//             <td>${topic.tableOfContent}</td>
+//             <td>${topic.topicArea}</td>
+//             <td class="action-buttons">
+//                 <button class="edit">Редактировать</button>
+//                 <button class="save">Сохранить</button>
+//                 <button class="delete">Удалить</button>
+//             </td>
+//         `;
+//
+//         // Обработчик для отображения content при нажатии на строку
+//         row.addEventListener('click', (e) => {
+//             // Проверяем, был ли клик по кнопке
+//             if (e.target.tagName === 'BUTTON') {
+//                 return; // Игнорируем клик по кнопке
+//             }
+//
+//             // Отображаем поле content-display
+//             document.getElementById('content-display').style.display = 'block';
+//
+//             // Устанавливаем значение content
+//             document.getElementById('content-text').textContent = topic.content || "Нет данных";
+//         });
+//
+//         tableBody.appendChild(row);
+//     });
+//
+//     // Обновление информации о странице
+//     document.getElementById('page-info').textContent = `Страница ${currentPage} из ${Math.ceil(allData.length / itemsPerPage)}`;
+// }
+//
+// // Обработчик для кнопки редактирования
+// document.getElementById('user-button-4').addEventListener('click', async () => {
+//     const tableContainer = document.getElementById('table-container');
+//     tableContainer.style.display = 'block';
+//
+//     try {
+//         const response = await fetch('/api/topics/all');
+//         if (!response.ok) throw new Error('Ошибка при загрузке данных');
+//         allData = await response.json();
+//         displayData();
+//     } catch (error) {
+//         console.error('Ошибка:', error);
+//     }
+// });
+//
+// // Обработчики для других кнопок (скрываем таблицу)
+// document.querySelectorAll('.other-button').forEach(button => {
+//     button.addEventListener('click', () => {
+//         document.getElementById('table-container').style.display = 'none';
+//     });
+// });
+//
+// // Обработчик для выбора количества элементов на странице
+// document.getElementById('items-per-page').addEventListener('change', (e) => {
+//     itemsPerPage = parseInt(e.target.value);
+//     currentPage = 1;
+//     displayData();
+// });
+//
+// // Обработчики для кнопок пагинации
+// document.getElementById('prev-page').addEventListener('click', () => {
+//     if (currentPage > 1) {
+//         currentPage--;
+//         displayData();
+//     }
+// });
+//
+// document.getElementById('next-page').addEventListener('click', () => {
+//     if (currentPage < Math.ceil(allData.length / itemsPerPage)) {
+//         currentPage++;
+//         displayData();
+//     }
+// });
