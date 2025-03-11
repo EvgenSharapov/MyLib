@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -44,6 +45,17 @@ private final QuestionService questionService;
     @Override
     public void deleteQuestion(UUID id) {
         questionService.delete(id);
+    }
+
+    @Override
+    public QuestionRequestDTO saveQuestion(Question quest, UUID id) {
+        Question question = new Question();
+        question.setId(id);
+        question.setContent(quest.getContent());
+        question.setTableOfContent(quest.getTableOfContent());
+        question.setTopicArea(quest.getTopicArea());
+        System.out.println(quest);
+        return questionService.save(question);
     }
 
     @Override
@@ -85,6 +97,14 @@ private final QuestionService questionService;
         return questionService.findContentByText(query);
     }
 
+    @Override
+    public List<String> getAllTopicAreas() {
+        return Arrays.stream(TopicArea.values())
+                .map(Enum::name)
+                .toList();
+    }
+
+
     @ExceptionHandler(QuestionNotFoundException.class)
     public ResponseEntity<ErrorResponses> handleQuestionNotFoundException(QuestionNotFoundException ex) {
         ErrorResponses errorResponse = new ErrorResponses(ex.getMessage());
@@ -96,6 +116,8 @@ private final QuestionService questionService;
         ErrorResponses errorResponse = new ErrorResponses(ex.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
+
+
 
 
 

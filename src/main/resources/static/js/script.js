@@ -60,12 +60,11 @@ const menuContent2 = `
 const menuContent3 = `
     <a href="#" id="add-test-button">Добавить тест</a>
     <a href="#" id="add-library-button">Добавить тему</a>
-    <a href="#" id="show-tests-button">Получить случайный вопрос</a>
 `;
-// Содержимое меню для 4 кнопки
-const menuContent4 = `
-    <a href="#" id="edit-library-button">Редактировать библиотеку</a>
-`;
+// // Содержимое меню для 4 кнопки
+// const menuContent4 = `
+//     <a href="#" id="edit-library-button">Редактировать библиотеку</a>
+// `;
 
 // Содержимое меню для 5 кнопки
 const menuContent5 = `
@@ -164,40 +163,8 @@ document.getElementById('test-form').addEventListener('submit', function(event) 
         });
 });
 
-// // Находим кнопку user-button-6
-// const userButton6 = document.getElementById('user-button-6');
-//
-// // Добавляем обработчик события click для кнопки user-button-6
-// userButton6.addEventListener('click', function(event) {
-//     event.preventDefault(); // Предотвращаем стандартное поведение, если это ссылка
-//     event.stopPropagation(); // Останавливаем всплытие события
-//
-//     // Очищаем старые контейнеры
-//     clearContainers();
-//
-//
-//     // Очищаем старые контейнеры
-//     clearContainersFull()
-//
-//     // Скрываем форму добавления теста
-//     hideAddTestForm();
-//
-//
-//
-//     // Отправляем запрос на сервер для получения случайного вопроса
-//     fetch('/api/topics/random')
-//         .then(response => response.json())
-//         .then(questions => {
-//             // Отображаем вопрос на странице
-//             console.log(questions);
-//             displayQuestions(questions);
-//         })
-//         .catch(error => {
-//             console.error('Ошибка:', error);
-//             alert('Произошла ошибка при загрузке вопроса.');
-//         });
-// });
-//
+
+
 function displayQuestions(questions) {
     // Создаем контейнер для вопросов
     const container = document.createElement('div');
@@ -252,7 +219,6 @@ userButton6.addEventListener('click', function(event) {
         .then(response => response.json())
         .then(questions => {
             // Отображаем вопрос на странице
-            console.log(questions);
             displayQuestions(questions);
         })
         .catch(error => {
@@ -261,15 +227,6 @@ userButton6.addEventListener('click', function(event) {
         });
 
 });
-
-
-
-
-
-
-
-
-
 
 
 
@@ -309,7 +266,7 @@ userButton6.addEventListener('click', function(event) {
 
 // Функция для загрузки всех тем
     function loadAllTopics() {
-        fetch('/api/topics')
+        fetch('/api/topics/all')
             .then(response => response.json())
             .then(topics => {
                 displayTopic(topics); // Отображаем список тем
@@ -509,7 +466,8 @@ function displayTopic(topics) {
             'questions-container',
             'topics-container',
             'topic-content-container',
-            'areas-container'
+            'areas-container',
+            'table-container'
 
 
         ];
@@ -535,8 +493,8 @@ function displayTopic(topics) {
             'areas-container',
             'topics-list-container',
             'areas-containerEdit',
-
-
+            "topics-list-containerEdit",
+            'table-container'
 
         ];
 
@@ -569,6 +527,7 @@ function displayTopic(topics) {
             // 'topic-content-container',
             'areas-container',
             'topics-list-container',
+            'table-container'
 
 
         ];
@@ -687,209 +646,6 @@ function displayTopic(topics) {
     });
 
 
-// Обработчик для кнопки "Редактировать библиотеку"
-    document.addEventListener('click', function (event) {
-        if (event.target.id === 'edit-library-button') {
-            event.preventDefault(); // Предотвращаем стандартное поведение ссылки
-
-            // Очищаем старые контейнеры
-            clearContainersFull();
-
-            // Скрываем форму добавления теста
-            hideAddTestForm();
-
-            // Создаем выпадающие кнопки для каждой области
-            createAreaButtonsEdit();
-
-
-            const contentContainer = document.getElementById('topic-content-container1');
-            const topicsContainer = document.getElementById('topics-list-container1');
-            contentContainer.style.display = 'block'; // Показываем левую колонку
-            topicsContainer.style.display = 'block'; // Показываем правую колонку
-
-            // Загружаем все темы в режиме редактирования
-            loadAllTopicsForEditing();
-        }
-    });
-
-
-// Функция для создания выпадающих кнопок по областям
-    function createAreaButtonsEdit() {
-        const container = document.createElement('div');
-        container.id = 'areas-containerEdit';
-        container.style.display = 'flex'; // Используем flexbox для расположения кнопок
-        container.style.flexWrap = 'wrap'; // Перенос кнопок на новую строку, если не хватает места
-        container.style.gap = '20px'; // Отступы между кнопками
-        container.style.padding = '20px'; // Отступы внутри контейнера
-        container.style.justifyContent = 'center'; // Центрируем кнопки
-
-        // Получаем все значения Enum (области тем)
-        const areas = Object.values(TopicArea);
-
-        areas.forEach(area => {
-            const areaButton = document.createElement('button');
-            areaButton.textContent = area; // Название области
-            areaButton.className = 'area-button'; // Добавляем класс для стилизации
-            areaButton.dataset.area = area; // Сохраняем область в data-атрибуте
-            areaButton.addEventListener('click', () => loadAllTopicsForEditing(area)); // Обработчик клика
-            container.appendChild(areaButton);
-        });
-
-        // Добавляем контейнер на страницу
-        document.body.appendChild(container);
-    }
-
-
-// Функция для загрузки всех тем в режиме редактирования
-    function loadAllTopicsForEditing() {
-        clearContainersFull();
-        fetch('/api/topics')
-            .then(response => response.json())
-            .then(topics => {
-                displayTopicsForEditing(topics); // Отображаем список тем с возможностью редактирования
-            })
-            .catch(error => {
-                console.error('Ошибка:', error);
-                alert('Произошла ошибка при загрузке тем.');
-            });
-    }
-
-// Функция для отображения тем с возможностью редактирования
-    function displayTopicsForEditing(topics, page = 1, itemsPerPage = 12) {
-        const container = document.createElement('div');
-        container.id = 'topics-list-containerEdit';
-        container.className = 'topics-list-containerEdit';
-        container.innerHTML = '';
-
-
-        if (topics.length === 0) {
-            container.innerHTML = '<p>Темы не найдены.</p>';
-            return;
-        }
-
-        // Вычисляем начальный и конечный индексы для текущей страницы
-        const startIndex = (page - 1) * itemsPerPage;
-        const endIndex = startIndex + itemsPerPage;
-        const paginatedTopics = topics.slice(startIndex, endIndex);
-
-
-        // Отображаем темы для текущей страницы
-        paginatedTopics.forEach(topic => {
-            const topicDiv = document.createElement('div');
-            topicDiv.className = 'topic-item';
-            topicDiv.innerHTML = `
-            <button class="edit-topic-button" data-topic-id="${topic.id}">Редактировать</button>
-            <button class="delete-topic-button" data-topic-id="${topic.id}">Удалить</button>
-            <p class="topic-title" data-topic-id="${topic.id}">${topic.tableOfContent}</p>
-         
-           
-        `;
-            topicDiv.querySelector('.edit-topic-button').addEventListener('click', () => {
-                loadTopicContentForEditing(topic.id); // Загружаем содержимое темы для редактирования
-            });
-            topicDiv.querySelector('.delete-topic-button').addEventListener('click', () => {
-                deleteTopic(topic.id); // Удаляем тему
-            });
-            container.appendChild(topicDiv);
-        });
-
-        // Очищаем старые контейнеры и добавляем новый
-        clearContainersLibrary();
-        document.body.appendChild(container);
-
-        // Добавляем пагинацию
-        addPagination(topics, page, itemsPerPage);
-    }
-
-// Функция для удаления темы
-    function deleteTopic(topicId) {
-        if (confirm('Вы уверены, что хотите удалить эту тему?')) {
-            fetch(`/api/topics/${topicId}`, {
-                method: 'DELETE',
-            })
-                .then(response => {
-                    if (response.ok) {
-                        alert('Тема успешно удалена!');
-                        loadAllTopicsForEditing(); // Перезагружаем список тем
-                    } else {
-                        throw new Error('Ошибка при удалении темы');
-                    }
-                })
-                .catch(error => {
-                    console.error('Ошибка:', error);
-                    alert('Произошла ошибка при удалении темы.');
-                });
-        }
-    }
-
-// Функция для загрузки содержимого темы в режиме редактирования
-    function loadTopicContentForEditing(topicId) {
-        fetch(`/api/topics/${topicId}`)
-            .then(response => response.json())
-            .then(topic => {
-                displayTopicContentForEditing(topic); // Отображаем содержимое темы для редактирования
-            })
-            .catch(error => {
-                console.error('Ошибка:', error);
-                alert('Произошла ошибка при загрузке содержимого темы.');
-            });
-    }
-
-// Функция для отображения содержимого темы с возможностью редактирования
-    function displayTopicContentForEditing(topic) {
-        const container = document.createElement('div');
-        container.id = 'topic-content-container1';
-        container.className = 'topic-content-container1';
-        container.innerHTML = `
-        <p><strong>Название темы:</strong></p>
-        <input type="text" id="edit-topic-title" value="${topic.tableOfContent}">
-        <p><strong>Содержание:</strong></p>
-        <textarea id="edit-topic-content">${topic.content}</textarea>
-        <button id="save-topic-button" data-topic-id="${topic.id}">Сохранить</button>
-        <button id="cancel-edit-button">Отмена</button>
-    `;
-
-        // Очищаем старые контейнеры и добавляем новый
-        clearContainers();
-        document.body.appendChild(container);
-
-        // Добавляем обработчик для кнопки "Сохранить"
-        document.getElementById('save-topic-button').addEventListener('click', () => {
-            saveTopicChanges(topic.id);
-        });
-
-        // Добавляем обработчик для кнопки "Отмена"
-        document.getElementById('cancel-edit-button').addEventListener('click', () => {
-            loadAllTopicsForEditing(); // Возвращаемся к списку тем
-        });
-    }
-
-// Функция для сохранения изменений в теме
-    function saveTopicChanges(topicId) {
-        const title = document.getElementById('edit-topic-title').value;
-        const content = document.getElementById('edit-topic-content').value;
-
-        fetch(`/api/topics/${topicId}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                tableOfContent: title,
-                content: content,
-            }),
-        })
-            .then(response => response.json())
-            .then(updatedTopic => {
-                alert('Изменения сохранены успешно!');
-                loadTopicContentForEditing(updatedTopic.id); // Перезагружаем содержимое темы
-            })
-            .catch(error => {
-                console.error('Ошибка:', error);
-                alert('Произошла ошибка при сохранении изменений.');
-            });
-    }
-
 
 document.addEventListener('DOMContentLoaded', function() {
     const searchInput = document.getElementById('search-input');
@@ -952,3 +708,233 @@ function loadTopicsBySearch(query, searchType) {
 }
 
 
+
+
+
+
+let currentPage = 1;
+let itemsPerPage = 5;
+let allData = [];
+let editingRow = null; // Текущая строка в режиме редактирования
+
+// Функция для отображения данных на текущей странице
+function displayData() {
+    const tableBody = document.querySelector('#topics-table tbody');
+    tableBody.innerHTML = '';
+
+    const start = (currentPage - 1) * itemsPerPage;
+    const end = start + itemsPerPage;
+    const pageData = allData.slice(start, end);
+
+    pageData.forEach((topic, index) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${topic.tableOfContent}</td>
+            <td>${topic.topicArea}</td>
+            <td class="action-buttons">
+                <button class="edit">Edit</button>
+                <button class="save" style="display: none;">Save</button>
+                <button class="delete">Delete</button>
+            </td>
+        `;
+
+        // Обработчик для отображения content
+        row.addEventListener('click', () => {
+            document.getElementById('content-display').style.display = 'block';
+            document.getElementById('content-text').value = topic.content;
+        });
+
+
+
+        // Обработчик для кнопки редактирования
+        row.querySelector('.edit').addEventListener('click', (e) => {
+            e.stopPropagation(); // Останавливаем всплытие события
+            enableEditMode(row, topic);
+        });
+
+        // Обработчик для кнопки сохранения
+        row.querySelector('.save').addEventListener('click', (e) => {
+            e.stopPropagation();
+            saveChanges(row, topic);
+        });
+
+        // Обработчик для кнопки удаления
+        row.querySelector('.delete').addEventListener('click', (e) => {
+            e.stopPropagation();
+            confirmDelete(topic);
+        });
+
+        tableBody.appendChild(row);
+    });
+
+    // Обновление информации о странице
+    document.getElementById('page-info').textContent = `Страница ${currentPage} из ${Math.ceil(allData.length / itemsPerPage)}`;
+}
+
+
+let topicAreas = []; // Массив для хранения значений перечисления
+
+// Функция для загрузки значений перечисления
+async function loadTopicAreas() {
+    try {
+        const response = await fetch('/api/topics/topic-areas');
+        if (!response.ok) {
+            throw new Error('Ошибка при загрузке значений перечисления');
+        }
+        topicAreas = await response.json();
+    } catch (error) {
+        console.error('Ошибка:', error);
+    }
+}
+
+// Функция для создания <select> с динамическими <option>
+function createTopicAreaSelect(selectedValue) {
+    const select = document.createElement('select');
+    select.style.width = '100%';
+
+    topicAreas.forEach(area => {
+        const option = document.createElement('option');
+        option.value = area;
+        option.textContent = area;
+        if (area === selectedValue) {
+            option.selected = true;
+        }
+        select.appendChild(option);
+    });
+
+    return select;
+}
+
+// Включение режима редактирования
+function enableEditMode(row, topic) {
+    if (editingRow) {
+        disableEditMode(editingRow);
+    }
+
+    editingRow = { row, topic };
+
+    const cells = row.querySelectorAll('td');
+    cells[0].innerHTML = `<input type="text" value="${topic.tableOfContent}" style="width: 100%;">`;
+    cells[1].innerHTML = ''; // Очищаем ячейку перед добавлением <select>
+    cells[1].appendChild(createTopicAreaSelect(topic.topicArea)); // Добавляем динамический <select>
+
+    // Показываем кнопку "Сохранить" и скрываем "Редактировать"
+    row.querySelector('.edit').style.display = 'none';
+    row.querySelector('.save').style.display = 'inline-block';
+
+    // Разблокируем textarea для редактирования
+    document.getElementById('content-text').disabled = false;
+}
+
+// Загрузка значений перечисления при загрузке страницы
+window.addEventListener('load', async () => {
+    await loadTopicAreas();
+});
+
+// Отключение режима редактирования
+function disableEditMode() {
+    if (!editingRow) return;
+
+    const { row, topic } = editingRow;
+    const cells = row.querySelectorAll('td');
+    cells[0].innerHTML = topic.tableOfContent;
+    cells[1].innerHTML = topic.topicArea;
+
+    // Показываем кнопку "Редактировать" и скрываем "Сохранить"
+    row.querySelector('.edit').style.display = 'inline-block';
+    row.querySelector('.save').style.display = 'none';
+
+    // Блокируем textarea
+    document.getElementById('content-text').disabled = true;
+
+    editingRow = null;
+}
+
+// Сохранение изменений
+async function saveChanges(row, topic) {
+    const cells = row.querySelectorAll('td');
+    topic.tableOfContent = cells[0].querySelector('input').value;
+    topic.topicArea = cells[1].querySelector('select').value;
+    topic.content = document.getElementById('content-text').value;
+
+    try {
+        const response = await fetch(`/api/topics/${topic.id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(topic),
+        });
+
+        if (!response.ok) {
+            throw new Error('Ошибка при сохранении изменений');
+        }
+
+        disableEditMode();
+        alert('Изменения сохранены!');
+    } catch (error) {
+        console.error('Ошибка:', error);
+        alert('Не удалось сохранить изменения');
+    }
+}
+
+// Подтверждение удаления
+async function confirmDelete(topic) {
+    if (confirm('Вы уверены, что хотите удалить эту запись?')) {
+        try {
+            const response = await fetch(`/api/topics/${topic.id}`, {
+                method: 'DELETE',
+            });
+
+            if (!response.ok) {
+                throw new Error('Ошибка при удалении записи');
+            }
+
+            // Удаляем запись из локального массива и обновляем таблицу
+            allData = allData.filter(item => item.id !== topic.id);
+            displayData();
+            alert('Запись удалена!');
+        } catch (error) {
+            console.error('Ошибка:', error);
+            alert('Не удалось удалить запись');
+        }
+    }
+}
+
+// Обработчик для кнопки редактирования
+document.getElementById('user-button-4').addEventListener('click', async () => {
+    const tableContainer = document.getElementById('table-container');
+    tableContainer.style.display = 'block';
+
+    try {
+        const response = await fetch('/api/topics/all');
+        if (!response.ok) throw new Error('Ошибка при загрузке данных');
+        allData = await response.json();
+        displayData();
+    } catch (error) {
+        console.error('Ошибка:', error);
+    }
+});
+
+
+// Обработчик для выбора количества элементов на странице
+document.getElementById('items-per-page').addEventListener('change', (e) => {
+    itemsPerPage = parseInt(e.target.value);
+    currentPage = 1;
+    displayData();
+});
+
+// Обработчики для кнопок пагинации
+document.getElementById('prev-page').addEventListener('click', () => {
+    if (currentPage > 1) {
+        currentPage--;
+        displayData();
+    }
+});
+
+document.getElementById('next-page').addEventListener('click', () => {
+    if (currentPage < Math.ceil(allData.length / itemsPerPage)) {
+        currentPage++;
+        displayData();
+    }
+});

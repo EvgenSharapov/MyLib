@@ -16,7 +16,5 @@ public enum TopicArea {
     JMS,
     JDBC,
     HTTP,
-    ALGORITHMS
-
-
+    ALGORITHMS;
 }

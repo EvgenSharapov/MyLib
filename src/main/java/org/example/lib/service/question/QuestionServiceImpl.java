@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
@@ -32,7 +33,7 @@ public class QuestionServiceImpl implements QuestionService{
     @PostConstruct
     public void init() {
         System.out.println("Initializing QuestionService...");
-        questionCache = new HashMap<>();
+        questionCache = new ConcurrentHashMap<>();
         List<Question> questions = questionRepo.findAll();
         questions.forEach(question ->
                 questionCache.put(question.getId(), questionMapper.mapToQuestionRequestDTO(question))
@@ -54,9 +55,11 @@ public class QuestionServiceImpl implements QuestionService{
         if (questionCache.containsKey(id)) {
             return questionCache.get(id);
         }
-        Question question =questionRepo.findById(id).orElseThrow(
+        Question question = questionRepo.findById(id).orElseThrow(
                 () -> new QuestionNotFoundException(id));
-        return questionMapper.mapToQuestionRequestDTO(question);
+        QuestionRequestDTO dto = questionMapper.mapToQuestionRequestDTO(question);
+        questionCache.put(id, dto);
+        return dto;
     }
 
     @Override
@@ -72,7 +75,7 @@ public class QuestionServiceImpl implements QuestionService{
     @Override
     @Transactional
     public QuestionRequestDTO save(Question question) {
-        questionRepo.save(question);
+        question = questionRepo.save(question);
         QuestionRequestDTO dto = questionMapper.mapToQuestionRequestDTO(question);
         questionCache.put(question.getId(), dto);
         return dto;
@@ -107,7 +110,6 @@ public class QuestionServiceImpl implements QuestionService{
         if (questionCache.isEmpty()) {
             throw new QuestionNotFoundException("Нет доступных тем");
         }
-        System.out.println(questionCache.size());
         List<QuestionRequestDTO> questions = new ArrayList<>(questionCache.values());
         return questions.get(ThreadLocalRandom.current().nextInt(questions.size()));
     }

@@ -7,6 +7,7 @@ import org.example.lib.model.TopicArea;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -30,6 +31,9 @@ public interface QuestionController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     void deleteQuestion(
             @PathVariable UUID id);
+    @PutMapping("/{id}")
+    QuestionRequestDTO saveQuestion(@RequestBody Question question,
+            @PathVariable UUID id);
 
     @GetMapping("/titles")
     List<String> getAllQuestionThemes();
@@ -45,4 +49,7 @@ public interface QuestionController {
 
     @GetMapping("/search/content")
     List<QuestionRequestDTO> searchQuestionsByContent(@RequestParam String query);
+
+    @GetMapping("/topic-areas")
+    List<String> getAllTopicAreas();
 }

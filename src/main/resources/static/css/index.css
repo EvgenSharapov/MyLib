@@ -233,9 +233,10 @@ header {
 }
 
 .create-button:hover {
-    background-color: #444444;
+    background-color: #333333; /* Темнее при наведении */
+    transform: scale(1.05); /* Легкое увеличение */
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2); /* Увеличиваем тень */
 }
-
 
 
 /* Добавьте эти стили в ваш CSS-файл или в <style> в HTML */
@@ -405,9 +406,10 @@ pre {
     padding: 8px;
     margin-top: 5px;
     margin-bottom: 10px;
-    border: 1px solid #ccc;
+    border: 1px solid #225e9f;
     border-radius: 4px;
 }
+/* Стили для области темы */
 
 #topic-form button {
     margin-top: 10px;
@@ -419,10 +421,31 @@ pre {
     cursor: pointer;
 }
 
+#topic-form button:hover {
+    background-color: #333333; /* Темнее при наведении */
+    transform: scale(1.05); /* Легкое увеличение */
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2); /* Увеличиваем тень */
+}
+
 #topic-form button[type="button"] {
     background-color: #6c757d;
     margin-left: 10px;
 }
+#topic-form button:hover[type="button"] {
+    background-color: #333333; /* Темнее при наведении */
+    transform: scale(1.05); /* Легкое увеличение */
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2); /* Увеличиваем тень */
+}
+
+#add-topic-form input[type="text"]:focus,
+#add-topic-form textarea:focus,
+#add-topic-form select:focus {
+    box-shadow: 0 0 0 2px #444444; /* Оранжевая тень вокруг поля */
+    border-color: #444444; /* Изменение цвета рамки при фокусе */
+}
+
+
+
 
 /* Общий стиль для контейнера пагинации */
 .pagination-container {
@@ -540,4 +563,120 @@ pre {
     font-size: 12px;
     white-space: nowrap;
     z-index: 1000;
+}
+
+
+
+
+/* Основной контейнер для таблицы и контента */
+#main-container {
+    display: flex;
+    width: 100%;
+    gap: 20px;
+    padding: 20px;
+    align-items: flex-start; /* Вертикальное выравнивание по верхнему краю */
+}
+
+/* Контейнер для таблицы */
+#table-container {
+    width: 59%; /* Фиксированная ширина */
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    display: none; /* Скрыта по умолчанию */
+}
+
+/* Стили для таблицы */
+#topics-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#topics-table th, #topics-table td {
+    padding: 12px 16px;
+    text-align: left;
+}
+
+#topics-table th {
+    background-color: #f8f9fa;
+    font-weight: bold;
+    border-bottom: 2px solid #dee2e6;
+}
+
+#topics-table td {
+    border-bottom: 1px solid #dee2e6;
+}
+
+#topics-table tr:hover {
+    background-color: #f1f3f5;
+    cursor: pointer;
+}
+
+/* Стили для кнопок действий */
+.action-buttons button {
+    padding: 5px 10px;
+    margin: 2px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.action-buttons button.edit {
+    background-color: #ffc107;
+    color: black;
+}
+
+.action-buttons button.save {
+    background-color: #28a745;
+    color: white;
+}
+
+.action-buttons button.delete {
+    background-color: #dc3545;
+    color: white;
+}
+
+.action-buttons button:hover {
+    opacity: 0.8;
+}
+
+/* Пагинация */
+.pagination-controls {
+    margin-bottom: 10px;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+    gap: 10px;
+}
+
+.pagination button {
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+}
+
+.pagination button:disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
+}
+
+/* Контейнер для контента */
+#content-display {
+    width: 35%; /* Фиксированная ширина */
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    height: auto; /* Высота зависит от содержимого */
+    overflow-y: auto; /* Добавляем прокрутку, если контент слишком большой */
+    display: none; /* Скрыта по умолчанию */
 }
