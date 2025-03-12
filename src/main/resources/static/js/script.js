@@ -16,7 +16,7 @@ const TopicArea = {
     SQL : 'SQL',
     SERVLET : 'SERVLET',
     JMS : 'JMS',
-    JDBC : 'JDBC',
+    HIBERNATE : 'HIBERNATE',
     HTTP : 'HTTP',
     ALGORITHMS : 'ALGORITHMS'
 
@@ -370,8 +370,9 @@ function displayTopic(topics) {
         });
 
         // Очищаем старые контейнеры и добавляем новый
-        clearContainersLibrary();
+       clearContainersLibrary();
         document.body.appendChild(container);
+
 
         // Добавляем пагинацию
         addPagination(topics, page, itemsPerPage);
@@ -417,6 +418,7 @@ function displayTopic(topics) {
 // Добавляем пагинацию в DOM
         document.body.appendChild(paginationContainer);
     }
+
 
 
 // Функция для выделения активной темы
@@ -472,7 +474,13 @@ function displayTopic(topics) {
         containers.forEach(id => {
             const container = document.getElementById(id);
             if (container) {
-                container.remove();
+                if (id === 'table-container') {
+                    // Для table-container скрываем, а не удаляем
+                    container.style.display = 'none';
+                } else {
+                    // Для остальных контейнеров вызываем remove
+                    container.remove();
+                }
             }
         });
         hideAddTopicForm();
@@ -490,7 +498,8 @@ function displayTopic(topics) {
             'areas-container',
             'topics-list-container',
             'areas-containerEdit',
-            "topics-list-containerEdit",
+            'topics-list-containerEdit',
+
 
         ];
 
@@ -517,13 +526,14 @@ function clearContainersFull() {
         'topics-list-container',
         'areas-containerEdit',
         'topics-list-containerEdit',
-        'table-container' // Добавляем table-container в список
+        'table-container', // Добавляем table-container в список
+        'content-display'
     ];
 
     containers.forEach(id => {
         const container = document.getElementById(id);
         if (container) {
-            if (id === 'table-container') {
+            if (id === 'table-container'||'content-display') {
                 // Для table-container скрываем, а не удаляем
                 container.style.display = 'none';
             } else {
@@ -536,12 +546,6 @@ function clearContainersFull() {
     hideAddTopicForm();
     clearPagination();
 }
-
-
-
-
-
-
 
 
     function clearPagination() {
@@ -557,10 +561,8 @@ function clearContainersFull() {
         const containers = [
             'questions-container',
             'topics-container',
-            // 'topic-content-container',
             'areas-container',
             'topics-list-container',
-
 
         ];
 
@@ -877,7 +879,7 @@ function enableEditMode(row, topic) {
         'SQL',
         'SERVLET',
         'JMS',
-        'JDBC',
+        'HIBERNATE',
         'HTTP',
         'ALGORITHMS'
     ];
@@ -900,14 +902,6 @@ function enableEditMode(row, topic) {
     row.querySelector('.edit').style.display = 'none';
     row.querySelector('.save').style.display = 'inline-block';
 }
-
-
-
-
-
-
-
-
 
 
 
@@ -981,23 +975,6 @@ async function confirmDelete(topic) {
 }
 
 
-// function showTableContainer() {
-//     const tableContainer = document.getElementById('table-container');
-//     if (tableContainer) {
-//         tableContainer.style.display = 'block';
-//     } else {
-//         console.error('Элемент table-container не найден');
-//     }
-// }
-//
-// function showDropdownMenu() {
-//     const dropdownMenu = document.getElementById('dropdown-menu');
-//     if (dropdownMenu) {
-//         dropdownMenu.classList.add('show');
-//     } else {
-//         console.error('Элемент dropdown-menu не найден');
-//     }
-// }
 
 document.getElementById('user-button-4').addEventListener('click', async () => {
     clearContainersForEdit();
@@ -1043,93 +1020,3 @@ document.getElementById('next-page').addEventListener('click', () => {
 
 
 
-
-// let currentPage = 1;
-// let itemsPerPage = 5;
-// let allData = [];
-//
-// // Функция для отображения данных на текущей странице
-// function displayData() {
-//     const tableBody = document.querySelector('#topics-table tbody');
-//     tableBody.innerHTML = '';
-//
-//     const start = (currentPage - 1) * itemsPerPage;
-//     const end = start + itemsPerPage;
-//     const pageData = allData.slice(start, end);
-//
-//     pageData.forEach(topic => {
-//         const row = document.createElement('tr');
-//         row.innerHTML = `
-//             <td>${topic.tableOfContent}</td>
-//             <td>${topic.topicArea}</td>
-//             <td class="action-buttons">
-//                 <button class="edit">Редактировать</button>
-//                 <button class="save">Сохранить</button>
-//                 <button class="delete">Удалить</button>
-//             </td>
-//         `;
-//
-//         // Обработчик для отображения content при нажатии на строку
-//         row.addEventListener('click', (e) => {
-//             // Проверяем, был ли клик по кнопке
-//             if (e.target.tagName === 'BUTTON') {
-//                 return; // Игнорируем клик по кнопке
-//             }
-//
-//             // Отображаем поле content-display
-//             document.getElementById('content-display').style.display = 'block';
-//
-//             // Устанавливаем значение content
-//             document.getElementById('content-text').textContent = topic.content || "Нет данных";
-//         });
-//
-//         tableBody.appendChild(row);
-//     });
-//
-//     // Обновление информации о странице
-//     document.getElementById('page-info').textContent = `Страница ${currentPage} из ${Math.ceil(allData.length / itemsPerPage)}`;
-// }
-//
-// // Обработчик для кнопки редактирования
-// document.getElementById('user-button-4').addEventListener('click', async () => {
-//     const tableContainer = document.getElementById('table-container');
-//     tableContainer.style.display = 'block';
-//
-//     try {
-//         const response = await fetch('/api/topics/all');
-//         if (!response.ok) throw new Error('Ошибка при загрузке данных');
-//         allData = await response.json();
-//         displayData();
-//     } catch (error) {
-//         console.error('Ошибка:', error);
-//     }
-// });
-//
-// // Обработчики для других кнопок (скрываем таблицу)
-// document.querySelectorAll('.other-button').forEach(button => {
-//     button.addEventListener('click', () => {
-//         document.getElementById('table-container').style.display = 'none';
-//     });
-// });
-//
-// // Обработчик для выбора количества элементов на странице
-// document.getElementById('items-per-page').addEventListener('change', (e) => {
-//     itemsPerPage = parseInt(e.target.value);
-//     currentPage = 1;
-//     displayData();
-// });
-//
-// // Обработчики для кнопок пагинации
-// document.getElementById('prev-page').addEventListener('click', () => {
-//     if (currentPage > 1) {
-//         currentPage--;
-//         displayData();
-//     }
-// });
-//
-// document.getElementById('next-page').addEventListener('click', () => {
-//     if (currentPage < Math.ceil(allData.length / itemsPerPage)) {
-//         currentPage++;
-//         displayData();
-//     }
-// });

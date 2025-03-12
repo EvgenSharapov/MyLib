@@ -451,7 +451,9 @@ pre {
 .pagination-container {
     display: flex; /* Используем flexbox для выравнивания элементов */
     justify-content: flex-end; /* Выравниваем содержимое по правому краю */
-    margin-right: 20px; /* Внешние отступы для контейнера */
+    margin-right: 50px; /* Внешние отступы для контейнера */
+    margin-top: -35px;
+
 }
 
 /* Стили для кнопок пагинации */

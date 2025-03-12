@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@Validated
+
 public class QuestionServiceImpl implements QuestionService{
 
     private final QuestionRepository questionRepo;
