@@ -758,3 +758,109 @@ pre {
     outline: none; /* Убираем стандартное обрамление */
     box-shadow: 0 0 5px rgba(34, 94, 159, 0.5); /* Легкая тень при фокусе */
 }
+
+
+
+
+
+/* Стили для модального окна */
+.modal {
+    display: none; /* Скрыто по умолчанию */
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5); /* Полупрозрачный фон */
+}
+
+.modal-content {
+    background-color: #fff;
+    margin: 10% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 50%;
+    max-width: 500px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover {
+    color: #000;
+}
+
+.user-info p {
+    margin: 10px 0;
+}
+
+#edit-profile-form {
+    margin-top: 20px;
+}
+
+#edit-profile-form input {
+    display: block;
+    width: 80%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+#edit-profile-form button {
+    padding: 10px 20px;
+    background-color: #28a745;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#edit-profile-form button:hover {
+    background-color: #218838;
+}
+
+.hidden {
+    display: none;
+}
+
+
+
+/* Стили для кнопки "Редактировать профиль" */
+#edit-profile-button {
+    background-color: #225e9f; /* Синий цвет фона */
+    color: white; /* Белый текст */
+    border: none; /* Убираем границу */
+    padding: 10px 20px; /* Внутренние отступы */
+    border-radius: 5px; /* Закругленные углы */
+    font-size: 16px; /* Размер шрифта */
+    cursor: pointer; /* Курсор в виде указателя */
+    transition: background-color 0.3s ease; /* Плавное изменение цвета */
+    margin-top: 20px; /* Отступ сверху */
+}
+
+#edit-profile-button:hover {
+    background-color: #1f4f82; /* Темно-синий цвет при наведении */
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
