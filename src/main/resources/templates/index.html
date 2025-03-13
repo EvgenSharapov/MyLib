@@ -12,6 +12,29 @@
 <body>
 
 <header>
+
+    <div id="user-menu-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div class="user-info">
+                <p><strong>Имя:</strong> <span id="user-first-name">${userData.firstName}</span></p>
+                <p><strong>Фамилия:</strong> <span id="user-last-name">${userData.lastName}</span></p>
+                <p><strong>Email:</strong> <span id="user-email">${userData.email}</span></p>
+                <p><strong>Дата регистрации:</strong> <span id="user-registration-date">${registrationDate}</span></p>
+            </div>
+            <button id="edit-profile-button">Редактировать профиль</button>
+            <div id="edit-profile-form" class="hidden">
+                <input type="text" id="edit-first-name" placeholder="Имя">
+                <input type="text" id="edit-last-name" placeholder="Фамилия">
+                <input type="password" id="edit-password" placeholder="Новый пароль">
+                <button id="save-profile-button">Сохранить</button>
+            </div>
+        </div>
+    </div>
+
+
+
+
     <!-- Контейнер для картинки (левая часть) -->
     <div class="left-section">
         <div class="user-menu">
@@ -22,7 +45,7 @@
     </div>
 
     <div class="search-container">
-        <input type="text" id="search-input" placeholder="Введите текст для поиска..." class="search-input">
+        <input type="text" id="search-input" placeholder="Введите текст для поиска..." class="search-input" autocomplete="off">
         <div class="search-buttons">
             <button id="search-theme-button" class="search-toggle-button" title="Поиск по темам"></button>
             <button id="search-content-button" class="search-toggle-button" title="Поиск по содержанию"></button>
@@ -139,52 +162,6 @@
 
 
 
-<!--&lt;!&ndash; Контейнер для таблицы и контента &ndash;&gt;-->
-<!--<div id="main-container">-->
-<!--    &lt;!&ndash; Таблица для отображения данных &ndash;&gt;-->
-<!--    <div id="table-container" style="display: none;">-->
-<!--        &lt;!&ndash; Всплывающее меню для выбора количества элементов &ndash;&gt;-->
-<!--        <div class="pagination-controls">-->
-<!--            <label for="items-per-page"></label>-->
-<!--            <select id="items-per-page">-->
-<!--                <option value="5">5</option>-->
-<!--                <option value="10">10</option>-->
-<!--                <option value="25">25</option>-->
-<!--            </select>-->
-<!--        </div>-->
-<!--        &lt;!&ndash; Пагинация &ndash;&gt;-->
-<!--        <div class="pagination">-->
-<!--            <button id="prev-page">Назад</button>-->
-<!--            <span id="page-info">Страница 1 из 1</span>-->
-<!--            <button id="next-page">Вперед</button>-->
-<!--        </div>-->
-
-<!--        &lt;!&ndash; Таблица &ndash;&gt;-->
-<!--        <table id="topics-table">-->
-<!--            <thead>-->
-<!--            <tr>-->
-<!--                <th style="width: 65%;">Table of Content</th>-->
-<!--                <th style="width: 15%;">Topic Area</th>-->
-<!--                <th style="width: 20%;">Действия</th>-->
-<!--            </tr>-->
-<!--            </thead>-->
-<!--            <tbody>-->
-<!--            &lt;!&ndash; Данные будут добавлены сюда &ndash;&gt;-->
-<!--            </tbody>-->
-<!--        </table>-->
-
-
-<!--    </div>-->
-
-<!--&lt;!&ndash;    &lt;!&ndash; Поле для отображения content &ndash;&gt;  style="display: none;"&ndash;&gt;-->
-<!--    <div id="content-display ">-->
-<!--        <h3>Содержание темы:</h3>-->
-<!--        <p id="content-text"></p>-->
-<!--    </div>-->
-<!--</div>-->
-
-
-
 <!-- Контейнер для таблицы и контента -->
 <div id="main-container">
     <!-- Таблица для отображения данных -->
@@ -232,23 +209,7 @@
 </div>
 
 
-<div id="user-menu-modal" class="modal">
-    <div class="modal-content">
-        <span class="close">&times;</span>
-        <div class="user-info">
-            <p><strong>Имя:</strong> <span id="user-first-name">${userData.firstName}</span></p>
-            <p><strong>Фамилия:</strong> <span id="user-last-name">${userData.lastName}</span></p>
-            <p><strong>Email:</strong> <span id="user-email">${userData.email}</span></p>
-            <p><strong>Дата регистрации:</strong> <span id="user-registration-date">${registrationDate}</span></p>
-        </div>
-        <button id="edit-profile-button">Редактировать профиль</button>
-        <div id="edit-profile-form" class="hidden">
-            <input type="text" id="edit-first-name" placeholder="Имя">
-            <input type="text" id="edit-last-name" placeholder="Фамилия">
-            <button id="save-profile-button">Сохранить</button>
-        </div>
-    </div>
-</div>
+
 
 
 <!-- Подключение JavaScript-файла -->

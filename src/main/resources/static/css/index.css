@@ -818,15 +818,17 @@ pre {
 
 #edit-profile-form button {
     padding: 10px 20px;
-    background-color: #28a745;
+    background-color: #04671b;
     color: #fff;
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease; /* Добавлено свойство перехода */
 }
 
 #edit-profile-form button:hover {
-    background-color: #218838;
+    background-color: #034e14;
+    transform: scale(1.1);
 }
 
 .hidden {
@@ -844,12 +846,13 @@ pre {
     border-radius: 5px; /* Закругленные углы */
     font-size: 16px; /* Размер шрифта */
     cursor: pointer; /* Курсор в виде указателя */
-    transition: background-color 0.3s ease; /* Плавное изменение цвета */
     margin-top: 20px; /* Отступ сверху */
+    transition: background-color 0.3s ease, transform 0.3s ease; /* Добавлено свойство перехода */
 }
 
 #edit-profile-button:hover {
     background-color: #1f4f82; /* Темно-синий цвет при наведении */
+    transform: scale(1.05);
 }
 
 

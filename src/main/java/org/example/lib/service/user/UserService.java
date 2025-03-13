@@ -52,13 +52,16 @@ public class UserService implements UserDetailsService {
     }
 
 
-    public void updateProfile(String username, String firstName, String lastName) {
+    public void updateProfile(String username, String firstName, String lastName, String password) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден"));
 
         user.setFirstName(firstName);
         user.setLastName(lastName);
 
+        if (password != null && !password.isEmpty()) {
+            user.setPassword(passwordEncoder.encode(password)); // Обновляем пароль, если он указан
+        }
 
         userRepository.save(user);
     }

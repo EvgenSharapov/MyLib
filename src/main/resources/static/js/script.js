@@ -926,20 +926,24 @@ function disableEditMode() {
     editingRow = null;
 }
 
-// Сохранение изменений
 async function saveChanges(row, topic) {
     const cells = row.querySelectorAll('td');
     topic.tableOfContent = cells[0].querySelector('input').value;
     topic.topicArea = cells[1].querySelector('select').value;
     topic.content = document.getElementById('content-text').value;
 
+    const csrfToken = document.querySelector('meta[name="_csrf"]').content;
+    const csrfHeader = document.querySelector('meta[name="_csrf_header"]').content;
+
     try {
         const response = await fetch(`/api/topics/${topic.id}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
+                [csrfHeader]: csrfToken, // Добавляем CSRF-токен
             },
-            body: JSON.stringify(topic),
+            credentials: 'include', // Включаем куки в запрос
+            body: JSON.stringify(topic), // Используем объект topic
         });
 
         if (!response.ok) {
@@ -1059,81 +1063,98 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-        function showUserMenu(userData) {
-            const registrationDate = new Date(userData.registrationDate).toLocaleDateString();
-            const modal = document.getElementById('user-menu-modal');
+    function showUserMenu(userData) {
+        const registrationDate = new Date(userData.registrationDate).toLocaleDateString();
+        const modal = document.getElementById('user-menu-modal');
 
-            if (!modal) {
-                console.error('Модальное окно не найдено');
-                return;
+        if (!modal) {
+            console.error('Модальное окно не найдено');
+            return;
+        }
+
+        const modalContent = modal.querySelector('.modal-content');
+        modal.querySelector('#user-first-name').textContent = userData.firstName;
+        modal.querySelector('#user-last-name').textContent = userData.lastName;
+        modal.querySelector('#user-email').textContent = userData.email;
+        modal.querySelector('#user-registration-date').textContent = registrationDate;
+
+        modal.querySelector('#edit-first-name').value = "";
+        modal.querySelector('#edit-last-name').value = "";
+        modal.querySelector('#edit-password').value = "";
+
+        modal.style.display = 'block';
+
+
+
+
+        // Убедитесь, что вы не изменяете поле #search-input
+        const searchInput = document.getElementById('search-input');
+        if (searchInput) {
+            searchInput.placeholder = "Введите текст для поиска..."; // Восстанавливаем placeholder
+        }
+
+
+
+
+
+        const closeButton = modal.querySelector('.close');
+        if (closeButton) {
+            closeButton.addEventListener('click', () => {
+                modal.style.display = 'none';
+            });
+        } else {
+            console.error('Элемент .close не найден');
+        }
+
+        window.addEventListener('click', (event) => {
+            if (event.target === modal) {
+                modal.style.display = 'none';
             }
+        });
 
-            const modalContent = modal.querySelector('.modal-content');
-            modal.querySelector('#user-first-name').textContent = userData.firstName;
-            modal.querySelector('#user-last-name').textContent = userData.lastName;
-            modal.querySelector('#user-email').textContent = userData.email;
-            modal.querySelector('#user-registration-date').textContent = registrationDate;
+        const editProfileButton = modal.querySelector('#edit-profile-button');
+        const editProfileForm = modal.querySelector('#edit-profile-form');
+        const saveProfileButton = modal.querySelector('#save-profile-button');
 
-            modal.style.display = 'block';
-
-            const closeButton = modal.querySelector('.close');
-            if (closeButton) {
-                closeButton.addEventListener('click', () => {
-                    modal.style.display = 'none';
-                });
-            } else {
-                console.error('Элемент .close не найден');
-            }
-
-            window.addEventListener('click', (event) => {
-                if (event.target === modal) {
-                    modal.style.display = 'none';
-                }
+        if (editProfileButton && editProfileForm && saveProfileButton) {
+            editProfileButton.addEventListener('click', () => {
+                editProfileForm.classList.toggle('hidden');
             });
 
-            const editProfileButton = modal.querySelector('#edit-profile-button');
-            const editProfileForm = modal.querySelector('#edit-profile-form');
-            const saveProfileButton = modal.querySelector('#save-profile-button');
+            saveProfileButton.addEventListener('click', async () => {
+                const firstName = modal.querySelector('#edit-first-name').value;
+                const lastName = modal.querySelector('#edit-last-name').value;
+                const password = modal.querySelector('#edit-password').value; // Новое поле для пароля
 
-            if (editProfileButton && editProfileForm && saveProfileButton) {
-                editProfileButton.addEventListener('click', () => {
-                    editProfileForm.classList.toggle('hidden');
-                });
+                const csrfToken = document.querySelector('meta[name="_csrf"]').content;
+                const csrfHeader = document.querySelector('meta[name="_csrf_header"]').content;
 
-                saveProfileButton.addEventListener('click', async () => {
-                    const firstName = modal.querySelector('#edit-first-name').value;
-                    const lastName = modal.querySelector('#edit-last-name').value;
+                try {
+                    const response = await fetch('/update', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            [csrfHeader]: csrfToken,
+                        },
+                        body: JSON.stringify({ firstName, lastName, password }), // Добавляем пароль в запрос
+                    });
 
-                    const csrfToken = document.querySelector('meta[name="_csrf"]').content;
-                    const csrfHeader = document.querySelector('meta[name="_csrf_header"]').content;
-
-                    try {
-                        const response = await fetch('/update', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                [csrfHeader]: csrfToken,
-                            },
-                            body: JSON.stringify({ firstName, lastName }),
-                        });
-
-                        if (!response.ok) {
-                            throw new Error('Ошибка при обновлении профиля');
-                        }
-
-                        modal.querySelector('#user-first-name').textContent = firstName;
-                        modal.querySelector('#user-last-name').textContent = lastName;
-                        editProfileForm.classList.add('hidden');
-                        alert('Профиль успешно обновлен!');
-                    } catch (error) {
-                        console.error('Ошибка:', error);
-                        alert('Не удалось обновить профиль');
+                    if (!response.ok) {
+                        throw new Error('Ошибка при обновлении профиля');
                     }
-                });
-            } else {
-                console.error('Один из элементов редактирования не найден');
-            }
 
+                    modal.querySelector('#user-first-name').textContent = firstName;
+                    modal.querySelector('#user-last-name').textContent = lastName;
+                    editProfileForm.classList.add('hidden');
+                    alert('Профиль успешно обновлен!');
+                } catch (error) {
+                    console.error('Ошибка:', error);
+                    alert('Не удалось обновить профиль');
+                }
+            });
+        } else {
+            console.error('Один из элементов редактирования не найден');
         }
+    }
 
     })

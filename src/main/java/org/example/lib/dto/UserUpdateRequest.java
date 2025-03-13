@@ -9,6 +9,7 @@ import lombok.Setter;
 public class UserUpdateRequest {
     private String firstName;
     private String lastName;
+    private String password;
 
     // Геттеры и сеттеры
 }

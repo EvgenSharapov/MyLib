@@ -72,10 +72,8 @@ public class UserController {
     @PostMapping("/update")
     public ResponseEntity<String> updateProfile(@RequestBody UserUpdateRequest request, Authentication authentication) {
         String username = authentication.getName();
-        System.out.println("+++");
-        userService.updateProfile(username, request.getFirstName(), request.getLastName());
+        userService.updateProfile(username, request.getFirstName(), request.getLastName(), request.getPassword());
         return ResponseEntity.ok("Профиль обновлен");
     }
-
 
 }
