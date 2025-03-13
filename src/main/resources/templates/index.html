@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="_csrf" th:content="${_csrf.token}" />
+    <meta name="_csrf_header" th:content="${_csrf.headerName}" />
     <title>Библиотека</title>
     <link rel="stylesheet" href="/css/index.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -14,7 +16,7 @@
     <div class="left-section">
         <div class="user-menu">
             <a href="/"> <!-- Ссылка на начальную страницу -->
-                <img src="/img/Shey1.png" width="25" height="25" alt="Shey1" class="hover-zoom">
+                <img src="/images/Shey1.png" width="25" height="25" alt="Shey1" class="hover-zoom">
             </a>
         </div>
     </div>
@@ -226,6 +228,25 @@
     <div id="content-display" >
         <h3>Содержание темы:</h3>
         <textarea id="content-text" style="width: 100%; height: 650px;" disabled></textarea>
+    </div>
+</div>
+
+
+<div id="user-menu-modal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <div class="user-info">
+            <p><strong>Имя:</strong> <span id="user-first-name">${userData.firstName}</span></p>
+            <p><strong>Фамилия:</strong> <span id="user-last-name">${userData.lastName}</span></p>
+            <p><strong>Email:</strong> <span id="user-email">${userData.email}</span></p>
+            <p><strong>Дата регистрации:</strong> <span id="user-registration-date">${registrationDate}</span></p>
+        </div>
+        <button id="edit-profile-button">Редактировать профиль</button>
+        <div id="edit-profile-form" class="hidden">
+            <input type="text" id="edit-first-name" placeholder="Имя">
+            <input type="text" id="edit-last-name" placeholder="Фамилия">
+            <button id="save-profile-button">Сохранить</button>
+        </div>
     </div>
 </div>
 

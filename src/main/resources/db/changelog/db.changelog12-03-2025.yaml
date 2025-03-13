@@ -1,0 +1,60 @@
+databaseChangeLog:
+
+  - changeSet:
+      id: 3
+      author: evgeny_sharapov
+      changes:
+        - createTable:
+            tableName: user_info
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  remarks: "Уникальный идентификатор пользователя"
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+
+              - column:
+                  name: username
+                  type: varchar(50)
+                  remarks: "Уникальное имя пользователя"
+                  constraints:
+                    unique: true
+                    nullable: false
+
+              - column:
+                  name: password
+                  type: varchar(255)
+                  remarks: "Пароль пользователя"
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: first_name
+                  type: varchar(50)
+                  remarks: "Имя пользователя"
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: last_name
+                  type: varchar(50)
+                  remarks: "Фамилия пользователя"
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: email
+                  type: varchar(100)
+                  remarks: "Электронная почта пользователя"
+                  constraints:
+                    unique: true
+                    nullable: false
+
+              - column:
+                  name: registration_date
+                  type: timestamp
+                  remarks: "Дата регистрации пользователя"
+                  constraints:
+                    nullable: false

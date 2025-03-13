@@ -52,7 +52,7 @@ const menuContent1 = `
 
 // Содержимое меню для второй кнопки
 const menuContent2 = `
-    <a href="#">Настройки</a>
+    <a href="#" id="user-profile">Настройки</a>
     <a href="#">Прогресс</a>
     <a href="#" id="logout-button">Выход</a>
 `;
@@ -205,7 +205,9 @@ userButton6.addEventListener('click', function(event) {
     event.stopPropagation(); // Останавливаем всплытие события
 
         // Очищаем старые контейнеры
-        clearContainersFull()
+        clearContainersFull();
+        clearContainersFull();
+        clearContainersFull();
 
         // Скрываем форму добавления теста
         hideAddTestForm();
@@ -326,7 +328,8 @@ function displayTopic(topics) {
 
 // Функция для загрузки тем по области
     function loadTopicsByArea(area) {
-        clearContainers()
+        clearContainers();
+        clearContainersFull();
         fetch(`/api/topics/by-area/${area}`)
             .then(response => response.json())
             .then(topics => {
@@ -533,7 +536,7 @@ function clearContainersFull() {
     containers.forEach(id => {
         const container = document.getElementById(id);
         if (container) {
-            if (id === 'table-container'||'content-display') {
+            if (id === 'table-container'||id === 'content-display') {
                 // Для table-container скрываем, а не удаляем
                 container.style.display = 'none';
             } else {
@@ -722,6 +725,7 @@ document.addEventListener('DOMContentLoaded', function() {
 // Функция для загрузки тем по поисковому запросу
 function loadTopicsBySearch(query, searchType) {
     clearContainers(); // Очищаем контейнеры перед загрузкой новых данных
+    clearContainersFull();
     const addTestForm = document.getElementById('add-test-form');
     addTestForm.style.display = 'none'; // Скрываем форму
 
@@ -1020,3 +1024,116 @@ document.getElementById('next-page').addEventListener('click', () => {
 
 
 
+document.addEventListener('DOMContentLoaded', () => {
+    // Обработчик клика на весь документ
+    document.addEventListener('click', async (event) => {
+        // Проверяем, был ли клик на элементе с id="user-profile"
+        if (event.target.id === 'user-profile') {
+            event.preventDefault(); // Предотвращаем переход по ссылке
+
+            // Запрашиваем данные о пользователе с сервера
+            try {
+                const response = await fetch('/profile'); // Замените на ваш API-эндпоинт
+                if (!response.ok) {
+                    throw new Error('Ошибка при получении данных');
+                }
+                const userData = await response.json();
+
+                // Отображаем меню с данными пользователя
+                showUserMenu(userData);
+            } catch (error) {
+                console.error('Ошибка:', error);
+            }
+        }
+
+        // Проверяем, был ли клик на элементе с id="logout-button"
+        if (event.target.id === 'logout-button') {
+            event.preventDefault();
+            fetch('/logout', {method: 'POST'}) // Замените на ваш эндпоинт для выхода
+                .then(() => {
+                    window.location.href = '/login'; // Перенаправление на страницу входа
+                })
+                .catch((error) => {
+                    console.error('Ошибка при выходе:', error);
+                });
+        }
+    });
+
+        function showUserMenu(userData) {
+            const registrationDate = new Date(userData.registrationDate).toLocaleDateString();
+            const modal = document.getElementById('user-menu-modal');
+
+            if (!modal) {
+                console.error('Модальное окно не найдено');
+                return;
+            }
+
+            const modalContent = modal.querySelector('.modal-content');
+            modal.querySelector('#user-first-name').textContent = userData.firstName;
+            modal.querySelector('#user-last-name').textContent = userData.lastName;
+            modal.querySelector('#user-email').textContent = userData.email;
+            modal.querySelector('#user-registration-date').textContent = registrationDate;
+
+            modal.style.display = 'block';
+
+            const closeButton = modal.querySelector('.close');
+            if (closeButton) {
+                closeButton.addEventListener('click', () => {
+                    modal.style.display = 'none';
+                });
+            } else {
+                console.error('Элемент .close не найден');
+            }
+
+            window.addEventListener('click', (event) => {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+
+            const editProfileButton = modal.querySelector('#edit-profile-button');
+            const editProfileForm = modal.querySelector('#edit-profile-form');
+            const saveProfileButton = modal.querySelector('#save-profile-button');
+
+            if (editProfileButton && editProfileForm && saveProfileButton) {
+                editProfileButton.addEventListener('click', () => {
+                    editProfileForm.classList.toggle('hidden');
+                });
+
+                saveProfileButton.addEventListener('click', async () => {
+                    const firstName = modal.querySelector('#edit-first-name').value;
+                    const lastName = modal.querySelector('#edit-last-name').value;
+
+                    const csrfToken = document.querySelector('meta[name="_csrf"]').content;
+                    const csrfHeader = document.querySelector('meta[name="_csrf_header"]').content;
+
+                    try {
+                        const response = await fetch('/update', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                [csrfHeader]: csrfToken,
+                            },
+                            body: JSON.stringify({ firstName, lastName }),
+                        });
+
+                        if (!response.ok) {
+                            throw new Error('Ошибка при обновлении профиля');
+                        }
+
+                        modal.querySelector('#user-first-name').textContent = firstName;
+                        modal.querySelector('#user-last-name').textContent = lastName;
+                        editProfileForm.classList.add('hidden');
+                        alert('Профиль успешно обновлен!');
+                    } catch (error) {
+                        console.error('Ошибка:', error);
+                        alert('Не удалось обновить профиль');
+                    }
+                });
+            } else {
+                console.error('Один из элементов редактирования не найден');
+            }
+
+        }
+
+    })

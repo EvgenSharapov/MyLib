@@ -1,57 +1,61 @@
-//package org.example.lib.config;
-//
-//import org.springframework.context.annotation.Bean;
-//import org.springframework.context.annotation.Configuration;
-//import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-//import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-//import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-//import org.springframework.security.web.SecurityFilterChain;
-//
-//import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-//import org.springframework.security.core.userdetails.User;
-//import org.springframework.security.core.userdetails.UserDetails;
-//import org.springframework.security.core.userdetails.UserDetailsService;
-//import org.springframework.security.crypto.password.NoOpPasswordEncoder;
-//import org.springframework.security.crypto.password.PasswordEncoder;
-//import org.springframework.security.provisioning.InMemoryUserDetailsManager;
-//
-//
-//@Configuration
-//@EnableWebSecurity
-//public class SecurityConfig {
-//
-//    @Bean
-//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-//        http
-//                .authorizeHttpRequests(auth -> auth
-//                        .requestMatchers("/api/topics/**").permitAll()
-//                        .requestMatchers("/").permitAll()// Разрешаем доступ к API
-//                        .requestMatchers("/h2-console/**").permitAll() // Разрешаем доступ к H2 Console (если используется)
-//                        .anyRequest().authenticated()
-//                )
-//                .csrf().disable() // Отключаем CSRF для упрощения (не рекомендуется для production)
-//                .headers().frameOptions().disable(); // Отключаем frameOptions для H2 Console
-//
-//        return http.build();
-//    }
-//
-//    @Bean
-//    public UserDetailsService userDetailsService() {
-//        UserDetails admin = User.withUsername("admin")
-//                .password(passwordEncoder().encode("admin")) // Закодированный пароль
-//                .roles("ADMIN")
-//                .build();
-//
-//        UserDetails user = User.withUsername("user")
-//                .password(passwordEncoder().encode("user")) // Закодированный пароль
-//                .roles("USER")
-//                .build();
-//
-//        return new InMemoryUserDetailsManager(admin, user);
-//    }
-//
-//    @Bean
-//    public PasswordEncoder passwordEncoder() {
-//        return new BCryptPasswordEncoder();
-//    }
-//}
+package org.example.lib.config;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
+
+@Configuration
+@EnableWebSecurity
+@RequiredArgsConstructor
+public class SecurityConfig {
+
+    private final UserDetailsService userDetailsService;
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+                .authorizeHttpRequests((requests) -> requests
+                        .requestMatchers("/login", "/update", "/sing-up", "/register", "/css/**", "/js/**", "/images/**").permitAll() // Разрешаем доступ к этим страницам без аутентификации
+                        .requestMatchers("/", "/index").authenticated() // Требуем авторизации для главной страницы
+                        .anyRequest().authenticated() // Все остальные запросы требуют аутентификации
+                )
+                .formLogin((form) -> form
+                        .loginPage("/login") // Страница логина
+                        .defaultSuccessUrl("/", true) // Перенаправление на / после успешного входа
+                        .permitAll() // Разрешаем доступ к странице логина всем
+                )
+                .logout((logout) -> logout
+                        .logoutUrl("/logout") // URL для выхода
+                        .logoutSuccessUrl("/login") // Перенаправление на страницу логина после выхода
+                        .invalidateHttpSession(true) // Уничтожение сессии
+                        .deleteCookies("JSESSIONID") // Удаление cookies
+                        .permitAll() // Разрешаем доступ к logout всем
+                )
+                .exceptionHandling((exception) -> exception
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            // Перенаправление на /login, если пользователь не авторизован
+                            response.sendRedirect("/login");
+                        })
+                );
+
+        return http.build();
+    }
+
+
+
+    @Bean
+    public AuthenticationProvider authenticationProvider(PasswordEncoder passwordEncoder) {
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setPasswordEncoder(passwordEncoder); // Устанавливаем кодировщик паролей
+        authProvider.setUserDetailsService(userDetailsService); // Устанавливаем UserDetailsService
+        return authProvider;
+    }
+}
