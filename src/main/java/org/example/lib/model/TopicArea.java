@@ -16,5 +16,6 @@ public enum TopicArea {
     JMS,
     HIBERNATE,
     HTTP,
-    ALGORITHMS;
+    ALGORITHMS,
+    ORM
 }
