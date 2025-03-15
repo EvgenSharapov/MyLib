@@ -23,7 +23,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers("/login", "/update", "/sing-up", "/register", "/css/**", "/js/**", "/images/**").permitAll() // Разрешаем доступ к этим страницам без аутентификации
+                        .requestMatchers("/login","/change-language", "/update","/api/topics/**", "/sing-up", "/register", "/css/**", "/js/**", "/images/**").permitAll() // Разрешаем доступ к этим страницам без аутентификации
                         .requestMatchers("/", "/index").authenticated() // Требуем авторизации для главной страницы
                         .anyRequest().authenticated() // Все остальные запросы требуют аутентификации
                 )

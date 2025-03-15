@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,10 +8,61 @@
     <title>Библиотека</title>
     <link rel="stylesheet" href="/css/index.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Подключение SweetAlert2 через CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 </head>
 <body>
 
 <header>
+
+    <div id="user-menu-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div class="user-info">
+                <div class="user-info">
+                    <p>
+                        <!-- Используем Thymeleaf для подстановки перевода -->
+                        <strong th:text="#{firstName}">Имя</strong>
+                        <span id="user-first-name">${userData.firstName}</span>
+                    </p>
+                    <p>
+                        <strong th:text="#{lastName}">Фамилия</strong>
+                        <span id="user-last-name">${userData.lastName}</span>
+                    </p>
+                    <p>
+                        <strong th:text="#{email}">Email</strong>
+                        <span id="user-email">${userData.email}</span>
+                    </p>
+                    <p>
+                        <strong th:text="#{registrationDate}">Дата регистрации</strong>
+                        <span id="user-registration-date">${registrationDate}</span>
+                    </p>
+                </div>
+            </div>
+            <div class="action-buttons">
+                <!-- Кнопки с переводами -->
+                <button id="edit-profile-button" th:text="#{editProfile}">Редактировать профиль</button>
+                <button id="select-language-button" th:text="#{selectLanguage}">Выбрать язык</button>
+            </div>
+            <div id="edit-profile-form" class="hidden">
+                <!-- Поля с плейсхолдерами -->
+                <input type="text" id="edit-first-name" th:placeholder="#{firstName}">
+                <input type="text" id="edit-last-name" th:placeholder="#{lastName}">
+                <input type="password" id="edit-password" th:placeholder="#{passwordPlaceholder}">
+                <button id="save-profile-button" th:text="#{saveProfile}">Сохранить</button>
+            </div>
+            <div id="language-selection-form" class="hidden">
+                <!-- Кнопки выбора языка -->
+                <button class="language-option" data-lang="en">English</button>
+                <button class="language-option" data-lang="ru">Русский</button>
+                <button class="language-option" data-lang="de">Deutsch</button>
+            </div>
+        </div>
+    </div>
+
+
+
     <!-- Контейнер для картинки (левая часть) -->
     <div class="left-section">
         <div class="user-menu">
@@ -22,47 +73,104 @@
     </div>
 
     <div class="search-container">
-        <input type="text" id="search-input" placeholder="Введите текст для поиска..." class="search-input">
+        <input type="text" id="search-input" class="search-input" autocomplete="off"
+               th:placeholder="#{searchPlaceholder}" placeholder="Введите текст для поиска...">
         <div class="search-buttons">
-            <button id="search-theme-button" class="search-toggle-button" title="Поиск по темам"></button>
-            <button id="search-content-button" class="search-toggle-button" title="Поиск по содержанию"></button>
+            <button id="search-theme-button" class="search-toggle-button"
+                    th:title="#{searchThemeButtonTitle}" title="Поиск по темам"></button>
+            <button id="search-content-button" class="search-toggle-button"
+                    th:title="#{searchContentButtonTitle}" title="Поиск по содержанию"></button>
         </div>
     </div>
-
     <!-- Контейнер для кнопок (правая часть) -->
     <div class="right-section">
+        <!-- Кнопка "Случайный вопрос" -->
         <div class="user-menu">
-            <button id="user-button-6">
+            <button id="user-button-6" th:title="#{randomQuestionTitle}" title="Случайный вопрос">
                 <i class="fas fa-cube"></i>
             </button>
         </div>
 
-        <!--кнопка редактирования -->
+        <!-- Кнопка "Редактировать темы" -->
         <div class="user-menu">
-            <button id="user-button-4">
+            <button id="user-button-4" th:title="#{editTopicsTitle}" title="Редактировать темы">
                 <i class="fas fa-edit"></i>
             </button>
         </div>
 
-        <!-- Третья кнопка с иконкой "плюс" -->
-        <div class="user-menu">
+<!--        &lt;!&ndash; Кнопка "Добавить контент" &ndash;&gt;-->
+<!--        <div class="user-menu">-->
+<!--            <button id="user-button-3" th:title="#{addContentTitle}" title="Добавить контент" >-->
+<!--                <i class="fas fa-plus"></i> &lt;!&ndash; Иконка "плюс" &ndash;&gt;-->
+<!--            </button>-->
+<!--        </div>-->
+
+<!--        &lt;!&ndash; Кнопка "Библиотека" &ndash;&gt;-->
+<!--        <div class="user-menu">-->
+<!--            <button id="user-button-1" th:title="#{libraryTitle}" title="Библиотека">-->
+<!--                <img src="https://cdn-icons-png.flaticon.com/512/2169/2169840.png" alt="Книга" width="30" height="30">-->
+<!--            </button>-->
+
+<!--        </div>-->
+
+<!--        &lt;!&ndash; Кнопка "Профиль пользователя" &ndash;&gt;-->
+<!--        <div class="user-menu">-->
+<!--            <button id="user-button-2" th:title="#{userProfileTitle}" title="Профиль пользователя"></button>-->
+<!--        </div>-->
+<!--    </div>-->
+
+
+
+
+        <!-- Кнопка "Добавить контент" -->
+        <div class="user-menu center-menu">
             <button id="user-button-3">
                 <i class="fas fa-plus"></i> <!-- Иконка "плюс" -->
             </button>
+            <!-- Выпадающее меню -->
+            <div class="dropdown-menu center-dropdown" th:id="menu3">
+                <a href="#" id="add-test-button" th:text="#{addTest}"></a>
+                <a href="#" id="add-library-button" th:text="#{addTopic}"></a>
+            </div>
         </div>
 
-        <!-- Первая кнопка с иконкой книги -->
-        <div class="user-menu">
+        <!-- Кнопка "Библиотека" -->
+        <div class="user-menu center-menu">
             <button id="user-button-1">
-                <img src="https://cdn-icons-png.flaticon.com/512/2169/2169840.png" alt="Книга" width="30" height="30">
+                <img src="https://cdn-icons-png.flaticon.com/512/2169/2169840.png" alt="Книга" width="24" height="24">
             </button>
+            <!-- Выпадающее меню -->
+            <div class="dropdown-menu center-dropdown" th:id="menu1">
+                <a href="/test" th:text="#{takeTest}"></a>
+                <a href="#" id="show-library-button" th:text="#{library}"></a>
+            </div>
         </div>
 
-        <!-- Вторая кнопка с иконкой пользователя -->
-        <div class="user-menu">
+        <!-- Кнопка "Профиль пользователя" -->
+        <div class="user-menu right-menu">
             <button id="user-button-2"></button>
+            <!-- Выпадающее меню -->
+            <div class="dropdown-menu right-dropdown" th:id="menu2">
+                <a href="#" id="user-profile" th:text="#{userProfile}"></a>
+                <a href="#" id="logout-button" th:text="#{logout}"></a>
+            </div>
         </div>
-    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     <!-- Общий контейнер для меню -->
     <div id="dropdown-menu" class="dropdown-content">
@@ -72,39 +180,40 @@
 
 <!-- Форма для добавления теста -->
 <div id="add-test-form" class="add-test-form">
-    <h2>Добавить новый тест</h2>
+    <h2 th:text="#{addTestTitle}">Добавить новый тест</h2>
     <form id="test-form">
         <div class="form-group">
-            <label for="question">Вопрос:</label>
+            <label for="question" th:text="#{questionLabel}">Вопрос:</label>
             <input type="text" id="question" name="question" required>
         </div>
         <div class="form-group">
-            <label for="option1">Вариант ответа 1:</label>
+            <label for="option1" th:text="#{optionLabel(1)}">Вариант ответа 1:</label>
             <input type="text" id="option1" name="option1" required>
             <input type="radio" id="correct-answer-1" name="correct-answer" value="1">
-            <label for="correct-answer-1">Правильный</label>
+            <label for="correct-answer-1" th:text="#{correctAnswerLabel}">Правильный</label>
         </div>
         <div class="form-group">
-            <label for="option2">Вариант ответа 2:</label>
+            <label for="option2" th:text="#{optionLabel(2)}">Вариант ответа 2:</label>
             <input type="text" id="option2" name="option2" required>
             <input type="radio" id="correct-answer-2" name="correct-answer" value="2">
-            <label for="correct-answer-2">Правильный</label>
+            <label for="correct-answer-2" th:text="#{correctAnswerLabel}">Правильный</label>
         </div>
         <div class="form-group">
-            <label for="option3">Вариант ответа 3:</label>
+            <label for="option3" th:text="#{optionLabel(3)}">Вариант ответа 3:</label>
             <input type="text" id="option3" name="option3" required>
             <input type="radio" id="correct-answer-3" name="correct-answer" value="3">
-            <label for="correct-answer-3">Правильный</label>
+            <label for="correct-answer-3" th:text="#{correctAnswerLabel}">Правильный</label>
         </div>
         <div class="form-group">
-            <label for="option4">Вариант ответа 4:</label>
+            <label for="option4" th:text="#{optionLabel(4)}">Вариант ответа 4:</label>
             <input type="text" id="option4" name="option4" required>
             <input type="radio" id="correct-answer-4" name="correct-answer" value="4">
-            <label for="correct-answer-4">Правильный</label>
+            <label for="correct-answer-4" th:text="#{correctAnswerLabel}">Правильный</label>
         </div>
-        <button type="submit" class="create-button">Создать</button>
+        <button type="submit" class="create-button" th:text="#{createButton}">Создать</button>
     </form>
 </div>
+
 <div id="app">
     <div id="topic-content-container" class="column" style="display: none;">
         <!-- Содержимое темы будет здесь -->
@@ -112,76 +221,29 @@
     <div id="topics-list-container" class="column" style="display: none;">
         <!-- Список тем будет здесь -->
     </div>
-
 </div>
 
 
 
 <!-- Форма для добавления темы -->
 <div id="add-topic-form" style="display: none;">
-    <h2>Добавить новую тему</h2>
+    <h2 th:text="#{addTopicTitle}">Добавить новую тему</h2>
     <form id="topic-form">
-        <label for="topic-title">Название темы:</label>
+        <label for="topic-title" th:text="#{topicTitleLabel}">Название темы:</label>
         <input type="text" id="topic-title" name="topic-title" required>
 
-        <label for="topic-content">Содержимое темы:</label>
+        <label for="topic-content" th:text="#{topicContentLabel}">Содержимое темы:</label>
         <textarea id="topic-content" name="topic-content" rows="10" required></textarea>
 
-        <label for="topic-area">Область темы:</label>
+        <label for="topic-area" th:text="#{topicAreaLabel}">Область темы:</label>
         <select id="topic-area" name="topic-area" required>
             <!-- Опции будут добавлены динамически -->
         </select>
 
-        <button type="submit" >Сохранить</button>
-        <button type="button" id="cancel-topic-button">Отмена</button>
+        <button type="submit" th:text="#{saveButton}">Сохранить</button>
+        <button type="button" id="cancel-topic-button" th:text="#{cancelButton}">Отмена</button>
     </form>
 </div>
-
-
-
-<!--&lt;!&ndash; Контейнер для таблицы и контента &ndash;&gt;-->
-<!--<div id="main-container">-->
-<!--    &lt;!&ndash; Таблица для отображения данных &ndash;&gt;-->
-<!--    <div id="table-container" style="display: none;">-->
-<!--        &lt;!&ndash; Всплывающее меню для выбора количества элементов &ndash;&gt;-->
-<!--        <div class="pagination-controls">-->
-<!--            <label for="items-per-page"></label>-->
-<!--            <select id="items-per-page">-->
-<!--                <option value="5">5</option>-->
-<!--                <option value="10">10</option>-->
-<!--                <option value="25">25</option>-->
-<!--            </select>-->
-<!--        </div>-->
-<!--        &lt;!&ndash; Пагинация &ndash;&gt;-->
-<!--        <div class="pagination">-->
-<!--            <button id="prev-page">Назад</button>-->
-<!--            <span id="page-info">Страница 1 из 1</span>-->
-<!--            <button id="next-page">Вперед</button>-->
-<!--        </div>-->
-
-<!--        &lt;!&ndash; Таблица &ndash;&gt;-->
-<!--        <table id="topics-table">-->
-<!--            <thead>-->
-<!--            <tr>-->
-<!--                <th style="width: 65%;">Table of Content</th>-->
-<!--                <th style="width: 15%;">Topic Area</th>-->
-<!--                <th style="width: 20%;">Действия</th>-->
-<!--            </tr>-->
-<!--            </thead>-->
-<!--            <tbody>-->
-<!--            &lt;!&ndash; Данные будут добавлены сюда &ndash;&gt;-->
-<!--            </tbody>-->
-<!--        </table>-->
-
-
-<!--    </div>-->
-
-<!--&lt;!&ndash;    &lt;!&ndash; Поле для отображения content &ndash;&gt;  style="display: none;"&ndash;&gt;-->
-<!--    <div id="content-display ">-->
-<!--        <h3>Содержание темы:</h3>-->
-<!--        <p id="content-text"></p>-->
-<!--    </div>-->
-<!--</div>-->
 
 
 
@@ -191,69 +253,52 @@
     <div id="table-container" style="display: none;">
         <!-- Всплывающее меню для выбора количества элементов -->
         <div class="pagination-controls-container">
-        <div class="pagination-controls">
-            <label for="items-per-page"></label>
-            <select id="items-per-page">
-                <option value="10">10</option>
-                <option value="15">15</option>
-                <option value="20">20</option>
-            </select>
-        </div>
-        <!-- Пагинация -->
-        <div class="pagination">
-            <button id="prev-page">Назад</button>
-            <span id="page-info">Страница 1 из 1</span>
-            <button id="next-page">Вперед</button>
-        </div>
+            <div class="pagination-controls">
+                <label for="items-per-page"></label>
+                <select id="items-per-page">
+                    <option value="10">10</option>
+                    <option value="15">15</option>
+                    <option value="20">20</option>
+                </select>
+            </div>
+            <!-- Пагинация -->
+            <div class="pagination">
+                <button id="prev-page" th:text="#{prevPageButton}">Назад</button>
+                <span id="page-info" th:text="${#messages.msg('pageInfo', 1, 1)}">1 ... 1</span>
+                <button id="next-page" th:text="#{nextPageButton}">Вперед</button>
+            </div>
         </div>
 
         <!-- Таблица -->
         <table id="topics-table">
             <thead>
             <tr>
-                <th style="width: 60%;">Название темы</th>
-                <th style="width: 15%;">Раздел</th>
-                <th style="width: 25%;">Действия</th> <!-- Новая колонка для кнопок -->
+                <th style="width: 55%;" th:text="#{topicNameColumn}">Название темы</th>
+                <th style="width: 15%;" th:text="#{sectionColumn}">Раздел</th>
+                <th style="width: 30%;" th:text="#{actionsColumn}">Действия</th> <!-- Новая колонка для кнопок -->
             </tr>
             </thead>
             <tbody>
             <!-- Данные будут добавлены сюда -->
             </tbody>
         </table>
-
-
     </div>
 
     <!-- Поле для отображения content -->
-    <div id="content-display" >
-        <h3>Содержание темы:</h3>
+    <div id="content-display">
+        <h3 th:text="#{contentTitle}">Содержание темы:</h3>
         <textarea id="content-text" style="width: 100%; height: 650px;" disabled></textarea>
     </div>
 </div>
 
 
-<div id="user-menu-modal" class="modal">
-    <div class="modal-content">
-        <span class="close">&times;</span>
-        <div class="user-info">
-            <p><strong>Имя:</strong> <span id="user-first-name">${userData.firstName}</span></p>
-            <p><strong>Фамилия:</strong> <span id="user-last-name">${userData.lastName}</span></p>
-            <p><strong>Email:</strong> <span id="user-email">${userData.email}</span></p>
-            <p><strong>Дата регистрации:</strong> <span id="user-registration-date">${registrationDate}</span></p>
-        </div>
-        <button id="edit-profile-button">Редактировать профиль</button>
-        <div id="edit-profile-form" class="hidden">
-            <input type="text" id="edit-first-name" placeholder="Имя">
-            <input type="text" id="edit-last-name" placeholder="Фамилия">
-            <button id="save-profile-button">Сохранить</button>
-        </div>
-    </div>
-</div>
+
 
 
 <!-- Подключение JavaScript-файла -->
 <script src="/js/script.js">
 
 </script>
+
 </body>
 </html>

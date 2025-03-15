@@ -18,25 +18,86 @@ const TopicArea = {
     JMS : 'JMS',
     HIBERNATE : 'HIBERNATE',
     HTTP : 'HTTP',
-    ALGORITHMS : 'ALGORITHMS'
+    ALGORITHMS : 'ALGORITHMS',
+    ORM : 'ORM'
 
 
 };
 
 
-// Функция для скрытия меню
-function hideDropdownMenu() {
-    dropdownMenu.classList.remove('show');
-}
+const translations = {
+    en: {
+        languageChanged: 'Language changed',
+        selectedLanguage: 'Selected language:',
+        okButton: 'OK',
+        edit: 'Edit',
+        save: 'Save',
+        delete: 'Delete'
+    },
+    ru: {
+        languageChanged: 'Язык изменён',
+        selectedLanguage: 'Выбран язык:',
+        okButton: 'ОК',
+        edit: 'Редактор',
+        save: 'Сохранить',
+        delete: 'Удалить',
+    },
+    de: {
+        languageChanged: 'Sprache geändert',
+        selectedLanguage: 'Ausgewählte Sprache:',
+        okButton: 'OK',
+        edit: 'Bearbeiten',
+        save: 'Speichern',
+        delete: 'Löschen',
+    }
 
-// Обработчик для клика вне меню
-document.addEventListener('click', function() {
-    // Если клик произошел вне меню и не по кнопке, которая открывает меню
-    // if (!dropdownMenu.contains(event.target) &&
-    //     !event.target.matches('#user-button-1, #user-button-2, #user-button-3')) {
-    hideDropdownMenu(); // Скрываем меню
-    // }
+};
+
+
+
+//Меню
+
+document.addEventListener('DOMContentLoaded', function() {
+    const userMenus = document.querySelectorAll('.user-menu');
+
+    userMenus.forEach(menu => {
+        const dropdownMenu = menu.querySelector('.dropdown-menu');
+        let timeoutId;
+
+        // Показываем меню при наведении на кнопку
+        menu.addEventListener('mouseenter', () => {
+            clearTimeout(timeoutId); // Отменяем таймер, если он был
+            dropdownMenu.style.opacity = '1';
+            dropdownMenu.style.visibility = 'visible';
+        });
+
+        // Скрываем меню с задержкой при уходе мыши
+        menu.addEventListener('mouseleave', () => {
+            timeoutId = setTimeout(() => {
+                // Проверяем, находится ли мышь всё ещё в области меню
+                if (!dropdownMenu.matches(':hover')) {
+                    dropdownMenu.style.opacity = '0';
+                    dropdownMenu.style.visibility = 'hidden';
+                }
+            }, 1000); // Задержка 1 секунда
+        });
+
+        // Отменяем таймер, если мышь вернулась в меню
+        dropdownMenu.addEventListener('mouseenter', () => {
+            clearTimeout(timeoutId);
+        });
+
+        // Скрываем меню с задержкой при уходе мыши из меню
+        dropdownMenu.addEventListener('mouseleave', () => {
+            timeoutId = setTimeout(() => {
+                dropdownMenu.style.opacity = '0';
+                dropdownMenu.style.visibility = 'hidden';
+            }, 1500);
+        });
+    });
 });
+
+
 
 // Общий контейнер для меню
 const dropdownMenu = document.getElementById('dropdown-menu');
@@ -44,31 +105,7 @@ const dropdownMenu = document.getElementById('dropdown-menu');
 // Форма для добавления теста
 const addTestForm = document.getElementById('add-test-form');
 
-// Содержимое меню для первой кнопки
-const menuContent1 = `
-    <a href="/test">Пройти тест</a>
-    <a href="#" id="show-library-button">Библиотека</a>
-`;
 
-// Содержимое меню для второй кнопки
-const menuContent2 = `
-    <a href="#" id="user-profile">Настройки</a>
-    <a href="#">Прогресс</a>
-    <a href="#" id="logout-button">Выход</a>
-`;
-
-const menuContent3 = `
-    <a href="#" id="add-test-button">Добавить тест</a>
-    <a href="#" id="add-library-button">Добавить тему</a>
-`;
-// // // Содержимое меню для 4 кнопки
-// const menuContent4 = document.getElementById('menu-content-4');
-
-// // Содержимое меню для 5 кнопки
-// const menuContent5 = `
-//     <a href="#" id="find-by-theme">Поиск тем по названию</a>
-//     <a href="#" id="find-by-content">Поиск тем по содержанию</a>
-// `;
 
 // Обработчик для кнопки "Выход"
 document.addEventListener('click', function(event) {
@@ -78,36 +115,6 @@ document.addEventListener('click', function(event) {
     }
 });
 
-// Обработчик для 1 кнопки
-const userButton1 = document.getElementById('user-button-1');
-userButton1.addEventListener('click', function(event) {
-    event.stopPropagation(); // Останавливаем всплытие события
-    dropdownMenu.innerHTML = menuContent1; // Устанавливаем содержимое меню
-    dropdownMenu.classList.add('show'); // Показываем меню
-});
-
-// Обработчик для 2 кнопки
-userButton2.addEventListener('click', function(event) {
-    event.stopPropagation(); // Останавливаем всплытие события
-    dropdownMenu.innerHTML = menuContent2; // Устанавливаем содержимое меню
-    dropdownMenu.classList.add('show'); // Показываем меню
-});
-
-// Обработчик для 3 кнопки
-const userButton3 = document.getElementById('user-button-3');
-userButton3.addEventListener('click', function(event) {
-    event.stopPropagation(); // Останавливаем всплытие события
-    dropdownMenu.innerHTML = menuContent3; // Устанавливаем содержимое меню
-    dropdownMenu.classList.add('show'); // Показываем меню
-});
-
-// // Обработчик для 4 кнопки
-// const userButton4 = document.getElementById('user-button-4');
-// userButton4.addEventListener('click', function(event) {
-//     event.stopPropagation(); // Останавливаем всплытие события
-//     dropdownMenu.innerHTML = menuContent4; // Устанавливаем содержимое меню
-//     dropdownMenu.classList.add('show'); // Показываем меню
-// });
 
 
 
@@ -162,18 +169,13 @@ document.getElementById('test-form').addEventListener('submit', function(event) 
 
 
 
-function displayQuestions(questions) {
+function displayQuestion(questions) {
     // Создаем контейнер для вопросов
     const container = document.createElement('div');
     container.id = 'areas-container';
     container.style.textAlign = 'center'; // Выравниваем текст по центру (для заголовка)
     container.style.cursor = 'pointer'; // Меняем курсор на указатель при наведении
 
-    // Создаем элемент для отображения tableOfContent
-    const tableOfContentDiv = document.createElement('div');
-    tableOfContentDiv.className = 'table-of-content';
-    tableOfContentDiv.innerHTML = `<h1>${questions.tableOfContent}</h1>`; // Крупные буквы
-    tableOfContentDiv.style.fontSize = '2em'; // Увеличиваем размер текста
 
     // Создаем элемент для отображения content (изначально скрыт)
     const contentDiv = document.createElement('div');
@@ -182,19 +184,62 @@ function displayQuestions(questions) {
     contentDiv.style.display = 'none'; // Скрываем content изначально
     contentDiv.style.textAlign = 'left'; // Выравниваем текст по левому краю
 
-    // Добавляем обработчик события click на tableOfContent
-    tableOfContentDiv.addEventListener('click', () => {
-        tableOfContentDiv.style.display = 'none'; // Скрываем tableOfContent
-        contentDiv.style.display = 'block'; // Показываем content
-    });
+    contentDiv.style.display = 'block'; // Показываем content
 
-    // Добавляем элементы в контейнер
-    container.appendChild(tableOfContentDiv);
     container.appendChild(contentDiv);
 
     // Добавляем контейнер на страницу
     document.body.appendChild(container);
 }
+
+
+function displayTitleQuestions(questions) {
+    // Создаем HTML для отображения вопроса и ответа
+    const html = `
+        <div class="question-container">
+            <div class="table-of-content">
+                <h1>${questions.tableOfContent}</h1>
+            </div>
+            <div class="content" style="display: none;">
+                <p>${questions.content}</p>
+            </div>
+        </div>
+    `;
+
+    return html;
+}
+
+
+
+// // Находим кнопку user-button-6
+// const userButton6 = document.getElementById('user-button-6');
+//
+// // Добавляем обработчик события click для кнопки user-button-6
+// userButton6.addEventListener('click', function(event) {
+//     event.preventDefault(); // Предотвращаем стандартное поведение, если это ссылка
+//     event.stopPropagation(); // Останавливаем всплытие события
+//
+//         // Очищаем старые контейнеры
+//         clearContainersFull();
+//
+//         // Скрываем форму добавления теста
+//         hideAddTestForm();
+//
+//         // Отправляем запрос на сервер для получения случайного вопроса
+//     fetch('/api/topics/random')
+//         .then(response => response.json())
+//         .then(questions => {
+//             // Отображаем вопрос на странице
+//             displayQuestions(questions);
+//         })
+//         .catch(error => {
+//             console.error('Ошибка:', error);
+//             alert('Произошла ошибка при загрузке вопроса.');
+//         });
+//
+// });
+
+
 
 // Находим кнопку user-button-6
 const userButton6 = document.getElementById('user-button-6');
@@ -204,29 +249,78 @@ userButton6.addEventListener('click', function(event) {
     event.preventDefault(); // Предотвращаем стандартное поведение, если это ссылка
     event.stopPropagation(); // Останавливаем всплытие события
 
-        // Очищаем старые контейнеры
-        clearContainersFull();
-        clearContainersFull();
-        clearContainersFull();
+    // Очищаем старые контейнеры
+    clearContainersFull();
 
-        // Скрываем форму добавления теста
-        hideAddTestForm();
+    // Скрываем форму добавления теста
+    hideAddTestForm();
 
-
-        // Отправляем запрос на сервер для получения случайного вопроса
+    // Отправляем запрос на сервер для получения случайного вопроса
     fetch('/api/topics/random')
         .then(response => response.json())
         .then(questions => {
-            // Отображаем вопрос на странице
-            displayQuestions(questions);
+            // Получаем HTML для отображения вопроса и ответа
+            const questionHtml = displayTitleQuestions(questions);
+
+            // Отображаем вопрос в SweetAlert2
+            Swal.fire({
+                title: 'Случайный вопрос',
+                html: questionHtml, // Вставляем HTML с вопросом
+                icon: 'question', // Иконка вопроса
+                confirmButtonText: 'Посмотреть ответ', // Текст кнопки
+                showCancelButton: false, // Скрываем кнопку "Отмена"
+                customClass: {
+                    popup: 'custom-swal-popup', // Класс для кастомного стиля
+                },
+                didOpen: () => {
+
+                    // Добавляем стили динамически
+                    const style = document.createElement('style');
+                    style.textContent = `
+            .question-container {
+                border: 2px solid #4CAF50;
+                border-radius: 10px;
+                padding: 20px;
+                background-color: #f9f9f9;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                max-width: 600px;
+                margin: 0 auto;
+            }
+            .table-of-content h1 {
+                font-size: 1.5em;
+                color: #333;
+                margin-bottom: 15px;
+                text-align: center;
+            }
+            .content p {
+                font-size: 1.2em;
+                color: #555;
+                line-height: 1.6;
+                text-align: justify;
+            }
+        `;
+                    // Добавляем обработчик для кнопки "Посмотреть ответ"
+                    const confirmButton = Swal.getConfirmButton();
+                    confirmButton.addEventListener('click', () => {
+                        // // Показываем ответ
+                        // const contentDiv = Swal.getPopup().querySelector('.content');
+                        // contentDiv.style.display = 'block'; // Показываем content
+                        // confirmButton.style.display = 'none'; // Скрываем кнопку "Посмотреть ответ"
+                        displayQuestion(questions);
+                    });
+                },
+            });
         })
         .catch(error => {
             console.error('Ошибка:', error);
-            alert('Произошла ошибка при загрузке вопроса.');
+            Swal.fire({
+                title: 'Ошибка',
+                text: 'Произошла ошибка при загрузке вопроса.',
+                icon: 'error', // Иконка ошибки
+                confirmButtonText: 'OK',
+            });
         });
-
 });
-
 
 
 // Обработчик для кнопки "Библиотека"
@@ -586,89 +680,107 @@ function clearContainersFull() {
     }
 
 // Обработчик для кнопки "Добавить тему"
-    document.addEventListener('click', function (event) {
-        if (event.target.id === 'add-library-button') {
-            event.preventDefault();// Предотвращаем стандартное поведение ссылки
+document.addEventListener('click', function (event) {
+    if (event.target.id === 'add-library-button') {
+        event.preventDefault(); // Предотвращаем стандартное поведение ссылки
 
-            clearContainersFull()
-            hideAddTestForm();
+        clearContainersFull();
+        hideAddTestForm();
 
-            // Показываем форму добавления темы
-            showAddTopicForm();
+        // Показываем форму добавления темы
+        showAddTopicForm();
 
-            // Заполняем выпадающий список областей
-            populateTopicAreas();
-        }
-    });
+        // Заполняем выпадающий список областей
+        populateTopicAreas();
+    }
+});
 
 // Функция для отображения формы добавления темы
-    function showAddTopicForm() {
-        const addTopicForm = document.getElementById('add-topic-form');
-        addTopicForm.style.display = 'block'; // Показываем форму
-    }
+function showAddTopicForm() {
+    const addTopicForm = document.getElementById('add-topic-form');
+    addTopicForm.style.display = 'block'; // Показываем форму
+}
 
 // Функция для заполнения выпадающего списка областей
-    function populateTopicAreas() {
-        const topicAreaSelect = document.getElementById('topic-area');
-        topicAreaSelect.innerHTML = ''; // Очищаем старые опции
+function populateTopicAreas() {
+    const topicAreaSelect = document.getElementById('topic-area');
+    topicAreaSelect.innerHTML = ''; // Очищаем старые опции
 
-        // Получаем все значения Enum (области тем)
-        const areas = Object.values(TopicArea);
+    // Получаем все значения Enum (области тем)
+    const areas = Object.values(TopicArea);
 
-        // Добавляем опции в выпадающий список
-        areas.forEach(area => {
-            const option = document.createElement('option');
-            option.value = area;
-            option.textContent = area;
-            topicAreaSelect.appendChild(option);
-        });
-    }
+    // Добавляем опции в выпадающий список
+    areas.forEach(area => {
+        const option = document.createElement('option');
+        option.value = area;
+        option.textContent = area;
+        topicAreaSelect.appendChild(option);
+    });
+}
 
 // Функция для очистки формы добавления темы
-    function clearAddTopicForm() {
-        document.getElementById('topic-title').value = ''; // Очищаем поле "Заголовок"
-        document.getElementById('topic-content').value = ''; // Очищаем поле "Содержание"
-        document.getElementById('topic-area').selectedIndex = 0; // Сбрасываем выбор области
-    }
+function clearAddTopicForm() {
+    document.getElementById('topic-title').value = ''; // Очищаем поле "Заголовок"
+    document.getElementById('topic-content').value = ''; // Очищаем поле "Содержание"
+    document.getElementById('topic-area').selectedIndex = 0; // Сбрасываем выбор области
+}
 
 // Обработчик для формы добавления темы
-    document.getElementById('topic-form').addEventListener('submit', function (event) {
-        event.preventDefault(); // Предотвращаем стандартную отправку формы
+document.getElementById('topic-form').addEventListener('submit', function (event) {
+    event.preventDefault(); // Предотвращаем стандартную отправку формы
 
-        // Собираем данные из формы
-        const tableOfContent = document.getElementById('topic-title').value;
-        const content = document.getElementById('topic-content').value;
-        const topicArea = document.getElementById('topic-area').value;
+    // Собираем данные из формы
+    const tableOfContent = document.getElementById('topic-title').value;
+    const content = document.getElementById('topic-content').value;
+    const topicArea = document.getElementById('topic-area').value;
 
-        // Создаем объект с данными
-        const data = {
-            topicArea: topicArea,
-            content: content,
-            tableOfContent: tableOfContent
-        };
-        console.log(data);
+    // Создаем объект с данными
+    const data = {
+        topicArea: topicArea,
+        content: content,
+        tableOfContent: tableOfContent
+    };
+    console.log(data);
 
-        // Отправляем данные на сервер
-        fetch('/api/topics', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
+    // Извлекаем CSRF-токен и имя заголовка из мета-тегов
+    const csrfToken = document.querySelector('meta[name="_csrf"]').content;
+    const csrfHeader = document.querySelector('meta[name="_csrf_header"]').content;
+
+    // Отправляем данные на сервер
+    fetch('/api/topics', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            [csrfHeader]: csrfToken // Добавляем CSRF-токен в заголовки
+        },
+        body: JSON.stringify(data)
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Ошибка сети или сервера');
+            }
+            return response.json();
         })
-            .then(response => response.json())
-            .then(result => {
-                alert('Тема успешно добавлена!');
-                console.log(result);
-                hideAddTopicForm(); // Скрываем форму после успешного добавления
-                clearAddTopicForm(); // Очищаем поля формы
-                // loadAllTopics(); // Обновляем список тем
-            })
-            .catch(error => {
-                console.error('Ошибка:', error);
-                alert('Произошла ошибка при добавлении темы.');
+        .then(result => {
+            Swal.fire({
+                icon: 'success',
+                title: 'Успех!',
+                text: 'Тема успешно добавлена!',
             });
-    });
+            console.log(result);
+            hideAddTopicForm(); // Скрываем форму после успешного добавления
+            clearAddTopicForm(); // Очищаем поля формы
+            // loadAllTopics(); // Обновляем список тем
+        })
+        .catch(error => {
+            console.error('Ошибка:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Ошибка',
+                text: 'Произошла ошибка при добавлении темы.',
+            });
+        });
+});
 
 // Функция для скрытия формы добавления темы
     function hideAddTopicForm() {
@@ -759,10 +871,13 @@ let editingRow = null; // Текущая строка в режиме редак
 function displayData() {
     const tableBody = document.querySelector('#topics-table tbody');
     tableBody.innerHTML = '';
+    currentLanguage = localStorage.getItem('language') || 'en';
 
     const start = (currentPage - 1) * itemsPerPage;
     const end = start + itemsPerPage;
     const pageData = allData.slice(start, end);
+    const lang = translations[currentLanguage] || translations.en;
+    console.log(currentLanguage);
 
     pageData.forEach((topic, index) => {
         const row = document.createElement('tr');
@@ -770,9 +885,9 @@ function displayData() {
             <td>${topic.tableOfContent}</td>
             <td>${topic.topicArea}</td>
             <td class="action-buttons">
-                <button class="edit">Edit</button>
-                <button class="save" style="display: none;">Save</button>
-                <button class="delete">Delete</button>
+                <button class="edit">${lang.edit}</button>
+                <button class="save" style="display: none;">${lang.save}</button>
+                <button class="delete">${lang.delete}</button>
             </td>
         `;
 
@@ -831,7 +946,7 @@ function displayData() {
     });
 
     // Обновление информации о странице
-    document.getElementById('page-info').textContent = `Страница ${currentPage} из ${Math.ceil(allData.length / itemsPerPage)}`;
+    document.getElementById('page-info').textContent = `${currentPage} ... ${Math.ceil(allData.length / itemsPerPage)}`;
 
 }
 
@@ -885,7 +1000,8 @@ function enableEditMode(row, topic) {
         'JMS',
         'HIBERNATE',
         'HTTP',
-        'ALGORITHMS'
+        'ALGORITHMS',
+        'ORM'
     ];
 
     options.forEach(optionValue => {
@@ -909,7 +1025,6 @@ function enableEditMode(row, topic) {
 
 
 
-
 // Отключение режима редактирования
 function disableEditMode() {
     if (!editingRow) return;
@@ -926,20 +1041,50 @@ function disableEditMode() {
     editingRow = null;
 }
 
-// Сохранение изменений
+
+// // Определяем переменную currentLanguage
+let currentLanguage = 'ru'; // По умолчанию русский язык
+
+
+// Объект с переводами для сохранения изменений
+const saveTranslations = {
+    en: {
+        changesSaved: 'Changes saved!',
+        saveError: 'Failed to save changes',
+        errorTitle: 'Error',
+    },
+    ru: {
+        changesSaved: 'Изменения сохранены!',
+        saveError: 'Не удалось сохранить изменения',
+        errorTitle: 'Ошибка',
+    },
+    de: {
+        changesSaved: 'Änderungen gespeichert!',
+        saveError: 'Änderungen konnten nicht gespeichert werden',
+        errorTitle: 'Fehler',
+    }
+};
+
+
+// Функция для сохранения изменений
 async function saveChanges(row, topic) {
     const cells = row.querySelectorAll('td');
     topic.tableOfContent = cells[0].querySelector('input').value;
     topic.topicArea = cells[1].querySelector('select').value;
     topic.content = document.getElementById('content-text').value;
 
+    const csrfToken = document.querySelector('meta[name="_csrf"]').content;
+    const csrfHeader = document.querySelector('meta[name="_csrf_header"]').content;
+
     try {
         const response = await fetch(`/api/topics/${topic.id}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
+                [csrfHeader]: csrfToken, // Добавляем CSRF-токен
             },
-            body: JSON.stringify(topic),
+            credentials: 'include', // Включаем куки в запрос
+            body: JSON.stringify(topic), // Используем объект topic
         });
 
         if (!response.ok) {
@@ -947,10 +1092,40 @@ async function saveChanges(row, topic) {
         }
 
         disableEditMode();
-        alert('Изменения сохранены!');
+        currentLanguage = localStorage.getItem('language') || 'en';
+
+
+
+        console.log(currentLanguage)
+
+        // Успешное сохранение - показываем SweetAlert2
+        const lang = saveTranslations[currentLanguage] || saveTranslations.en; // Используем текущий язык
+        Swal.fire({
+            title: lang.changesSaved,
+            icon: 'success', // Иконка успеха
+            confirmButtonText: 'OK',
+            timer: null, // Отключаем автоматическое закрытие
+            customClass: {
+                popup: 'custom-swal-popup', // Класс для кастомного стиля
+            },
+        }).then(() => {
+            // Дополнительные действия после закрытия уведомления (если нужно)
+        });
     } catch (error) {
         console.error('Ошибка:', error);
-        alert('Не удалось сохранить изменения');
+
+        // Ошибка при сохранении - показываем SweetAlert2
+        const lang = saveTranslations[currentLanguage] || saveTranslations.en; // Используем текущий язык
+        Swal.fire({
+            title: lang.errorTitle,
+            text: lang.saveError,
+            icon: 'error', // Иконка ошибки
+            confirmButtonText: 'OK',
+            timer: null, // Отключаем автоматическое закрытие
+            customClass: {
+                popup: 'custom-swal-popup', // Класс для кастомного стиля
+            },
+        });
     }
 }
 
@@ -1024,14 +1199,81 @@ document.getElementById('next-page').addEventListener('click', () => {
 
 
 
+
 document.addEventListener('DOMContentLoaded', () => {
-    // Обработчик клика на весь документ
+    const modal = document.getElementById('user-menu-modal');
+    const selectLanguageButton = document.getElementById('select-language-button');
+    const editProfileButton = document.getElementById('edit-profile-button');
+    const languageSelectionForm = document.getElementById('language-selection-form');
+    const editProfileForm = document.getElementById('edit-profile-form');
+
+    // Обработчик клика на кнопку "Редактировать профиль"
+    editProfileButton.addEventListener('click', () => {
+        editProfileForm.classList.toggle('hidden'); // Показываем/скрываем форму редактирования
+        languageSelectionForm.classList.add('hidden'); // Скрываем меню выбора языка
+    });
+
+    // Обработчик клика на кнопку "Выбрать язык"
+    selectLanguageButton.addEventListener('click', () => {
+        languageSelectionForm.classList.toggle('hidden'); // Показываем/скрываем меню выбора языка
+        editProfileForm.classList.add('hidden'); // Скрываем форму редактирования
+    });
+
+
+
+
+
+    // Обработка выбора языка
+    document.querySelectorAll('.language-option').forEach(button => {
+        button.addEventListener('click', () => {
+            const selectedLanguage = button.getAttribute('data-lang');
+            // Получаем переводы для выбранного языка
+            const lang = translations[selectedLanguage];
+            changeLanguage(selectedLanguage);
+
+            // Используем SweetAlert2 для красивого уведомления
+            Swal.fire({
+                title: lang.languageChanged, // Заголовок на выбранном языке
+                text: `${lang.selectedLanguage} ${selectedLanguage}`, // Текст на выбранном языке
+                icon: 'success', // Иконка (success, error, warning, info, question)
+                confirmButtonText: lang.okButton, // Текст кнопки на выбранном языке
+                timer: null, // Отключаем автоматическое закрытие
+                customClass: {
+                    popup: 'custom-swal-popup', // Класс для кастомного стиля
+                },
+            }).then((result) => {
+                // Если пользователь нажал "OK", перезагружаем страницу
+                if (result.isConfirmed) {
+                    window.location.reload();
+                }
+            });
+            // Здесь можно добавить логику для изменения языка
+            languageSelectionForm.classList.add('hidden'); // Скрываем меню выбора языка
+        });
+    });
+
+    function changeLanguage(language) {
+        localStorage.setItem('language', language); // Сохраняем язык
+        currentLanguage = language; // Обновляем переменную
+    }
+
+    // Закрытие модального окна при клике на крестик
+    modal.querySelector('.close').addEventListener('click', () => {
+        modal.style.display = 'none';
+    });
+
+    // Закрытие модального окна при клике вне его области
+    window.addEventListener('click', (event) => {
+        if (event.target === modal) {
+            modal.style.display = 'none';
+        }
+    });
+
+    // Обработчик клика на элемент с id="user-profile"
     document.addEventListener('click', async (event) => {
-        // Проверяем, был ли клик на элементе с id="user-profile"
         if (event.target.id === 'user-profile') {
             event.preventDefault(); // Предотвращаем переход по ссылке
 
-            // Запрашиваем данные о пользователе с сервера
             try {
                 const response = await fetch('/profile'); // Замените на ваш API-эндпоинт
                 if (!response.ok) {
@@ -1046,10 +1288,10 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // Проверяем, был ли клик на элементе с id="logout-button"
+        // Обработчик клика на элемент с id="logout-button"
         if (event.target.id === 'logout-button') {
             event.preventDefault();
-            fetch('/logout', {method: 'POST'}) // Замените на ваш эндпоинт для выхода
+            fetch('/logout', { method: 'POST' }) // Замените на ваш эндпоинт для выхода
                 .then(() => {
                     window.location.href = '/login'; // Перенаправление на страницу входа
                 })
@@ -1059,81 +1301,65 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-        function showUserMenu(userData) {
-            const registrationDate = new Date(userData.registrationDate).toLocaleDateString();
-            const modal = document.getElementById('user-menu-modal');
+    // Функция для отображения меню с данными пользователя
+    function showUserMenu(userData) {
+        const registrationDate = new Date(userData.registrationDate).toLocaleDateString();
 
-            if (!modal) {
-                console.error('Модальное окно не найдено');
-                return;
-            }
-
-            const modalContent = modal.querySelector('.modal-content');
-            modal.querySelector('#user-first-name').textContent = userData.firstName;
-            modal.querySelector('#user-last-name').textContent = userData.lastName;
-            modal.querySelector('#user-email').textContent = userData.email;
-            modal.querySelector('#user-registration-date').textContent = registrationDate;
-
-            modal.style.display = 'block';
-
-            const closeButton = modal.querySelector('.close');
-            if (closeButton) {
-                closeButton.addEventListener('click', () => {
-                    modal.style.display = 'none';
-                });
-            } else {
-                console.error('Элемент .close не найден');
-            }
-
-            window.addEventListener('click', (event) => {
-                if (event.target === modal) {
-                    modal.style.display = 'none';
-                }
-            });
-
-            const editProfileButton = modal.querySelector('#edit-profile-button');
-            const editProfileForm = modal.querySelector('#edit-profile-form');
-            const saveProfileButton = modal.querySelector('#save-profile-button');
-
-            if (editProfileButton && editProfileForm && saveProfileButton) {
-                editProfileButton.addEventListener('click', () => {
-                    editProfileForm.classList.toggle('hidden');
-                });
-
-                saveProfileButton.addEventListener('click', async () => {
-                    const firstName = modal.querySelector('#edit-first-name').value;
-                    const lastName = modal.querySelector('#edit-last-name').value;
-
-                    const csrfToken = document.querySelector('meta[name="_csrf"]').content;
-                    const csrfHeader = document.querySelector('meta[name="_csrf_header"]').content;
-
-                    try {
-                        const response = await fetch('/update', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                [csrfHeader]: csrfToken,
-                            },
-                            body: JSON.stringify({ firstName, lastName }),
-                        });
-
-                        if (!response.ok) {
-                            throw new Error('Ошибка при обновлении профиля');
-                        }
-
-                        modal.querySelector('#user-first-name').textContent = firstName;
-                        modal.querySelector('#user-last-name').textContent = lastName;
-                        editProfileForm.classList.add('hidden');
-                        alert('Профиль успешно обновлен!');
-                    } catch (error) {
-                        console.error('Ошибка:', error);
-                        alert('Не удалось обновить профиль');
-                    }
-                });
-            } else {
-                console.error('Один из элементов редактирования не найден');
-            }
-
+        if (!modal) {
+            console.error('Модальное окно не найдено');
+            return;
         }
 
-    })
+        // Заполняем данные пользователя
+        modal.querySelector('#user-first-name').textContent = userData.firstName;
+        modal.querySelector('#user-last-name').textContent = userData.lastName;
+        modal.querySelector('#user-email').textContent = userData.email;
+        modal.querySelector('#user-registration-date').textContent = registrationDate;
+
+        // Очищаем поля формы редактирования
+        modal.querySelector('#edit-first-name').value = "";
+        modal.querySelector('#edit-last-name').value = "";
+        modal.querySelector('#edit-password').value = "";
+
+        // Показываем модальное окно
+        modal.style.display = 'block';
+    }
+});
+
+
+
+function changeLanguage(lang) {
+    // Отправляем запрос на сервер для изменения языка
+    fetch(`/change-language?language=${lang}`, {
+        method: 'GET'
+    }).then(response => {
+        if (response.ok) {
+            // После успешной смены языка обновляем страницу
+            // window.location.reload();
+            console.log(`Language changed to ${lang}`);
+        } else {
+            console.error('Failed to change language');
+        }
+    });
+}
+
+document.querySelectorAll('.language-option').forEach(button => {
+    button.addEventListener('click', () => {
+        const selectedLanguage = button.getAttribute('data-lang');
+        changeLanguage(selectedLanguage); // Меняем язык
+        document.getElementById('language-selection-form').classList.add('hidden'); // Скрываем меню выбора языка
+    });
+});
+
+
+
+
+
+
+
+
+
+
+
+
+

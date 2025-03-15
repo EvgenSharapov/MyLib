@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
     <title>Регистрация</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/css/index1.css">
@@ -12,19 +14,15 @@
             font-family: 'Arial', sans-serif;
         }
         .navbar {
-            background-color: #2c3e50;
+            background-color: #333333;
         }
-        .navbar-brand {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #ecf0f1 !important;
-        }
+
         .nav-link {
             color: #ecf0f1 !important;
             font-weight: 500;
         }
         .nav-link:hover {
-            color: #1abc9c !important;
+            color: #ccc !important;
         }
         .register-container {
             background-color: #ffffff;
@@ -50,11 +48,11 @@
             padding: 0.75rem;
         }
         .form-control:focus {
-            border-color: #1abc9c;
+            border-color: #225e9f;
             box-shadow: 0 0 0 3px rgba(26, 188, 156, 0.1);
         }
         .btn-primary {
-            background-color: #1abc9c;
+            background-color: #225e9f;
             border: none;
             border-radius: 8px;
             padding: 0.75rem;
@@ -62,7 +60,7 @@
             transition: background-color 0.3s ease;
         }
         .btn-primary:hover {
-            background-color: #16a085;
+            background-color: #1f4f82;
         }
         .btn-primary:focus {
             box-shadow: 0 0 0 3px rgba(26, 188, 156, 0.3);
@@ -83,51 +81,150 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item">
-                    <a class="nav-link" th:href="@{/login}">Войти</a>
+                    <a class="nav-link" th:href="@{/login}" th:text="#{login}">Login</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" th:href="@{/sing-up}">Зарегистрироваться</a>
+                    <a class="nav-link" th:href="@{/sing-up}" th:text="#{signUp}">Sign Up</a>
                 </li>
             </ul>
         </div>
     </div>
 </nav>
 
+<!--<main class="container">-->
+<!--    <div class="row justify-content-center">-->
+<!--        <div class="col-md-6 col-lg-4">-->
+<!--            <div class="register-container">-->
+<!--                <h2 class="register-title" th:text="#{registration}">Registration</h2>-->
+<!--                <form th:action="@{/register}" method="post">-->
+<!--                    <div class="mb-3">-->
+<!--                        <label for="email" class="form-label" th:text="#{email}">Email</label>-->
+<!--                        <input type="email" class="form-control" id="email" name="email" required>-->
+<!--                    </div>-->
+<!--                    <div class="mb-3">-->
+<!--                        <label for="username" class="form-label" th:text="#{username}">Username</label>-->
+<!--                        <input type="text" class="form-control" id="username" name="username" required>-->
+<!--                    </div>-->
+<!--                    <div class="mb-3">-->
+<!--                        <label for="password" class="form-label" th:text="#{password}">Password</label>-->
+<!--                        <input type="password" class="form-control" id="password" name="password" required>-->
+<!--                    </div>-->
+<!--                    <div class="mb-3">-->
+<!--                        <label for="firstName" class="form-label" th:text="#{firstName}">First Name</label>-->
+<!--                        <input type="text" class="form-control" id="firstName" name="firstName" required>-->
+<!--                    </div>-->
+<!--                    <div class="mb-3">-->
+<!--                        <label for="lastName" class="form-label" th:text="#{lastName}">Last Name</label>-->
+<!--                        <input type="text" class="form-control" id="lastName" name="lastName" required>-->
+<!--                    </div>-->
+<!--                    <div class="d-grid">-->
+<!--                        <button type="submit" class="btn btn-primary" th:text="#{registerButton}">Register</button>-->
+<!--                    </div>-->
+<!--                </form>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</main>-->
+
 <main class="container">
     <div class="row justify-content-center">
         <div class="col-md-6 col-lg-4">
             <div class="register-container">
-                <h2 class="register-title">Регистрация</h2>
-                <form th:action="@{/register}" method="post">
+                <h2 class="register-title" th:text="#{registration}">Registration</h2>
+                <form id="register-form" method="post">
                     <div class="mb-3">
-                        <label for="email" class="form-label">Email</label>
+                        <label for="email" class="form-label" th:text="#{email}">Email</label>
                         <input type="email" class="form-control" id="email" name="email" required>
                     </div>
                     <div class="mb-3">
-                        <label for="username" class="form-label">Логин</label>
+                        <label for="username" class="form-label" th:text="#{username}">Username</label>
                         <input type="text" class="form-control" id="username" name="username" required>
                     </div>
                     <div class="mb-3">
-                        <label for="password" class="form-label">Пароль</label>
+                        <label for="password" class="form-label" th:text="#{password}">Password</label>
                         <input type="password" class="form-control" id="password" name="password" required>
                     </div>
                     <div class="mb-3">
-                        <label for="firstName" class="form-label">Имя</label>
+                        <label for="firstName" class="form-label" th:text="#{firstName}">First Name</label>
                         <input type="text" class="form-control" id="firstName" name="firstName" required>
                     </div>
                     <div class="mb-3">
-                        <label for="lastName" class="form-label">Фамилия</label>
+                        <label for="lastName" class="form-label" th:text="#{lastName}">Last Name</label>
                         <input type="text" class="form-control" id="lastName" name="lastName" required>
                     </div>
                     <div class="d-grid">
-                        <button type="submit" class="btn btn-primary">Зарегистрироваться</button>
+                        <button type="submit" class="btn btn-primary" th:text="#{registerButton}">Register</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
-
 </main>
+
+<!-- Подключение SweetAlert2 через CDN -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
+<script>
+    // Обработка отправки формы
+    document.getElementById('register-form').addEventListener('submit', function(event) {
+        event.preventDefault(); // Предотвращаем стандартную отправку формы
+
+        // Собираем данные формы
+        const formData = new FormData(this);
+
+        // Получаем CSRF-токен
+        const csrfToken = document.querySelector('meta[name="_csrf"]').content;
+        const csrfHeader = document.querySelector('meta[name="_csrf_header"]').content;
+
+        // Отправляем данные на сервер
+        fetch('/register', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'Accept': 'application/json',
+                [csrfHeader]: csrfToken, // Добавляем CSRF-токен
+            },
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Ошибка при регистрации');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    // Успешная регистрация
+                    Swal.fire({
+                        title: 'Успех!',
+                        text: data.message || 'Регистрация прошла успешно.',
+                        icon: 'success',
+                        confirmButtonText: 'OK',
+                    }).then(() => {
+                        // Перенаправляем пользователя на другую страницу (например, на страницу входа)
+                        window.location.href = '/login';
+                    });
+                } else {
+                    // Ошибка регистрации
+                    Swal.fire({
+                        title: 'Ошибка',
+                        text: data.message || 'Произошла ошибка при регистрации.',
+                        icon: 'error',
+                        confirmButtonText: 'OK',
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Ошибка:', error);
+                Swal.fire({
+                    title: 'Ошибка',
+                    text: 'Произошла ошибка при отправке данных.',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                });
+            });
+    });
+</script>
 
 </body>
 </html>
