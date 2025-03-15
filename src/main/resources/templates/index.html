@@ -44,12 +44,14 @@
                 <!-- Кнопки с переводами -->
                 <button id="edit-profile-button" th:text="#{editProfile}">Редактировать профиль</button>
                 <button id="select-language-button" th:text="#{selectLanguage}">Выбрать язык</button>
+                <button id="difficulty-profile-button" th:text="#{difficulty}">Сложность</button>
+
             </div>
             <div id="edit-profile-form" class="hidden">
                 <!-- Поля с плейсхолдерами -->
-                <input type="text" id="edit-first-name" th:placeholder="#{firstName}">
-                <input type="text" id="edit-last-name" th:placeholder="#{lastName}">
-                <input type="password" id="edit-password" th:placeholder="#{passwordPlaceholder}">
+                <input type="text" id="edit-first-name" th:placeholder="#{firstName}" autocomplete="off">
+                <input type="text" id="edit-last-name" th:placeholder="#{lastName}" autocomplete="off">
+                <input type="password" id="edit-password" th:placeholder="#{passwordPlaceholder}"  autocomplete="new-password">
                 <button id="save-profile-button" th:text="#{saveProfile}">Сохранить</button>
             </div>
             <div id="language-selection-form" class="hidden">
@@ -57,6 +59,12 @@
                 <button class="language-option" data-lang="en">English</button>
                 <button class="language-option" data-lang="ru">Русский</button>
                 <button class="language-option" data-lang="de">Deutsch</button>
+            </div>
+            <div id="difficulty-selection-form" class="hidden">
+                <!-- Кнопки выбора языка -->
+                <button class="difficulty-option" th:text="#{liteDifficulty}" data-difficulty="EASY">Лёгкий</button>
+                <button class="difficulty-option" th:text="#{averageDifficulty}" data-difficulty="AVERAGE">Средний</button>
+                <button class="difficulty-option" th:text="#{hardDifficulty}" data-difficulty="HARD">Сложный</button>
             </div>
         </div>
     </div>
@@ -66,6 +74,7 @@
     <!-- Контейнер для картинки (левая часть) -->
     <div class="left-section">
         <div class="user-menu">
+
             <a href="/"> <!-- Ссылка на начальную страницу -->
                 <img src="/images/Shey1.png" width="25" height="25" alt="Shey1" class="hover-zoom">
             </a>
@@ -225,7 +234,6 @@
 
 
 
-<!-- Форма для добавления темы -->
 <div id="add-topic-form" style="display: none;">
     <h2 th:text="#{addTopicTitle}">Добавить новую тему</h2>
     <form id="topic-form">
@@ -240,11 +248,18 @@
             <!-- Опции будут добавлены динамически -->
         </select>
 
+        <!-- Добавляем поле для выбора сложности -->
+        <label for="topic-difficulty" th:text="#{difficulty}">Сложность:</label>
+        <select id="topic-difficulty" name="topic-difficulty" required>
+            <option value="EASY" th:text="#{liteDifficulty}">Лёгкий</option>
+            <option value="AVERAGE" th:text="#{averageDifficulty}">Средний</option>
+            <option value="HARD" th:text="#{hardDifficulty}">Сложный</option>
+        </select>
+
         <button type="submit" th:text="#{saveButton}">Сохранить</button>
         <button type="button" id="cancel-topic-button" th:text="#{cancelButton}">Отмена</button>
     </form>
 </div>
-
 
 
 <!-- Контейнер для таблицы и контента -->
@@ -275,6 +290,7 @@
             <tr>
                 <th style="width: 55%;" th:text="#{topicNameColumn}">Название темы</th>
                 <th style="width: 15%;" th:text="#{sectionColumn}">Раздел</th>
+                <th style="width: 15%;" th:text="#{difficulty}">Сложность</th>
                 <th style="width: 30%;" th:text="#{actionsColumn}">Действия</th> <!-- Новая колонка для кнопок -->
             </tr>
             </thead>
@@ -297,7 +313,7 @@
 
 <!-- Подключение JavaScript-файла -->
 <script src="/js/script.js">
-
+    highlightSelectedLanguage();
 </script>
 
 </body>

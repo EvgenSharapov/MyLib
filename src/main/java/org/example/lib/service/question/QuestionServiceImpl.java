@@ -116,6 +116,28 @@ public class QuestionServiceImpl implements QuestionService{
 
     @Override
     @Retryable(backoff = @Backoff(delay = 1000))
+    public QuestionRequestDTO findRandomByDifficulty(String difficulty) {
+        if (questionCache.isEmpty()) {
+            throw new QuestionNotFoundException("Нет доступных тем");
+        }
+
+        // Фильтруем вопросы по уровню сложности
+        List<QuestionRequestDTO> filteredQuestions = questionCache.values().stream()
+                .filter(question -> difficulty == null || difficulty.equalsIgnoreCase(String.valueOf(question.difficulty())))
+                .collect(Collectors.toList());
+
+        if (filteredQuestions.isEmpty()) {
+            throw new QuestionNotFoundException("Нет доступных вопросов для выбранного уровня сложности: " + difficulty);
+        }
+
+        // Возвращаем случайный вопрос из отфильтрованного списка
+        return filteredQuestions.get(ThreadLocalRandom.current().nextInt(filteredQuestions.size()));
+    }
+
+
+
+    @Override
+    @Retryable(backoff = @Backoff(delay = 1000))
     public List<QuestionRequestDTO> findThemeByText(String text) {
         List<Question>questions =questionRepo.findByTableOfContentContainingIgnoreCase(text);
         return questionMapper.mapToQuestionRequestDTO(questions);

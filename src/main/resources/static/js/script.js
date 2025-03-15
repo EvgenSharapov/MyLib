@@ -55,49 +55,6 @@ const translations = {
 
 
 
-//Меню
-
-document.addEventListener('DOMContentLoaded', function() {
-    const userMenus = document.querySelectorAll('.user-menu');
-
-    userMenus.forEach(menu => {
-        const dropdownMenu = menu.querySelector('.dropdown-menu');
-        let timeoutId;
-
-        // Показываем меню при наведении на кнопку
-        menu.addEventListener('mouseenter', () => {
-            clearTimeout(timeoutId); // Отменяем таймер, если он был
-            dropdownMenu.style.opacity = '1';
-            dropdownMenu.style.visibility = 'visible';
-        });
-
-        // Скрываем меню с задержкой при уходе мыши
-        menu.addEventListener('mouseleave', () => {
-            timeoutId = setTimeout(() => {
-                // Проверяем, находится ли мышь всё ещё в области меню
-                if (!dropdownMenu.matches(':hover')) {
-                    dropdownMenu.style.opacity = '0';
-                    dropdownMenu.style.visibility = 'hidden';
-                }
-            }, 1000); // Задержка 1 секунда
-        });
-
-        // Отменяем таймер, если мышь вернулась в меню
-        dropdownMenu.addEventListener('mouseenter', () => {
-            clearTimeout(timeoutId);
-        });
-
-        // Скрываем меню с задержкой при уходе мыши из меню
-        dropdownMenu.addEventListener('mouseleave', () => {
-            timeoutId = setTimeout(() => {
-                dropdownMenu.style.opacity = '0';
-                dropdownMenu.style.visibility = 'hidden';
-            }, 1500);
-        });
-    });
-});
-
-
 
 // Общий контейнер для меню
 const dropdownMenu = document.getElementById('dropdown-menu');
@@ -210,37 +167,6 @@ function displayTitleQuestions(questions) {
 }
 
 
-
-// // Находим кнопку user-button-6
-// const userButton6 = document.getElementById('user-button-6');
-//
-// // Добавляем обработчик события click для кнопки user-button-6
-// userButton6.addEventListener('click', function(event) {
-//     event.preventDefault(); // Предотвращаем стандартное поведение, если это ссылка
-//     event.stopPropagation(); // Останавливаем всплытие события
-//
-//         // Очищаем старые контейнеры
-//         clearContainersFull();
-//
-//         // Скрываем форму добавления теста
-//         hideAddTestForm();
-//
-//         // Отправляем запрос на сервер для получения случайного вопроса
-//     fetch('/api/topics/random')
-//         .then(response => response.json())
-//         .then(questions => {
-//             // Отображаем вопрос на странице
-//             displayQuestions(questions);
-//         })
-//         .catch(error => {
-//             console.error('Ошибка:', error);
-//             alert('Произошла ошибка при загрузке вопроса.');
-//         });
-//
-// });
-
-
-
 // Находим кнопку user-button-6
 const userButton6 = document.getElementById('user-button-6');
 
@@ -255,8 +181,8 @@ userButton6.addEventListener('click', function(event) {
     // Скрываем форму добавления теста
     hideAddTestForm();
 
-    // Отправляем запрос на сервер для получения случайного вопроса
-    fetch('/api/topics/random')
+    // Отправляем запрос на сервер для получения случайного вопроса с учётом сложности
+    fetch(`/api/topics/random?difficulty=${selectedDifficulty}`)
         .then(response => response.json())
         .then(questions => {
             // Получаем HTML для отображения вопроса и ответа
@@ -273,39 +199,36 @@ userButton6.addEventListener('click', function(event) {
                     popup: 'custom-swal-popup', // Класс для кастомного стиля
                 },
                 didOpen: () => {
-
                     // Добавляем стили динамически
                     const style = document.createElement('style');
                     style.textContent = `
-            .question-container {
-                border: 2px solid #4CAF50;
-                border-radius: 10px;
-                padding: 20px;
-                background-color: #f9f9f9;
-                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-                max-width: 600px;
-                margin: 0 auto;
-            }
-            .table-of-content h1 {
-                font-size: 1.5em;
-                color: #333;
-                margin-bottom: 15px;
-                text-align: center;
-            }
-            .content p {
-                font-size: 1.2em;
-                color: #555;
-                line-height: 1.6;
-                text-align: justify;
-            }
-        `;
+                        .question-container {
+                            border: 2px solid #4CAF50;
+                            border-radius: 10px;
+                            padding: 20px;
+                            background-color: #f9f9f9;
+                            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                            max-width: 600px;
+                            margin: 0 auto;
+                        }
+                        .table-of-content h1 {
+                            font-size: 1.5em;
+                            color: #333;
+                            margin-bottom: 15px;
+                            text-align: center;
+                        }
+                        .content p {
+                            font-size: 1.2em;
+                            color: #555;
+                            line-height: 1.6;
+                            text-align: justify;
+                        }
+                    `;
+                    document.head.appendChild(style);
+
                     // Добавляем обработчик для кнопки "Посмотреть ответ"
                     const confirmButton = Swal.getConfirmButton();
                     confirmButton.addEventListener('click', () => {
-                        // // Показываем ответ
-                        // const contentDiv = Swal.getPopup().querySelector('.content');
-                        // contentDiv.style.display = 'block'; // Показываем content
-                        // confirmButton.style.display = 'none'; // Скрываем кнопку "Посмотреть ответ"
                         displayQuestion(questions);
                     });
                 },
@@ -733,12 +656,14 @@ document.getElementById('topic-form').addEventListener('submit', function (event
     const tableOfContent = document.getElementById('topic-title').value;
     const content = document.getElementById('topic-content').value;
     const topicArea = document.getElementById('topic-area').value;
+    const topicDifficulty = document.getElementById('topic-difficulty').value; // Получаем выбранную сложность
 
     // Создаем объект с данными
     const data = {
         topicArea: topicArea,
         content: content,
-        tableOfContent: tableOfContent
+        tableOfContent: tableOfContent,
+        difficulty: topicDifficulty // Добавляем сложность в данные
     };
     console.log(data);
 
@@ -867,7 +792,6 @@ let itemsPerPage = 10;
 let allData = [];
 let editingRow = null; // Текущая строка в режиме редактирования
 
-// Функция для отображения данных на текущей странице
 function displayData() {
     const tableBody = document.querySelector('#topics-table tbody');
     tableBody.innerHTML = '';
@@ -877,13 +801,13 @@ function displayData() {
     const end = start + itemsPerPage;
     const pageData = allData.slice(start, end);
     const lang = translations[currentLanguage] || translations.en;
-    console.log(currentLanguage);
 
     pageData.forEach((topic, index) => {
         const row = document.createElement('tr');
         row.innerHTML = `
             <td>${topic.tableOfContent}</td>
             <td>${topic.topicArea}</td>
+            <td>${topic.difficulty}</td> <!-- Отображаем сложность -->
             <td class="action-buttons">
                 <button class="edit">${lang.edit}</button>
                 <button class="save" style="display: none;">${lang.save}</button>
@@ -893,43 +817,25 @@ function displayData() {
 
         // Обработчик для отображения content при нажатии на строку
         row.addEventListener('click', (e) => {
-            // Проверяем, был ли клик по кнопке
-            if (e.target.tagName === 'BUTTON') {
-                return; // Игнорируем клик по кнопке
-            }
+            if (e.target.tagName === 'BUTTON') return;
 
-            // Отображаем поле content-display
             document.getElementById('content-display').style.display = 'block';
-
-            // Устанавливаем значение content
             document.getElementById('content-text').value = topic.content || "Нет данных";
         });
 
         // Обработчик для кнопки редактирования
         row.querySelector('.edit').addEventListener('click', (e) => {
-            e.stopPropagation(); // Останавливаем всплытие события
-
-            // Отображаем поле content-display
+            e.stopPropagation();
             document.getElementById('content-display').style.display = 'block';
-
-            // Устанавливаем значение content
             document.getElementById('content-text').value = topic.content || "Нет данных";
-
-            // Делаем поле content-text редактируемым
             document.getElementById('content-text').disabled = false;
-
-            // Включаем режим редактирования для строки
             enableEditMode(row, topic);
         });
 
         // Обработчик для кнопки сохранения
         row.querySelector('.save').addEventListener('click', (e) => {
             e.stopPropagation();
-
-            // Сохраняем изменения
             saveChanges(row, topic);
-
-            // Блокируем поле content-text после сохранения
             document.getElementById('content-text').disabled = true;
         });
 
@@ -937,17 +843,13 @@ function displayData() {
         row.querySelector('.delete').addEventListener('click', (e) => {
             e.stopPropagation();
             confirmDelete(topic);
-
-            // Скрываем поле content-display при удалении
             document.getElementById('content-display').style.display = 'none';
         });
 
         tableBody.appendChild(row);
     });
 
-    // Обновление информации о странице
     document.getElementById('page-info').textContent = `${currentPage} ... ${Math.ceil(allData.length / itemsPerPage)}`;
-
 }
 
 
@@ -963,88 +865,86 @@ function enableEditMode(row, topic) {
 
     const cells = row.querySelectorAll('td');
 
-    // Создаем input с стилями
-    const input = document.createElement('input');
-    input.type = 'text';
-    input.value = topic.tableOfContent;
-    input.style.width = '100%';
-    input.style.padding = '8px'; // Добавляем внутренний отступ
-    input.style.border = '1px solid #ccc'; // Устанавливаем границу
-    input.style.borderRadius = '4px'; // Закругляем углы
-    input.style.fontSize = '14px'; // Устанавливаем размер шрифта
+    // Редактирование названия темы
+    const titleInput = document.createElement('input');
+    titleInput.type = 'text';
+    titleInput.value = topic.tableOfContent;
+    titleInput.style.width = '100%';
+    titleInput.style.padding = '8px';
+    titleInput.style.border = '1px solid #ccc';
+    titleInput.style.borderRadius = '4px';
+    titleInput.style.fontSize = '14px';
 
-    cells[0].innerHTML = ''; // Очищаем ячейку перед добавлением input
-    cells[0].appendChild(input); // Добавляем input в ячейку
+    cells[0].innerHTML = '';
+    cells[0].appendChild(titleInput);
 
-    // Создаем <select> с оставшимися опциями
-    const select = document.createElement('select');
-    select.style.width = '100%';
-    select.style.padding = '8px';
-    select.style.border = '1px solid #ccc';
-    select.style.borderRadius = '4px';
-    select.style.fontSize = '14px';
+    // Редактирование области темы
+    const areaSelect = document.createElement('select');
+    areaSelect.style.width = '100%';
+    areaSelect.style.padding = '8px';
+    areaSelect.style.border = '1px solid #ccc';
+    areaSelect.style.borderRadius = '4px';
+    areaSelect.style.fontSize = '14px';
 
-    const options = [
-        'OOP',
-        'JAVA_CORE',
-        'GIT',
-        'SPRING',
-        'DATA_BASE',
-        'MULTITHREADING',
-        'OTHER',
-        'COLLECTIONS',
-        'TEST',
-        'STREAM',
-        'SQL',
-        'SERVLET',
-        'JMS',
-        'HIBERNATE',
-        'HTTP',
-        'ALGORITHMS',
-        'ORM'
+    const areaOptions = [
+        'OOP', 'JAVA_CORE', 'GIT', 'SPRING', 'DATA_BASE', 'MULTITHREADING', 'OTHER',
+        'COLLECTIONS', 'TEST', 'STREAM', 'SQL', 'SERVLET', 'JMS', 'HIBERNATE', 'HTTP', 'ALGORITHMS', 'ORM'
     ];
 
-    options.forEach(optionValue => {
+    areaOptions.forEach(optionValue => {
         const option = document.createElement('option');
         option.value = optionValue;
         option.textContent = optionValue;
         if (optionValue === topic.topicArea) {
-            option.selected = true; // Устанавливаем выбранным элемент, если он соответствует
+            option.selected = true;
         }
-        select.appendChild(option);
+        areaSelect.appendChild(option);
     });
 
-    // Очищаем ячейку перед добавлением <select>
     cells[1].innerHTML = '';
-    cells[1].appendChild(select); // Добавляем динамический <select> в ячейку
+    cells[1].appendChild(areaSelect);
+
+    // Редактирование сложности
+    const difficultySelect = document.createElement('select');
+    difficultySelect.style.width = '100%';
+    difficultySelect.style.padding = '8px';
+    difficultySelect.style.border = '1px solid #ccc';
+    difficultySelect.style.borderRadius = '4px';
+    difficultySelect.style.fontSize = '14px';
+
+    const difficultyOptions = ['EASY', 'AVERAGE', 'HARD']; // Варианты сложности
+    difficultyOptions.forEach(optionValue => {
+        const option = document.createElement('option');
+        option.value = optionValue;
+        option.textContent = optionValue;
+        if (optionValue === topic.difficulty) {
+            option.selected = true;
+        }
+        difficultySelect.appendChild(option);
+    });
+
+    cells[2].innerHTML = '';
+    cells[2].appendChild(difficultySelect);
 
     // Показываем кнопку "Сохранить" и скрываем "Редактировать"
     row.querySelector('.edit').style.display = 'none';
     row.querySelector('.save').style.display = 'inline-block';
-}
-
-
-
-// Отключение режима редактирования
-function disableEditMode() {
-    if (!editingRow) return;
-
-    const { row, topic } = editingRow;
-    const cells = row.querySelectorAll('td');
-    cells[0].innerHTML = topic.tableOfContent;
-    cells[1].innerHTML = topic.topicArea;
-
-    // Показываем кнопку "Редактировать" и скрываем "Сохранить"
-    row.querySelector('.edit').style.display = 'inline-block';
-    row.querySelector('.save').style.display = 'none';
 
     editingRow = null;
 }
 
 
-// // Определяем переменную currentLanguage
-let currentLanguage = 'ru'; // По умолчанию русский язык
+// // // Определяем переменную currentLanguage
+// let currentLanguage = 'en'; // По умолчанию русский язык
 
+
+const language = {
+    en: 'en',
+    ru: 'ru',
+    de: 'de'
+};
+
+let currentLanguage = localStorage.getItem('language') || 'en'; // По умолчанию 'EASY'
 
 // Объект с переводами для сохранения изменений
 const saveTranslations = {
@@ -1067,92 +967,134 @@ const saveTranslations = {
 
 
 // Функция для сохранения изменений
-async function saveChanges(row, topic) {
+function saveChanges(row, topic) {
     const cells = row.querySelectorAll('td');
+
+    // Получаем новые значения из полей редактирования
     topic.tableOfContent = cells[0].querySelector('input').value;
-    topic.topicArea = cells[1].querySelector('select').value;
+    topic.topicArea = cells[1].querySelector('select').value; // Новая область темы
+    topic.difficulty = cells[2].querySelector('select').value; // Новая сложность
     topic.content = document.getElementById('content-text').value;
 
+
+    // Извлекаем CSRF-токен и имя заголовка из мета-тегов
     const csrfToken = document.querySelector('meta[name="_csrf"]').content;
     const csrfHeader = document.querySelector('meta[name="_csrf_header"]').content;
 
-    try {
-        const response = await fetch(`/api/topics/${topic.id}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                [csrfHeader]: csrfToken, // Добавляем CSRF-токен
-            },
-            credentials: 'include', // Включаем куки в запрос
-            body: JSON.stringify(topic), // Используем объект topic
+    // Отправляем изменения на сервер
+    fetch(`/api/topics/${topic.id}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            [csrfHeader]: csrfToken // Добавляем CSRF-токен в заголовки
+        },
+        body: JSON.stringify(topic) // Отправляем обновлённые данные темы
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Ошибка сети или сервера');
+            }
+            return response.json(); // Ожидаем JSON-ответ от сервера
+        })
+        .then(updatedTopic => {
+            // Уведомляем пользователя об успешном обновлении
+            Swal.fire({
+                icon: 'success',
+                title: 'Успех!',
+                text: 'Тема успешно обновлена!',
+            });
+
+            // Выходим из режима редактирования
+            disableEditMode();
+
+            // Обновляем таблицу с данными
+            displayData();
+        })
+        .catch(error => {
+            console.error('Ошибка:', error);
+
+            // Уведомляем пользователя об ошибке
+            Swal.fire({
+                icon: 'error',
+                title: 'Ошибка',
+                text: 'Произошла ошибка при обновлении темы.',
+            });
         });
+}
 
-        if (!response.ok) {
-            throw new Error('Ошибка при сохранении изменений');
-        }
+function disableEditMode() {
+    if (!editingRow) return;
 
-        disableEditMode();
-        currentLanguage = localStorage.getItem('language') || 'en';
+    const { row, topic } = editingRow;
+    const cells = row.querySelectorAll('td');
+    cells[0].innerHTML = topic.tableOfContent;
+    cells[1].innerHTML = topic.topicArea;
+    cells[2].innerHTML = topic.difficulty; // Отображаем сложность
 
+    row.querySelector('.edit').style.display = 'inline-block';
+    row.querySelector('.save').style.display = 'none';
 
-
-        console.log(currentLanguage)
-
-        // Успешное сохранение - показываем SweetAlert2
-        const lang = saveTranslations[currentLanguage] || saveTranslations.en; // Используем текущий язык
-        Swal.fire({
-            title: lang.changesSaved,
-            icon: 'success', // Иконка успеха
-            confirmButtonText: 'OK',
-            timer: null, // Отключаем автоматическое закрытие
-            customClass: {
-                popup: 'custom-swal-popup', // Класс для кастомного стиля
-            },
-        }).then(() => {
-            // Дополнительные действия после закрытия уведомления (если нужно)
-        });
-    } catch (error) {
-        console.error('Ошибка:', error);
-
-        // Ошибка при сохранении - показываем SweetAlert2
-        const lang = saveTranslations[currentLanguage] || saveTranslations.en; // Используем текущий язык
-        Swal.fire({
-            title: lang.errorTitle,
-            text: lang.saveError,
-            icon: 'error', // Иконка ошибки
-            confirmButtonText: 'OK',
-            timer: null, // Отключаем автоматическое закрытие
-            customClass: {
-                popup: 'custom-swal-popup', // Класс для кастомного стиля
-            },
-        });
-    }
+    editingRow = null;
 }
 
 
 // Подтверждение удаления
 async function confirmDelete(topic) {
-    if (confirm('Вы уверены, что хотите удалить эту запись?')) {
+    const result = await Swal.fire({
+        title: 'Вы уверены?',
+        text: 'Вы действительно хотите удалить эту запись?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#225e9f',
+        cancelButtonColor: '#730611',
+        confirmButtonText: 'Да, удалить!',
+        cancelButtonText: 'Отмена'
+    });
+
+    if (result.isConfirmed) {
         try {
+            // Извлекаем CSRF-токен и имя заголовка из мета-тегов
+            const csrfToken = document.querySelector('meta[name="_csrf"]').content;
+            const csrfHeader = document.querySelector('meta[name="_csrf_header"]').content;
+
+            // Отправляем запрос на удаление с CSRF-токеном
             const response = await fetch(`/api/topics/${topic.id}`, {
                 method: 'DELETE',
+                headers: {
+                    [csrfHeader]: csrfToken // Добавляем CSRF-токен в заголовки
+                }
             });
 
             if (!response.ok) {
                 throw new Error('Ошибка при удалении записи');
             }
 
-            // Удаляем запись из локального массива и обновляем таблицу
+            // Удаляем запись из локального массива
             allData = allData.filter(item => item.id !== topic.id);
+
+            // Обновляем таблицу
             displayData();
-            alert('Запись удалена!');
+
+            // Показываем уведомление об успешном удалении
+            await Swal.fire({
+                title: 'Успех!',
+                text: 'Запись успешно удалена.',
+                icon: 'success',
+                confirmButtonText: 'OK'
+            });
         } catch (error) {
             console.error('Ошибка:', error);
-            alert('Не удалось удалить запись');
+
+            // Показываем уведомление об ошибке
+            await Swal.fire({
+                title: 'Ошибка',
+                text: 'Не удалось удалить запись.',
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
         }
     }
 }
-
 
 
 document.getElementById('user-button-4').addEventListener('click', async () => {
@@ -1204,18 +1146,31 @@ document.addEventListener('DOMContentLoaded', () => {
     const modal = document.getElementById('user-menu-modal');
     const selectLanguageButton = document.getElementById('select-language-button');
     const editProfileButton = document.getElementById('edit-profile-button');
+    const difficultyProfileButton = document.getElementById('difficulty-profile-button');
     const languageSelectionForm = document.getElementById('language-selection-form');
     const editProfileForm = document.getElementById('edit-profile-form');
+    const difficultyProfileForm = document.getElementById('difficulty-selection-form');
+
+
 
     // Обработчик клика на кнопку "Редактировать профиль"
     editProfileButton.addEventListener('click', () => {
         editProfileForm.classList.toggle('hidden'); // Показываем/скрываем форму редактирования
         languageSelectionForm.classList.add('hidden'); // Скрываем меню выбора языка
+        difficultyProfileForm.classList.add('hidden'); // Скрываем форму редактирования
     });
 
     // Обработчик клика на кнопку "Выбрать язык"
     selectLanguageButton.addEventListener('click', () => {
         languageSelectionForm.classList.toggle('hidden'); // Показываем/скрываем меню выбора языка
+        difficultyProfileForm.classList.add('hidden'); // Скрываем форму редактирования
+        editProfileForm.classList.add('hidden'); // Скрываем форму редактирования
+    });
+
+    // Обработчик клика на кнопку "Выбрать сложность"
+    difficultyProfileButton.addEventListener('click', () => {
+        difficultyProfileForm.classList.toggle('hidden'); // Показываем/скрываем меню выбора языка
+        languageSelectionForm.classList.add('hidden'); // Скрываем меню выбора языка
         editProfileForm.classList.add('hidden'); // Скрываем форму редактирования
     });
 
@@ -1255,6 +1210,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function changeLanguage(language) {
         localStorage.setItem('language', language); // Сохраняем язык
         currentLanguage = language; // Обновляем переменную
+        highlightSelectedLanguage();
     }
 
     // Закрытие модального окна при клике на крестик
@@ -1349,6 +1305,124 @@ document.querySelectorAll('.language-option').forEach(button => {
         changeLanguage(selectedLanguage); // Меняем язык
         document.getElementById('language-selection-form').classList.add('hidden'); // Скрываем меню выбора языка
     });
+});
+
+const difficulty = {
+    EASY: 'EASY',
+    AVERAGE: 'AVERAGE',
+    HARD: 'HARD'
+};
+
+let selectedDifficulty = localStorage.getItem('difficulty') || 'EASY'; // По умолчанию 'EASY'
+
+// // Обработчики для кнопок выбора сложности
+// document.querySelectorAll('.difficulty-option').forEach(button => {
+//     button.addEventListener('click', () => {
+//         // Получаем выбранную сложность из атрибута data-difficulty
+//         selectedDifficulty = button.getAttribute('data-difficulty');
+//         highlightSelectedDifficulty();
+//         console.log(selectedDifficulty);
+//         Swal.fire({
+//             title: `Выбрана сложность: ${selectedDifficulty}`,
+//             icon: 'success', // Иконка успеха
+//             confirmButtonText: 'OK',
+//             timer: null, // Отключаем автоматическое закрытие
+//             customClass: {
+//                 popup: 'custom-swal-popup', // Класс для кастомного стиля
+//             },
+//         })
+//     });
+// });
+
+
+
+
+
+function highlightSelectedDifficulty() {
+    const selectedDifficulty = localStorage.getItem('difficulty') || 'EASY';
+    const difficultyButtons = document.querySelectorAll('.difficulty-option');
+
+    difficultyButtons.forEach(button => {
+        if (button.getAttribute('data-difficulty') === selectedDifficulty) {
+            button.classList.add('active');
+        } else {
+            button.classList.remove('active');
+        }
+    });
+}
+
+// Функция для подсветки выбранного языка
+function highlightSelectedLanguage() {
+    currentLanguage = localStorage.getItem('language') || 'en';
+    const languageButtons = document.querySelectorAll('.language-option');
+
+    languageButtons.forEach(button => {
+        if (button.getAttribute('data-lang') === currentLanguage) {
+            button.classList.add('active');
+        } else {
+            button.classList.remove('active');
+        }
+    });
+}
+
+// Обработчики для кнопок выбора языка
+document.querySelectorAll('.language-option').forEach(button => {
+    button.addEventListener('click', () => {
+        // Получаем выбранный язык из атрибута data-language
+        const currentLanguage = button.getAttribute('data-language');
+
+        // Сохраняем выбранный язык в localStorage
+        localStorage.setItem('language', currentLanguage);
+
+        // Подсвечиваем выбранный язык
+        highlightSelectedLanguage();
+
+        // Показываем уведомление
+        Swal.fire({
+            title: `Выбран язык: ${currentLanguage === 'en' ? 'Английский' : 'Русский'}`,
+            icon: 'success', // Иконка успеха
+            confirmButtonText: 'OK',
+            timer: null, // Отключаем автоматическое закрытие
+            customClass: {
+                popup: 'custom-swal-popup', // Класс для кастомного стиля
+            },
+        });
+    });
+});
+
+
+// Обработчики для кнопок выбора сложности
+document.querySelectorAll('.difficulty-option').forEach(button => {
+    button.addEventListener('click', () => {
+        // Получаем выбранную сложность из атрибута data-difficulty
+        selectedDifficulty = button.getAttribute('data-difficulty');
+
+        // Сохраняем выбранную сложность в localStorage
+        localStorage.setItem('difficulty', selectedDifficulty);
+
+        // Подсвечиваем выбранную сложность
+        highlightSelectedDifficulty();
+
+        // Показываем уведомление
+        Swal.fire({
+            title: `Выбрана сложность: ${selectedDifficulty}`,
+            icon: 'success', // Иконка успеха
+            confirmButtonText: 'OK',
+            timer: null, // Отключаем автоматическое закрытие
+            customClass: {
+                popup: 'custom-swal-popup', // Класс для кастомного стиля
+            },
+        });
+    });
+});
+
+
+// Инициализация при загрузке страницы
+document.addEventListener('DOMContentLoaded', () => {
+
+    highlightSelectedLanguage();
+    highlightSelectedDifficulty();
+
 });
 
 
