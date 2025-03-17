@@ -202,6 +202,10 @@ userButton6.addEventListener('click', function(event) {
                     // Добавляем стили динамически
                     const style = document.createElement('style');
                     style.textContent = `
+                    
+                        .swal2-popup {
+                            font-family: 'Montserrat', sans-serif !important;
+                        }
                         .question-container {
                             border: 2px solid #4CAF50;
                             border-radius: 10px;
@@ -1355,6 +1359,7 @@ function highlightSelectedDifficulty() {
 function highlightSelectedLanguage() {
     currentLanguage = localStorage.getItem('language') || 'en';
     const languageButtons = document.querySelectorAll('.language-option');
+    console.log(currentLanguage)
 
     languageButtons.forEach(button => {
         if (button.getAttribute('data-lang') === currentLanguage) {
@@ -1419,12 +1424,78 @@ document.querySelectorAll('.difficulty-option').forEach(button => {
 
 // Инициализация при загрузке страницы
 document.addEventListener('DOMContentLoaded', () => {
+    if (!localStorage.getItem('language')) {
+        localStorage.setItem('language', 'en');
+    }
 
     highlightSelectedLanguage();
     highlightSelectedDifficulty();
 
 });
 
+
+
+//СОХРАНЕНИЕ ИЗМЕНЕНИЙ В ПРОФИЛЕ
+document.getElementById('save-profile-button').addEventListener('click', function () {
+    // Собираем данные из полей формы
+    const firstName = document.getElementById('edit-first-name').value;
+    const lastName = document.getElementById('edit-last-name').value;
+    const password = document.getElementById('edit-password').value;
+
+    // Проверка на пустые поля (опционально)
+    if (!firstName || !lastName || !password) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Ошибка',
+            text: 'Все поля должны быть заполнены!',
+        });
+        return;
+    }
+
+    // Создаем объект с данными для отправки
+    const data = {
+        firstName: firstName,
+        lastName: lastName,
+        password: password
+    };
+
+    // Отправляем данные на сервер
+    fetch('/update', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            // Добавляем CSRF-токен, если используется Spring Security
+            'X-CSRF-TOKEN': document.querySelector('meta[name="_csrf"]').content
+        },
+        body: JSON.stringify(data)
+    })
+        .then(response => {
+            if (response.ok) {
+                return response.text(); // Получаем текстовый ответ от сервера
+            } else {
+                throw new Error('Ошибка при обновлении профиля');
+            }
+        })
+        .then(message => {
+            // Уведомляем пользователя об успешном обновлении
+            Swal.fire({
+                icon: 'success',
+                title: 'Успех!',
+                text: message,
+            });
+            // Скрываем форму редактирования
+            document.getElementById('edit-profile-form').classList.add('hidden');
+        })
+        .catch(error => {
+            console.error('Ошибка:', error);
+            // Уведомляем пользователя об ошибке
+            Swal.fire({
+                icon: 'error',
+                title: 'Ошибка',
+                text: 'Произошла ошибка при обновлении профиля.',
+            });
+        });
+});
 
 
 
