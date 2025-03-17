@@ -1,9 +1,12 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap');
 /* Общие стили */
 body {
+    /*font-family: 'Montserrat', sans-serif;*/
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
     background-color: #dedee9;
+    overflow-y: scroll;
 
 }
 
@@ -67,10 +70,9 @@ header {
 }
 
 #user-button-1 img {
-    width: 24px;
-    height: 24px;
+    width: 19px;
+    height: 19px;
 }
-
 #user-button-2,
 #user-button-3,
 #user-button-4,
@@ -84,6 +86,8 @@ header {
     width: 40px;
     height: 40px;
 }
+
+
 
 
 
@@ -107,9 +111,9 @@ header {
     border: 1px solid #e0e0e0; /* Граница для меню */
 
 }
-
 /* Стили для ссылок в меню */
 .dropdown-content a {
+
     color: #333;
     padding: 12px 16px;
     text-decoration: none;
@@ -226,6 +230,7 @@ header {
 
 /* Стили для кнопки "Создать" */
 .create-button {
+    font-family: 'Montserrat', sans-serif;
     display: block;
     width: 100%;
     padding: 10px;
@@ -247,7 +252,7 @@ header {
 
 /* Добавьте эти стили в ваш CSS-файл или в <style> в HTML */
 .topic-content-container {
-    width: 65%;
+    width: 50%;
     font-family: Verdana, sans-serif;
     letter-spacing: 1px; /* Расстояние между буквами */
     line-height: 1.3; /* Высота строки */
@@ -291,6 +296,7 @@ pre {
 
 /* Стили для кнопок областей */
 .area-button {
+    font-family: 'Montserrat', sans-serif;
     width: 200px; /* Ширина кнопки */
     height: 100px; /* Высота кнопки */
     background-color: #444444; /* Цвет фона */
@@ -356,6 +362,7 @@ pre {
 
 /* Стили для элемента темы */
 .topic-item {
+    font-family: 'Montserrat', sans-serif;
     margin: 1px 1px;
     padding: 1px;
     background-color: #ffffff;
@@ -387,6 +394,7 @@ pre {
 
 
 #add-topic-form {
+    font-family: 'Montserrat', sans-serif;
     position: fixed;
     top: 50%;
     left: 50%;
@@ -418,6 +426,7 @@ pre {
 /* Стили для области темы */
 
 #topic-form button {
+    font-family: 'Montserrat', sans-serif;
     margin-top: 10px;
     padding: 10px 20px;
     border: none;
@@ -591,6 +600,7 @@ pre {
 
 /* Основной контейнер для таблицы и контента */
 #main-container {
+    /*font-family: 'Montserrat', sans-serif;*/
     display: flex;
     width: 95%;
     gap: 20px;
@@ -600,6 +610,7 @@ pre {
 
 /* Контейнер для таблицы */
 #table-container {
+    /*font-family: 'Montserrat', sans-serif;*/
     width: 59%; /* Фиксированная ширина */
     background-color: #fff;
     border-radius: 10px;
@@ -620,6 +631,7 @@ pre {
 }
 
 #topics-table th {
+    font-family: 'Montserrat', sans-serif;
     background-color: #f8f9fa;
     font-weight: bold;
     border-bottom: 2px solid #dee2e6;
@@ -640,6 +652,7 @@ pre {
 }
 
 .action-buttons button {
+    font-family: 'Montserrat', sans-serif;
     width: 100px; /* Установите фиксированную ширину */
     height: 40px; /* Установите фиксированную высоту */
     border: none;
@@ -695,6 +708,7 @@ pre {
 }
 
 .pagination button {
+    font-family: 'Montserrat', sans-serif;
     width: 100px; /* Установите фиксированную ширину */
     height: 40px; /* Установите фиксированную высоту */
     border: none;
@@ -784,6 +798,7 @@ pre {
 
 /* Стили для модального окна */
 .modal {
+    font-family: 'Montserrat', sans-serif;
     display: none; /* Скрыто по умолчанию */
     position: fixed;
     z-index: 1000;
@@ -796,6 +811,7 @@ pre {
 }
 
 .modal-content {
+    font-family: 'Montserrat', sans-serif;
     background-color: #fff;
     margin: 10% auto;
     padding: 20px;
@@ -827,6 +843,7 @@ pre {
 }
 
 #edit-profile-form input {
+    font-family: 'Montserrat', sans-serif;
     display: block;
     width: 80%;
     padding: 10px;
@@ -836,8 +853,9 @@ pre {
 }
 
 #edit-profile-form button {
+    font-family: 'Montserrat', sans-serif;
     padding: 10px 20px;
-    background-color: #04671b;
+    background-color: #4CAF50;
     color: #fff;
     border: none;
     border-radius: 5px;
@@ -846,7 +864,7 @@ pre {
 }
 
 #edit-profile-form button:hover {
-    background-color: #034e14;
+    background-color: #218838;
     transform: scale(1.1);
 }
 
@@ -857,8 +875,10 @@ pre {
 
 
 /* Стили для кнопки "Редактировать профиль" */
+#difficulty-profile-button,
 #edit-profile-button {
     background-color: #225e9f; /* Синий цвет фона */
+    font-family: 'Montserrat', sans-serif;
     color: white; /* Белый текст */
     border: none; /* Убираем границу */
     padding: 5px 10px; /* Внутренние отступы */
@@ -867,8 +887,10 @@ pre {
     cursor: pointer; /* Курсор в виде указателя */
     margin-top: 20px; /* Отступ сверху */
     transition: background-color 0.3s ease, transform 0.3s ease; /* Добавлено свойство перехода */
+    line-height: 1.2; /* Уменьшение межстрочного интервала */
 }
 
+#difficulty-profile-button:hover,
 #edit-profile-button:hover {
     background-color: #1f4f82; /* Темно-синий цвет при наведении */
     transform: scale(1.05);
@@ -887,6 +909,7 @@ pre {
 /* Стили для кнопки "Выбрать язык" */
 #select-language-button {
     background-color: #28a745; /* Зеленый цвет */
+    font-family: 'Montserrat', sans-serif;
     color: white;
     border: none;
     padding: 5px 10px;
@@ -895,6 +918,7 @@ pre {
     cursor: pointer;
     transition: background-color 0.3s ease, transform 0.3s ease; /* Добавлено свойство перехода */
     margin-top: 20px; /* Отступ сверху */
+    line-height: 1.2; /* Уменьшение межстрочного интервала */
 }
 
 #select-language-button:hover {
@@ -903,15 +927,18 @@ pre {
 }
 
 /* Стили для меню выбора языка */
+#difficulty-selection-form,
 #language-selection-form {
+    font-family: 'Montserrat', sans-serif;
     margin-top: 20px;
 }
 
 #language-selection-form h3 {
     margin-bottom: 10px;
 }
-
+.difficulty-option,
 .language-option {
+    font-family: 'Montserrat', sans-serif;
     display: block;
     width: 100%;
     padding: 10px;
@@ -923,11 +950,10 @@ pre {
     transition: background-color 0.3s ease;
 }
 
+.difficulty-option:hover,
 .language-option:hover {
     background-color: #e2e6ea;
 }
-
-
 
 
 
@@ -938,26 +964,93 @@ pre {
 .user-menu {
     position: relative;
     display: inline-block;
+    margin: 0 10px; /* Отступ между кнопками */
+
 }
 
+.user-menu button {
+    background-color: #1f4f82; /* Синий цвет кнопки */
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    display: flex;
+
+    gap: 8px; /* Расстояние между иконкой и текстом */
+    transition: background-color 0.3s ease, transform 0.2s ease;
+
+
+
+}
+
+.user-menu button:hover {
+    background-color: #225e9f; /* Темно-синий цвет при наведении */
+    transform: translateY(-2px); /* Легкий эффект поднятия */
+}
+
+.user-menu button i {
+    font-size: 16px; /* Размер иконки */
+}
+
+.user-menu button img {
+    width: 24px;
+    height: 24px;
+    /*filter: brightness(0) invert(1); !* Делаем иконку белой *!*/
+}
+
+/* Стили для выпадающего меню */
 .dropdown-menu {
-    display: block; /* Меню всегда в DOM, но скрыто */
+
+    display: block;
     position: absolute;
-    background-color: #f9f9f9;
-    min-width: 160px;
-    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
-    z-index: 1;
-    border-radius: 8px; /* Закругляем углы */
-    opacity: 0; /* Начальная прозрачность для анимации */
-    transition: opacity 0.3s ease, visibility 0.3s ease; /* Плавное появление и исчезновение */
-    visibility: hidden; /* Скрываем меню */
+    background-color: #ffffff;
+    min-width: 200px; /* Ширина меню */
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    border-radius: 8px;
+    opacity: 0;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    visibility: hidden;
+    font-family: 'Montserrat', sans-serif;
+    text-align: center; /* Выравниваем текст по центру */
+
+}
+
+/* Показываем меню при наведении */
+.user-menu:hover .dropdown-menu {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Стили для ссылок в меню */
+.dropdown-menu a {
+    font-family: 'Montserrat', sans-serif;
+    color: #333; /* Темный цвет текста */
+    padding: 12px;
+    text-decoration: none;
+    display: block;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.5;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.dropdown-menu a:hover {
+    background-color: #f1f1f1;
+    color: #1f4f82; /* Синий цвет текста при наведении */
+    border-radius: 8px;
 }
 
 /* Стили для меню самой правой кнопки */
 .right-menu .dropdown-menu {
-    right: 0; /* Прижимаем меню к правому краю окна */
+    right: -34%; /* Прижимаем меню к правому краю окна */
     top: 100%; /* Позиционируем меню чуть ниже кнопки */
     margin-top: 5px; /* Смещаем меню вниз */
+
 }
 
 /* Стили для меню остальных кнопок */
@@ -968,31 +1061,9 @@ pre {
     margin-top: 5px; /* Смещаем меню вниз */
 }
 
-/* Показываем меню при наведении */
-.user-menu:hover .dropdown-menu {
-    opacity: 1; /* Делаем меню полностью видимым */
-    visibility: visible; /* Показываем меню */
-}
-
-/* Стили для ссылок в меню */
-.dropdown-menu a {
-    color: black;
-    padding: 12px 16px;
-    text-decoration: none;
-    display: block;
-}
-
-.dropdown-menu a:hover {
-    background-color: #f1f1f1;
-    border-radius: 8px; /* Закругляем углы при наведении */
-}
-
-
-
-
 
 .custom-swal-popup {
-    font-family: 'Arial', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     border-radius: 15px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     background-color: #f8f9fa;
@@ -1000,6 +1071,7 @@ pre {
 }
 
 .custom-swal-popup .swal2-title {
+    font-family: 'Montserrat', sans-serif;
     color: #225e9f;
 }
 
@@ -1018,6 +1090,7 @@ pre {
 
 /* Стили для контейнера с вопросом */
 .question-container {
+    font-family: 'Montserrat', sans-serif;
     border: 2px solid #4CAF50; /* Рамка */
     border-radius: 10px; /* Закруглённые углы */
     padding: 20px; /* Отступы внутри рамки */
@@ -1029,6 +1102,7 @@ pre {
 
 /* Стили для заголовка */
 .table-of-content h1 {
+    font-family: 'Montserrat', sans-serif;
     font-size: 1.5em; /* Размер шрифта */
     color: #333; /* Цвет текста */
     margin-bottom: 15px; /* Отступ снизу */
@@ -1037,8 +1111,27 @@ pre {
 
 /* Стили для контента */
 .content p {
-    font-size: 1.2em; /* Размер шрифта */
+    font-family: 'Montserrat', sans-serif;
+    /*font-size: 1.2em; !* Размер шрифта *!*/
     color: #555; /* Цвет текста */
-    line-height: 1.6; /* Межстрочный интервал */
+    /*line-height: 1.6; !* Межстрочный интервал *!*/
     text-align: justify; /* Выравнивание текста по ширине */
+}
+
+
+
+
+
+.language-option.active {
+    font-family: 'Montserrat', sans-serif;
+    background-color: #4CAF50; /* Зелёный фон для активного языка */
+    color: white; /* Белый текст */
+    border: 2px solid #45a049; /* Тёмно-зелёная рамка */
+}
+
+.difficulty-option.active {
+    font-family: 'Montserrat', sans-serif;
+    background-color: #4CAF50; /* Синий фон для активной сложности */
+    color: white; /* Белый текст */
+    border: 2px solid #45a049; /* Тёмно-синяя рамка */
 }

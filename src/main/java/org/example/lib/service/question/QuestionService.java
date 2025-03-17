@@ -21,10 +21,14 @@ public interface QuestionService {
 
     List<QuestionRequestDTO> getQuestionsByArea(TopicArea topicArea);
 
-    QuestionRequestDTO getRandomQuestion();
+    QuestionRequestDTO findRandomByDifficulty(String difficulty);
 
     List<QuestionRequestDTO> findThemeByText(String text);
 
     List<QuestionRequestDTO> findContentByText(String text);
+
+    QuestionRequestDTO getRandomQuestion();
+
+
 
 }

@@ -58,4 +58,6 @@ public class SecurityConfig {
         authProvider.setUserDetailsService(userDetailsService); // Устанавливаем UserDetailsService
         return authProvider;
     }
+
+
 }

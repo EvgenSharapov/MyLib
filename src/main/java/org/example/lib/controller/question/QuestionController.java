@@ -41,8 +41,8 @@ public interface QuestionController {
     @GetMapping("/by-area/{topicArea}")
     List<QuestionRequestDTO> getQuestionsByArea(@PathVariable TopicArea topicArea);
 
-    @GetMapping("/random")
-    QuestionRequestDTO getRandomQuestion();
+//    @GetMapping("/random")
+//    QuestionRequestDTO getRandomQuestion();
 
     @GetMapping("/search/theme")
     List<QuestionRequestDTO> searchQuestionsByTheme(@RequestParam String query);
@@ -52,4 +52,7 @@ public interface QuestionController {
 
     @GetMapping("/topic-areas")
     List<String> getAllTopicAreas();
+
+    @GetMapping("/random")
+    QuestionRequestDTO getRandomQuestion(@RequestParam(required = false) String difficulty);
 }

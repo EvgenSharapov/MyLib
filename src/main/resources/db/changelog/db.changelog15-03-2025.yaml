@@ -1,0 +1,12 @@
+databaseChangeLog:
+
+  - changeSet:
+      id: 4
+      author: evgeny_sharapov
+      changes:
+        - addColumn:
+            tableName: topic_library
+            columns:
+              - column:
+                  name: difficulty
+                  type: varchar(50)

@@ -17,6 +17,7 @@ public class QuestionMapper {
                 .content(question.getContent())
                 .tableOfContent(question.getTableOfContent())
                 .topicArea(question.getTopicArea())
+                .difficulty(question.getDifficulty())
                 .build();
     }
 

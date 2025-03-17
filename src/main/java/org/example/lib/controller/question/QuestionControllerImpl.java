@@ -52,6 +52,7 @@ private final QuestionService questionService;
         Question question = new Question();
         question.setId(id);
         question.setContent(quest.getContent());
+        question.setDifficulty(quest.getDifficulty());
         question.setTableOfContent(quest.getTableOfContent());
         question.setTopicArea(quest.getTopicArea());
         return questionService.save(question);
@@ -71,13 +72,22 @@ private final QuestionService questionService;
         return questions;
     }
 
-    @Override
-    public QuestionRequestDTO getRandomQuestion() {
-        QuestionRequestDTO question = questionService.getRandomQuestion();
-        if(question == null){
-            throw new QuestionNotFoundException("No questions found");
+//    @Override
+//    public QuestionRequestDTO getRandomQuestion() {
+//        QuestionRequestDTO question = questionService.getRandomQuestion();
+//        if(question == null){
+//            throw new QuestionNotFoundException("No questions found");
+//        }
+//        return question;
+//    }
+
+    @GetMapping("/random")
+    public QuestionRequestDTO getRandomQuestion(@RequestParam(required = false) String difficulty) {
+        if (difficulty != null) {
+            return questionService.findRandomByDifficulty(difficulty);
+        } else {
+            return questionService.getRandomQuestion();
         }
-        return question;
     }
 
     @Override

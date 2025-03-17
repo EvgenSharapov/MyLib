@@ -27,6 +27,10 @@ public class Question {
     @Column(name = "topic_area")
     private TopicArea topicArea;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "difficulty")
+    private Difficulty difficulty;
+
 
     public Question() {
     }
