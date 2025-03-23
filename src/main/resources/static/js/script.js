@@ -175,7 +175,6 @@ const userButton6 = document.getElementById('user-button-6');
 userButton6.addEventListener('click', function(event) {
     event.preventDefault(); // Предотвращаем стандартное поведение, если это ссылка
     event.stopPropagation(); // Останавливаем всплытие события
-
     // Очищаем старые контейнеры
     clearContainersFull();
 
@@ -543,6 +542,7 @@ function displayTopic(topics) {
 
 // Функция для очистки старых контейнеров
 function clearContainersFull() {
+    isEditTableOpen = false;
     const containers = [
         'questions-container',
         'topics-container',
@@ -764,8 +764,17 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
+
+let isEditTableOpen = false; // По умолчанию таблица для редактирования закрыта
+
+
+
+
+
+
+//
 // Функция для загрузки тем по поисковому запросу
-function loadTopicsBySearch(query, searchType) {
+function loadTopicsBySearchs(query, searchType) {
     clearContainers(); // Очищаем контейнеры перед загрузкой новых данных
     clearContainersFull();
     const addTestForm = document.getElementById('add-test-form');
@@ -789,7 +798,37 @@ function loadTopicsBySearch(query, searchType) {
 
 
 
+function loadTopicsBySearch(query, searchType) {
+    if (isEditTableOpen) {
+        // Если открыта таблица для редактирования, применяем поиск к ней
+        searchLibrary(query, searchType);
+    } else {
+        // Если таблица для редактирования закрыта, применяем поиск к библиотеке
+        loadTopicsBySearchs(query, searchType);
+    }
+}
 
+// Функция для поиска в таблице для редактирования
+function searchLibrary(query, searchType) {
+    const editTableBody = document.querySelector('#topics-table tbody');
+    editTableBody.innerHTML = ''; // Очищаем таблицу перед загрузкой новых данных
+
+    // Определяем URL в зависимости от типа поиска
+    const url = searchType === 'theme'
+        ? `/api/topics/search/theme?query=${encodeURIComponent(query)}`
+        : `/api/topics/search/content?query=${encodeURIComponent(query)}`;
+
+    fetch(url) // Отправляем запрос на сервер
+        .then(response => response.json())
+        .then(topics => {
+            allData = topics; // Обновляем глобальный массив allData
+            displayData(); // Отображаем данные в таблице для редактирования
+        })
+        .catch(error => {
+            console.error('Ошибка:', error);
+            alert('Произошла ошибка при загрузке тем.');
+        });
+}
 
 
 let currentPage = 1;
@@ -797,16 +836,35 @@ let itemsPerPage = 10;
 let allData = [];
 let editingRow = null; // Текущая строка в режиме редактирования
 
-function displayData() {
+
+
+function displayData(searchQuery = '', searchType = 'theme') {
     const tableBody = document.querySelector('#topics-table tbody');
     tableBody.innerHTML = '';
     currentLanguage = localStorage.getItem('language') || 'en';
 
+    // Фильтруем данные на основе поискового запроса
+    let filteredData = allData;
+    if (searchQuery) {
+        filteredData = allData.filter(topic => {
+            if (searchType === 'theme') {
+                // Поиск по теме (tableOfContent)
+                return topic.tableOfContent.toLowerCase().includes(searchQuery.toLowerCase());
+            } else if (searchType === 'content') {
+                // Поиск по содержанию (content)
+                return topic.content.toLowerCase().includes(searchQuery.toLowerCase());
+            }
+            return true; // Если тип поиска не указан, возвращаем все данные
+        });
+    }
+
+    // Пагинация для отфильтрованных данных
     const start = (currentPage - 1) * itemsPerPage;
     const end = start + itemsPerPage;
-    const pageData = allData.slice(start, end);
+    const pageData = filteredData.slice(start, end);
     const lang = translations[currentLanguage] || translations.en;
 
+    // Отображаем отфильтрованные данные
     pageData.forEach((topic, index) => {
         const row = document.createElement('tr');
         row.innerHTML = `
@@ -854,7 +912,8 @@ function displayData() {
         tableBody.appendChild(row);
     });
 
-    document.getElementById('page-info').textContent = `${currentPage} ... ${Math.ceil(allData.length / itemsPerPage)}`;
+    // Обновляем информацию о странице
+    document.getElementById('page-info').textContent = `${currentPage} ... ${Math.ceil(filteredData.length / itemsPerPage)}`;
 }
 
 
@@ -1102,24 +1161,37 @@ async function confirmDelete(topic) {
 }
 
 
+
 document.getElementById('user-button-4').addEventListener('click', async () => {
-    clearContainersForEdit();
-    // Скрываем форму добавления теста
-    hideAddTestForm();
+    clearContainersForEdit(); // Очищаем контейнеры
+    hideAddTestForm(); // Скрываем форму добавления теста
 
-
+    // Открываем таблицу для редактирования
     const tableContainer = document.getElementById('table-container');
     tableContainer.style.display = 'block';
 
+    // Устанавливаем флаг, что таблица для редактирования открыта
+    isEditTableOpen = true;
+
     try {
+        // Загружаем данные для таблицы редактирования
         const response = await fetch('/api/topics/all');
         if (!response.ok) throw new Error('Ошибка при загрузке данных');
-        allData = await response.json();
-        displayData();
+
+        allData = await response.json(); // Сохраняем данные в глобальный массив
+        displayData(); // Отображаем данные в таблице
     } catch (error) {
         console.error('Ошибка:', error);
+        alert('Произошла ошибка при загрузке данных.');
     }
 });
+
+
+
+
+
+
+
 
 
 // Обработчик для выбора количества элементов на странице
@@ -1462,7 +1534,7 @@ document.getElementById('save-profile-button').addEventListener('click', functio
 
     // Отправляем данные на сервер
     fetch('/update', {
-        method: 'POST',
+        method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
             // Добавляем CSRF-токен, если используется Spring Security

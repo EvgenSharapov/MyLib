@@ -1,9 +1,7 @@
 package org.example.lib.service.user;
 
 import lombok.RequiredArgsConstructor;
-import org.example.lib.dto.UserProfileDto;
 import org.example.lib.handler.exeptions.user.UserNotFoundException;
-import org.example.lib.mapper.UserMapper;
 import org.example.lib.model.User;
 import org.example.lib.repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,25 +20,32 @@ public class UserServiceImpl implements UserDetailsService,UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final UserMapper userMapper;
 
 
     @Override
     public User save(User user) {
+        if (existsByUsername(user.getUsername())) {
+            throw new IllegalArgumentException("Пользователь с таким логином уже существует");
+        }
+
+        if (existsByEmail(user.getEmail())) {
+            throw new IllegalArgumentException("Пользователь с такой почтой уже зарегистрирован");
+        }
+
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
 
-    @Override
-    public User findById(UUID id) {
-        return userRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException(id));
-    }
-
-    @Override
-    public void delete(UUID id) {
-        userRepository.deleteById(id);
-    }
+//    @Override
+//    public User findById(UUID id) {
+//        return userRepository.findById(id)
+//                .orElseThrow(() -> new UserNotFoundException(id));
+//    }
+//
+//    @Override
+//    public void delete(UUID id) {
+//        userRepository.deleteById(id);
+//    }
 
     @Override
     public Optional<User> findUserByName(String username) {

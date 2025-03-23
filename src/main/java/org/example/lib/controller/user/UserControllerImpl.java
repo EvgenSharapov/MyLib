@@ -1,12 +1,13 @@
 package org.example.lib.controller.user;
 
-//import org.example.lib.dto.UserProfileDto;
+import jakarta.validation.Valid;
 import org.example.lib.dto.UserProfileDto;
 import org.example.lib.dto.UserUpdateRequest;
 import org.example.lib.model.User;
 import org.example.lib.service.user.UserService;
 import org.example.lib.service.user.UserServiceImpl;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -25,66 +26,70 @@ public class UserControllerImpl implements UserController{
     }
 
 
-    @GetMapping("/sing-up")
+    @Override
     public String addUser(User user , Model model) {
         model.addAttribute("user", user);
         return "user/sing-up";
     }
 
-//    @PostMapping("/register")
-//    public String saveUser(@ModelAttribute("user") User user) {
+//    @Override
+//    public ResponseEntity<?> registerUser(@ModelAttribute("user") User user) {
+//        // Проверяем, существует ли пользователь с таким логином
+//        if (userService.existsByUsername(user.getUsername())) {
+//            return ResponseEntity.badRequest().body(Map.of(
+//                    "success", false,
+//                    "message", "Пользователь с таким логином уже существует"
+//            ));
+//        }
+//
+//        // Проверяем, существует ли пользователь с такой почтой
+//        if (userService.existsByEmail(user.getEmail())) {
+//            return ResponseEntity.badRequest().body(Map.of(
+//                    "success", false,
+//                    "message", "Пользователь с такой почтой уже зарегистрирован"
+//            ));
+//        }
+//
 //        userService.save(user);
-//        return "index";
+//        return ResponseEntity.ok(Map.of(
+//                "success", true,
+//                "message", "Пользователь успешно зарегистрирован"
+//        ));
 //    }
 
-    @PostMapping("/register")
-    public ResponseEntity<?> registerUser(@ModelAttribute("user") User user) {
-        // Проверяем, существует ли пользователь с таким логином
-        if (userService.existsByUsername(user.getUsername())) {
+
+    @Override
+    public ResponseEntity<?> registerUser(@Valid @ModelAttribute("user") User user) {
+        try {
+            userService.save(user);
+            return ResponseEntity.ok(Map.of(
+                    "success", true,
+                    "message", "Пользователь успешно зарегистрирован"
+            ));
+        } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(Map.of(
                     "success", false,
-                    "message", "Пользователь с таким логином уже существует"
+                    "message", e.getMessage()
             ));
         }
-
-        // Проверяем, существует ли пользователь с такой почтой
-        if (userService.existsByEmail(user.getEmail())) {
-            return ResponseEntity.badRequest().body(Map.of(
-                    "success", false,
-                    "message", "Пользователь с такой почтой уже зарегистрирован"
-            ));
-        }
-
-        // Если пользователь не существует, создаем его
-        userService.save(user);
-        return ResponseEntity.ok(Map.of(
-                "success", true,
-                "message", "Пользователь успешно зарегистрирован"
-        ));
     }
 
-
-
-
-    @GetMapping("/login")
+    @Override
     public String loginForm(User user, Model model) {
         model.addAttribute("user", user);
         return "login";
     }
 
-
-    @GetMapping("/profile")
+    @Override
     public ResponseEntity<UserProfileDto> getUserProfile(Authentication authentication) {
-        String username = authentication.getName(); // Получаем имя текущего пользователя
-        Optional<User> userOptional = userService.findUserByName(username); // Ищем пользователя
+        String username = authentication.getName();
+        Optional<User> userOptional = userService.findUserByName(username);
 
         if (userOptional.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build(); // Если пользователь не найден
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
 
         User user = userOptional.get();
-
-        // Создаем DTO для передачи данных
         UserProfileDto userProfile = new UserProfileDto(
                 user.getFirstName(),
                 user.getLastName(),
@@ -95,11 +100,14 @@ public class UserControllerImpl implements UserController{
         return ResponseEntity.ok(userProfile);
     }
 
-    @PostMapping("/update")
-    public ResponseEntity<String> updateProfile(@RequestBody UserUpdateRequest request, Authentication authentication) {
+    @Override
+    @PutMapping("/update")
+    public ResponseEntity<String> updateProfile(@Valid @RequestBody UserUpdateRequest request, Authentication authentication) {
         String username = authentication.getName();
         userService.updateProfile(username, request.getFirstName(), request.getLastName(), request.getPassword());
-        return ResponseEntity.ok("Профиль обновлен");
+        return ResponseEntity.ok()
+                .contentType(MediaType.valueOf("text/plain;charset=UTF-8"))
+                .body("Профиль обновлен");
     }
 
 }

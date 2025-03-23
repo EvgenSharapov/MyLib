@@ -1,8 +1,10 @@
 package org.example.lib.tests.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.example.lib.controller.question.QuestionController;
 import org.example.lib.controller.question.QuestionControllerImpl;
 import org.example.lib.dto.QuestionRequestDTO;
+import org.example.lib.handler.GlobalExceptionHandler;
 import org.example.lib.handler.exeptions.question.QuestionNotFoundException;
 import org.example.lib.model.Question;
 import org.example.lib.model.TopicArea;
@@ -14,6 +16,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -30,6 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 
 @ExtendWith(MockitoExtension.class)
+@Import(GlobalExceptionHandler.class)
 public class QuestionControllerImplTest {
 
     private MockMvc mockMvc;
@@ -42,9 +46,12 @@ public class QuestionControllerImplTest {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
+
     @BeforeEach
     void setUp() {
-        mockMvc = MockMvcBuilders.standaloneSetup(questionController).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(questionController)
+                .setControllerAdvice(new GlobalExceptionHandler()) // Подключаем GlobalExceptionHandler
+                .build();
     }
 
     @Test
