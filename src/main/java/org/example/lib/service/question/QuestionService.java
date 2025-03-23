@@ -30,5 +30,4 @@ public interface QuestionService {
     QuestionRequestDTO getRandomQuestion();
 
 
-
 }

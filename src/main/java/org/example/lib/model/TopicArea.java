@@ -17,5 +17,6 @@ public enum TopicArea {
     HIBERNATE,
     HTTP,
     ALGORITHMS,
-    ORM
+    ORM,
+    SYSTEM_DESIGN
 }

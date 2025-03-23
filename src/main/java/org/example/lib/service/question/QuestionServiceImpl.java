@@ -124,7 +124,7 @@ public class QuestionServiceImpl implements QuestionService{
         // Фильтруем вопросы по уровню сложности
         List<QuestionRequestDTO> filteredQuestions = questionCache.values().stream()
                 .filter(question -> difficulty == null || difficulty.equalsIgnoreCase(String.valueOf(question.difficulty())))
-                .collect(Collectors.toList());
+                .toList();
 
         if (filteredQuestions.isEmpty()) {
             throw new QuestionNotFoundException("Нет доступных вопросов для выбранного уровня сложности: " + difficulty);

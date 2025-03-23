@@ -5,9 +5,9 @@ import org.example.lib.dto.QuestionRequestDTO;
 import org.example.lib.model.Question;
 import org.example.lib.model.TopicArea;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 

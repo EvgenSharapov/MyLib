@@ -72,14 +72,6 @@ private final QuestionService questionService;
         return questions;
     }
 
-//    @Override
-//    public QuestionRequestDTO getRandomQuestion() {
-//        QuestionRequestDTO question = questionService.getRandomQuestion();
-//        if(question == null){
-//            throw new QuestionNotFoundException("No questions found");
-//        }
-//        return question;
-//    }
 
     @GetMapping("/random")
     public QuestionRequestDTO getRandomQuestion(@RequestParam(required = false) String difficulty) {

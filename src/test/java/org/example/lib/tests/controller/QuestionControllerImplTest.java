@@ -7,6 +7,7 @@ import org.example.lib.handler.exeptions.question.QuestionNotFoundException;
 import org.example.lib.model.Question;
 import org.example.lib.model.TopicArea;
 import org.example.lib.service.question.QuestionService;
+import org.example.lib.tests.utils.CreateEntityForTests;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -226,12 +227,13 @@ public class QuestionControllerImplTest {
     }
 
     @Test
-    void getRandomQuestion_ShouldReturnNotFound() throws Exception {
-        when(questionService.getRandomQuestion()).thenReturn(null);
+    void getRandomQuestion_ShouldReturnNotFound_WhenCacheIsEmpty() throws Exception {
+        when(questionService.getRandomQuestion()).thenThrow(new QuestionNotFoundException("Нет доступных тем"));
 
         mockMvc.perform(get("/api/topics/random")
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message").value("Нет доступных тем"));
     }
 
     @Test
@@ -262,5 +264,51 @@ public class QuestionControllerImplTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }
+
+
+    @Test
+    public void testGetRandomQuestion_WithDifficulty() throws Exception {
+        QuestionRequestDTO mockQuestion = CreateEntityForTests.createQuestionRequestDTO();
+        when(questionService.findRandomByDifficulty("EASY")).thenReturn(mockQuestion);
+
+        mockMvc.perform(get("/api/topics/random").param("difficulty", "EASY"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(mockQuestion.id().toString()))
+                .andExpect(jsonPath("$.content").value(mockQuestion.content()))
+                .andExpect(jsonPath("$.topicArea").value(mockQuestion.topicArea().toString()))
+                .andExpect(jsonPath("$.tableOfContent").value(mockQuestion.tableOfContent()))
+                .andExpect(jsonPath("$.difficulty").value(mockQuestion.difficulty().toString()));
+    }
+
+    @Test
+    public void testGetRandomQuestion_WithoutDifficulty() throws Exception {
+        QuestionRequestDTO mockQuestion = CreateEntityForTests.createQuestionRequestDTO();
+        when(questionService.getRandomQuestion()).thenReturn(mockQuestion);
+
+        mockMvc.perform(get("/api/topics/random"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(mockQuestion.id().toString()))
+                .andExpect(jsonPath("$.content").value(mockQuestion.content()))
+                .andExpect(jsonPath("$.topicArea").value(mockQuestion.topicArea().toString()))
+                .andExpect(jsonPath("$.tableOfContent").value(mockQuestion.tableOfContent()))
+                .andExpect(jsonPath("$.difficulty").value(mockQuestion.difficulty().toString()));
+    }
+
+    @Test
+    public void testGetRandomQuestion_InvalidDifficulty() throws Exception {
+        when(questionService.findRandomByDifficulty("INVALID")).thenThrow(new IllegalArgumentException("Invalid difficulty"));
+
+        mockMvc.perform(get("/api/topics/random").param("difficulty", "INVALID"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void testGetRandomQuestion_ServiceThrowsException() throws Exception {
+        when(questionService.getRandomQuestion()).thenThrow(new QuestionNotFoundException("Service failure"));
+
+        mockMvc.perform(get("/api/topics/random"))
+                .andExpect(status().isNotFound());
+    }
+
 }
 

@@ -68,4 +68,12 @@ public class UserServiceImpl implements UserDetailsService,UserService {
                 .orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден: " + userName));
     }
 
+    public boolean existsByUsername(String username) {
+        return userRepository.existsByUsername(username);
+    }
+
+    public boolean existsByEmail(String email) {
+        return userRepository.existsByEmail(email);
+    }
+
 }

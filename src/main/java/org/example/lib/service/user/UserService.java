@@ -20,4 +20,7 @@ public interface UserService {
 
     void updateProfile(String username, String firstName, String lastName, String password);
 
+    boolean existsByUsername(String username);
+
+    boolean existsByEmail(String email);
 }

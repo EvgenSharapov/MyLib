@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
 import java.util.Optional;
 
 @Controller
@@ -30,11 +31,40 @@ public class UserControllerImpl implements UserController{
         return "user/sing-up";
     }
 
+//    @PostMapping("/register")
+//    public String saveUser(@ModelAttribute("user") User user) {
+//        userService.save(user);
+//        return "index";
+//    }
+
     @PostMapping("/register")
-    public String saveUser(@ModelAttribute("user") User user) {
+    public ResponseEntity<?> registerUser(@ModelAttribute("user") User user) {
+        // Проверяем, существует ли пользователь с таким логином
+        if (userService.existsByUsername(user.getUsername())) {
+            return ResponseEntity.badRequest().body(Map.of(
+                    "success", false,
+                    "message", "Пользователь с таким логином уже существует"
+            ));
+        }
+
+        // Проверяем, существует ли пользователь с такой почтой
+        if (userService.existsByEmail(user.getEmail())) {
+            return ResponseEntity.badRequest().body(Map.of(
+                    "success", false,
+                    "message", "Пользователь с такой почтой уже зарегистрирован"
+            ));
+        }
+
+        // Если пользователь не существует, создаем его
         userService.save(user);
-        return "index";
+        return ResponseEntity.ok(Map.of(
+                "success", true,
+                "message", "Пользователь успешно зарегистрирован"
+        ));
     }
+
+
+
 
     @GetMapping("/login")
     public String loginForm(User user, Model model) {

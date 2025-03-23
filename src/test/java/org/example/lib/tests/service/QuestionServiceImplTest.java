@@ -2,6 +2,7 @@ package org.example.lib.tests.service;
 
 import org.example.lib.dto.QuestionRequestDTO;
 import org.example.lib.mapper.QuestionMapper;
+import org.example.lib.model.Difficulty;
 import org.example.lib.model.Question;
 import org.example.lib.model.TopicArea;
 import org.example.lib.repository.QuestionRepository;
@@ -111,7 +112,7 @@ public class QuestionServiceImplTest {
         question.setId(null);
         Question savedQuestion = createQuestion();
         QuestionRequestDTO dto = new QuestionRequestDTO(savedQuestion.getId(), "Content",
-                TopicArea.TEST, "Table of Content");
+                TopicArea.TEST, "Table of Content", Difficulty.EASY);
 
         when(questionRepo.save(question)).thenReturn(savedQuestion);
         when(questionMapper.mapToQuestionRequestDTO(any(Question.class))).thenReturn(dto);
