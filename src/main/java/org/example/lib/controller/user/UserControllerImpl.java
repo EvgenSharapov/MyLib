@@ -58,8 +58,8 @@ public class UserControllerImpl implements UserController{
 //    }
 
 
-    @Override
-    public ResponseEntity<?> registerUser(@Valid @ModelAttribute("user") User user) {
+    @PostMapping("/register")
+    public ResponseEntity<?> registerUser(@Valid @RequestBody User user) {
         try {
             userService.save(user);
             return ResponseEntity.ok(Map.of(

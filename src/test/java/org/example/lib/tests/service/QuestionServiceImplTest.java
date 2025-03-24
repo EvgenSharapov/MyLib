@@ -1,5 +1,8 @@
 package org.example.lib.tests.service;
 
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.example.lib.aspect.RetryAspect;
+import org.example.lib.config.TestConfig;
 import org.example.lib.dto.QuestionRequestDTO;
 import org.example.lib.mapper.QuestionMapper;
 import org.example.lib.model.Difficulty;
@@ -14,6 +17,15 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.example.lib.handler.exeptions.question.QuestionNotFoundException;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.retry.annotation.EnableRetry;
+import org.springframework.retry.annotation.Retryable;
+import org.springframework.retry.backoff.FixedBackOffPolicy;
+import org.springframework.retry.policy.SimpleRetryPolicy;
+import org.springframework.retry.support.RetryTemplate;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.lang.reflect.Field;
 import java.util.*;
@@ -23,7 +35,10 @@ import static org.example.lib.tests.utils.CreateEntityForTests.createQuestionReq
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+//@SpringBootTest
 @ExtendWith(MockitoExtension.class)
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = TestConfig.class)
 public class QuestionServiceImplTest {
 
     @Mock
@@ -42,11 +57,11 @@ public class QuestionServiceImplTest {
         questionCache = new HashMap<>();
         questionService = new QuestionServiceImpl(questionRepo, questionMapper);
 
-        // Используем рефлексию, чтобы установить questionCache в сервисе
         Field cacheField = QuestionServiceImpl.class.getDeclaredField("questionCache");
         cacheField.setAccessible(true);
         cacheField.set(questionService, questionCache);
     }
+
 
     @Test
     void findById_ShouldReturnQuestionFromCache() {
@@ -59,6 +74,46 @@ public class QuestionServiceImplTest {
         assertNotNull(result);
         assertEquals(cachedQuestion, result);
         verify(questionRepo, never()).findById(id);
+    }
+
+    @Test
+    void findById_ShouldReturnQuestionAndCacheIt() {
+        UUID questionId = UUID.randomUUID();
+        Question question = createQuestion();
+        question.setId(questionId);
+        QuestionRequestDTO expectedDto = createQuestionRequestDTO();
+
+        when(questionRepo.findById(questionId)).thenReturn(Optional.of(question));
+        when(questionMapper.mapToQuestionRequestDTO(question)).thenReturn(expectedDto);
+
+        QuestionRequestDTO result = questionService.findById(questionId);
+        QuestionRequestDTO cachedResult = questionService.findById(questionId);
+
+        assertEquals(expectedDto, result);
+        assertEquals(expectedDto, cachedResult);
+        verify(questionRepo, times(1)).findById(questionId);
+        verify(questionMapper, times(1)).mapToQuestionRequestDTO(question);
+    }
+
+    @Test
+    void findById_ShouldThrowQuestionNotFoundException() {
+        UUID nonExistentId = UUID.randomUUID();
+        when(questionRepo.findById(nonExistentId)).thenReturn(Optional.empty());
+
+        assertThrows(QuestionNotFoundException.class, () -> questionService.findById(nonExistentId));
+        verify(questionRepo, times(1)).findById(nonExistentId);
+    }
+
+    @Test
+    void findById_ShouldReturnCachedValue() {
+        UUID questionId = UUID.randomUUID();
+        QuestionRequestDTO cachedDto = createQuestionRequestDTO();
+        questionCache.put(questionId, cachedDto);
+
+        QuestionRequestDTO result = questionService.findById(questionId);
+
+        assertEquals(cachedDto, result);
+        verify(questionRepo, never()).findById(any());
     }
 
     @Test
@@ -153,7 +208,5 @@ public class QuestionServiceImplTest {
 
         assertThrows(QuestionNotFoundException.class, () -> questionService.getRandomQuestion());
     }
-
-
 
 }

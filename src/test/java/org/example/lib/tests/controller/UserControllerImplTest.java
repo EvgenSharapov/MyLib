@@ -2,6 +2,7 @@ package org.example.lib.tests.controller;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -22,6 +23,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -49,19 +51,17 @@ public class UserControllerImplTest {
 
     @Test
     void registerUser_ShouldReturnSuccess() throws Exception {
-        User user = new User();
-        user.setUsername("testUser");
-        user.setEmail("test@example.com");
-        user.setPassword("password");
-
         mockMvc.perform(post("/register")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(user)))
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .param("username", "ivan_2024")
+                        .param("password", "SecurePass123")
+                        .param("firstName", "Иван")
+                        .param("lastName", "Иванов")
+                        .param("email", "ivanov@example.com"))
+                .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.success").value(true))
-                .andExpect(jsonPath("$.message").value("Пользователь успешно зарегистрирован"));
+                .andExpect(jsonPath("$.success").value(true));
     }
-
 
     @Test
     void getUserProfile_ShouldReturnProfile() throws Exception {

@@ -50,7 +50,10 @@ public class QuestionServiceImpl implements QuestionService{
 
 
     @Override
-    @Retryable(maxAttempts = 5, backoff = @Backoff(delay = 1000))
+    @Retryable(
+            maxAttempts = 5,
+            backoff = @Backoff(delay = 1000),
+            retryFor = RuntimeException.class)
     public QuestionRequestDTO findById(UUID id) {
         if (questionCache.containsKey(id)) {
             return questionCache.get(id);
