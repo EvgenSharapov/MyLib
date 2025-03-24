@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -23,6 +24,7 @@ public class UserServiceImpl implements UserDetailsService,UserService {
 
 
     @Override
+    @Transactional
     public User save(User user) {
         if (existsByUsername(user.getUsername())) {
             throw new IllegalArgumentException("Пользователь с таким логином уже существует");
@@ -53,6 +55,7 @@ public class UserServiceImpl implements UserDetailsService,UserService {
     }
 
     @Override
+    @Transactional
     public void updateProfile(String userName, String firstName, String lastName, String password) {
         User user = userRepository.findByUsername(userName)
                 .orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден: " + userName));
