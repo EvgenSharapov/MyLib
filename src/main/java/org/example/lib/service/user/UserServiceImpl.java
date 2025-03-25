@@ -38,17 +38,6 @@ public class UserServiceImpl implements UserDetailsService,UserService {
         return userRepository.save(user);
     }
 
-//    @Override
-//    public User findById(UUID id) {
-//        return userRepository.findById(id)
-//                .orElseThrow(() -> new UserNotFoundException(id));
-//    }
-//
-//    @Override
-//    public void delete(UUID id) {
-//        userRepository.deleteById(id);
-//    }
-
     @Override
     public Optional<User> findUserByName(String username) {
         return userRepository.findByUsername(username);

@@ -17,7 +17,7 @@ public class LanguageController {
         Locale locale = new Locale(language);
 
         request.getSession().setAttribute(SessionLocaleResolver.LOCALE_SESSION_ATTRIBUTE_NAME, locale);
-        return "redirect:" + request.getHeader("Referer"); // Возвращаем на предыдущую страницу
+        return "redirect:" + request.getHeader("Referer");
     }
 
 
