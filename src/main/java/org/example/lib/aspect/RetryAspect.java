@@ -26,12 +26,10 @@ public class RetryAspect {
             } catch (Throwable e) {
                 lastException = e;
 
-                // Проверяем, нужно ли делать повторную попытку
                 if (!shouldRetry(e, retryFor, noRetryFor) || attempt == maxAttempts) {
                     throw e;
                 }
 
-                // Рассчитываем время задержки
                 long delay = calculateBackoff(backoff, attempt);
                 if (delay > 0) {
                     try {
@@ -56,7 +54,6 @@ public class RetryAspect {
             }
         }
 
-        // Если retryFor не пуст, проверяем соответствие
         if (retryFor.length > 0) {
             for (Class<? extends Throwable> retry : retryFor) {
                 if (retry.isInstance(e)) {
@@ -66,7 +63,6 @@ public class RetryAspect {
             return false;
         }
 
-        // По умолчанию повторяем для всех RuntimeException
         return e instanceof RuntimeException;
     }
 

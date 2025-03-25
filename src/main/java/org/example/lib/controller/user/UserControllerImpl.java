@@ -32,34 +32,8 @@ public class UserControllerImpl implements UserController{
         return "user/sing-up";
     }
 
-//    @Override
-//    public ResponseEntity<?> registerUser(@ModelAttribute("user") User user) {
-//        // Проверяем, существует ли пользователь с таким логином
-//        if (userService.existsByUsername(user.getUsername())) {
-//            return ResponseEntity.badRequest().body(Map.of(
-//                    "success", false,
-//                    "message", "Пользователь с таким логином уже существует"
-//            ));
-//        }
-//
-//        // Проверяем, существует ли пользователь с такой почтой
-//        if (userService.existsByEmail(user.getEmail())) {
-//            return ResponseEntity.badRequest().body(Map.of(
-//                    "success", false,
-//                    "message", "Пользователь с такой почтой уже зарегистрирован"
-//            ));
-//        }
-//
-//        userService.save(user);
-//        return ResponseEntity.ok(Map.of(
-//                "success", true,
-//                "message", "Пользователь успешно зарегистрирован"
-//        ));
-//    }
-
-
-    @PostMapping("/register")
-    public ResponseEntity<?> registerUser(@Valid @RequestBody User user) {
+    @Override
+    public ResponseEntity<?> registerUser(User user) {
         try {
             userService.save(user);
             return ResponseEntity.ok(Map.of(
@@ -101,8 +75,7 @@ public class UserControllerImpl implements UserController{
     }
 
     @Override
-    @PutMapping("/update")
-    public ResponseEntity<String> updateProfile(@Valid @RequestBody UserUpdateRequest request, Authentication authentication) {
+    public ResponseEntity<String> updateProfile(UserUpdateRequest request, Authentication authentication) {
         String username = authentication.getName();
         userService.updateProfile(username, request.getFirstName(), request.getLastName(), request.getPassword());
         return ResponseEntity.ok()

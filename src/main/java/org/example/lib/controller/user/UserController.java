@@ -1,6 +1,7 @@
 package org.example.lib.controller.user;
 
 
+import jakarta.validation.Valid;
 import org.example.lib.dto.UserProfileDto;
 import org.example.lib.dto.UserUpdateRequest;
 import org.example.lib.model.User;
@@ -25,8 +26,8 @@ public interface UserController {
     ResponseEntity<UserProfileDto> getUserProfile(Authentication authentication);
 
     @PutMapping("/update")
-    ResponseEntity<String> updateProfile(@RequestBody UserUpdateRequest request, Authentication authentication);
+    ResponseEntity<String> updateProfile(@Valid @RequestBody UserUpdateRequest request, Authentication authentication);
 
     @PostMapping("/register")
-    ResponseEntity<?> registerUser(@ModelAttribute("user") User user);
+    ResponseEntity<?> registerUser(@Valid @ModelAttribute("user") User user);
 }
