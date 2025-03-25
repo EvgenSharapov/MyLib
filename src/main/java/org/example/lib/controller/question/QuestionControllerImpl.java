@@ -72,16 +72,7 @@ private final QuestionService questionService;
         return questions;
     }
 
-//    @Override
-//    public QuestionRequestDTO getRandomQuestion() {
-//        QuestionRequestDTO question = questionService.getRandomQuestion();
-//        if(question == null){
-//            throw new QuestionNotFoundException("No questions found");
-//        }
-//        return question;
-//    }
-
-    @GetMapping("/random")
+    @Override
     public QuestionRequestDTO getRandomQuestion(@RequestParam(required = false) String difficulty) {
         if (difficulty != null) {
             return questionService.findRandomByDifficulty(difficulty);
@@ -112,22 +103,5 @@ private final QuestionService questionService;
                 .map(Enum::name)
                 .toList();
     }
-
-
-    @ExceptionHandler(QuestionNotFoundException.class)
-    public ResponseEntity<ErrorResponses> handleQuestionNotFoundException(QuestionNotFoundException ex) {
-        ErrorResponses errorResponse = new ErrorResponses(ex.getMessage());
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
-    }
-
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<ErrorResponses> handleIllegalArgumentException(IllegalArgumentException ex) {
-        ErrorResponses errorResponse = new ErrorResponses(ex.getMessage());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
-    }
-
-
-
-
 
 }

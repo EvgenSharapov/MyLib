@@ -12,10 +12,9 @@ public enum TopicArea {
     TEST,
     STREAM,
     SQL,
-    SERVLET,
-    JMS,
     HIBERNATE,
     HTTP,
     ALGORITHMS,
-    ORM
+    ORM,
+    SYSTEM_DESIGN
 }

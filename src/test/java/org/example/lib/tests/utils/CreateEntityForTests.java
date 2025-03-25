@@ -1,6 +1,7 @@
 package org.example.lib.tests.utils;
 
 import org.example.lib.dto.QuestionRequestDTO;
+import org.example.lib.model.Difficulty;
 import org.example.lib.model.Question;
 import org.example.lib.model.TopicArea;
 
@@ -15,11 +16,12 @@ public class CreateEntityForTests {
         question.setContent("Content");
         question.setTableOfContent("Table of Content");
         question.setTopicArea(TopicArea.TEST);
+        question.setDifficulty(Difficulty.EASY);
         return question;
     }
 
     public static QuestionRequestDTO createQuestionRequestDTO(){
         UUID id = UUID.randomUUID();
-        return new QuestionRequestDTO(id, "Content", TopicArea.TEST, "Table of Content");
+        return new QuestionRequestDTO(id, "Content", TopicArea.TEST, "Table of Content", Difficulty.EASY);
     }
 }

@@ -19,8 +19,8 @@ public class LanguageConfig implements WebMvcConfigurer {
     @Bean
     public LocaleResolver localeResolver() {
         SessionLocaleResolver resolver = new SessionLocaleResolver();
-//        resolver.setDefaultLocale(new Locale("ru")); // Язык по умолчанию
-        resolver.setDefaultLocale(Locale.US);
+        resolver.setDefaultLocale(new Locale("ru"));
+//        resolver.setDefaultLocale(Locale.US);
         resolver.setLocaleAttributeName("current.locale");
         resolver.setTimeZoneAttributeName("current.timezone");
         return resolver;
@@ -29,7 +29,7 @@ public class LanguageConfig implements WebMvcConfigurer {
     @Bean
     public LocaleChangeInterceptor localeChangeInterceptor() {
         LocaleChangeInterceptor localeChangeInterceptor = new LocaleChangeInterceptor();
-        localeChangeInterceptor.setParamName("language"); // Параметр для смены языка
+        localeChangeInterceptor.setParamName("language");
         return localeChangeInterceptor;
     }
 
@@ -41,9 +41,9 @@ public class LanguageConfig implements WebMvcConfigurer {
     @Bean
     public MessageSource messageSource() {
         ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
-        messageSource.setBasename("classpath:messages"); // Указываем базовое имя файлов
-        messageSource.setDefaultEncoding("UTF-8"); // Кодировка файлов
-        messageSource.setCacheSeconds(3600); // Кэширование на 1 час
+        messageSource.setBasename("classpath:messages");
+        messageSource.setDefaultEncoding("UTF-8");
+        messageSource.setCacheSeconds(3600);
         return messageSource;
     }
 }

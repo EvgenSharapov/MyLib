@@ -1,18 +1,21 @@
 package org.example.lib.controller.question;
 
 
+import jakarta.validation.Valid;
 import org.example.lib.dto.QuestionRequestDTO;
 import org.example.lib.model.Question;
 import org.example.lib.model.TopicArea;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/topics")
+@Validated
 public interface QuestionController {
 
 
@@ -24,7 +27,7 @@ public interface QuestionController {
             @PathVariable UUID id);
 
     @PostMapping
-    QuestionRequestDTO createQuestion(
+    QuestionRequestDTO createQuestion(@Valid
             @RequestBody Question question);
 
     @DeleteMapping("/{id}")
@@ -32,17 +35,14 @@ public interface QuestionController {
     void deleteQuestion(
             @PathVariable UUID id);
     @PutMapping("/{id}")
-    QuestionRequestDTO saveQuestion(@RequestBody Question question,
+    QuestionRequestDTO saveQuestion(@Valid @RequestBody Question question,
             @PathVariable UUID id);
 
     @GetMapping("/titles")
     List<String> getAllQuestionThemes();
 
     @GetMapping("/by-area/{topicArea}")
-    List<QuestionRequestDTO> getQuestionsByArea(@PathVariable TopicArea topicArea);
-
-//    @GetMapping("/random")
-//    QuestionRequestDTO getRandomQuestion();
+    List<QuestionRequestDTO> getQuestionsByArea(@Valid @PathVariable TopicArea topicArea);
 
     @GetMapping("/search/theme")
     List<QuestionRequestDTO> searchQuestionsByTheme(@RequestParam String query);
@@ -54,5 +54,5 @@ public interface QuestionController {
     List<String> getAllTopicAreas();
 
     @GetMapping("/random")
-    QuestionRequestDTO getRandomQuestion(@RequestParam(required = false) String difficulty);
+    QuestionRequestDTO getRandomQuestion(@Valid @RequestParam(required = false) String difficulty);
 }

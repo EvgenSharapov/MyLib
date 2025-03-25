@@ -11,5 +11,4 @@ public class UserUpdateRequest {
     private String lastName;
     private String password;
 
-    // Геттеры и сеттеры
 }

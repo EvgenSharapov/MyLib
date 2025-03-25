@@ -33,7 +33,11 @@ public class QuestionServiceImpl implements QuestionService{
     @PostConstruct
     public void init() {
         System.out.println("Initializing QuestionService...");
-        questionCache = new ConcurrentHashMap<>();
+        questionCache = new HashMap<>();
+        loadAllQuestionsIntoCache();
+    }
+
+    private void loadAllQuestionsIntoCache() {
         List<Question> questions = questionRepo.findAll();
         questions.forEach(question ->
                 questionCache.put(question.getId(), questionMapper.mapToQuestionRequestDTO(question))
@@ -48,9 +52,11 @@ public class QuestionServiceImpl implements QuestionService{
         System.out.println("Cache cleared.");
     }
 
-
     @Override
-    @Retryable(maxAttempts = 5, backoff = @Backoff(delay = 1000))
+    @Retryable(
+            maxAttempts = 5,
+            backoff = @Backoff(delay = 1000),
+            retryFor = RuntimeException.class)
     public QuestionRequestDTO findById(UUID id) {
         if (questionCache.containsKey(id)) {
             return questionCache.get(id);
@@ -121,16 +127,14 @@ public class QuestionServiceImpl implements QuestionService{
             throw new QuestionNotFoundException("Нет доступных тем");
         }
 
-        // Фильтруем вопросы по уровню сложности
         List<QuestionRequestDTO> filteredQuestions = questionCache.values().stream()
                 .filter(question -> difficulty == null || difficulty.equalsIgnoreCase(String.valueOf(question.difficulty())))
-                .collect(Collectors.toList());
+                .toList();
 
         if (filteredQuestions.isEmpty()) {
             throw new QuestionNotFoundException("Нет доступных вопросов для выбранного уровня сложности: " + difficulty);
         }
 
-        // Возвращаем случайный вопрос из отфильтрованного списка
         return filteredQuestions.get(ThreadLocalRandom.current().nextInt(filteredQuestions.size()));
     }
 
