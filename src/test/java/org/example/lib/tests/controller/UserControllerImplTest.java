@@ -25,7 +25,14 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 
+import org.springframework.http.ResponseEntity;
+import java.util.Map;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
@@ -61,6 +68,72 @@ public class UserControllerImplTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true));
+    }
+
+    @Test
+    void registerUser_ReturnsSuccessResponse_WhenUserValid() {
+        User user = new User();
+        user.setUsername("testUser");
+        user.setFirstName("John");
+        user.setLastName("Doe");
+        user.setEmail("john.doe@example.com");
+
+        when(userService.save(user)).thenReturn(user);
+
+        ResponseEntity<?> response = userController.registerUser(user);
+
+        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(true, ((Map<?, ?>) Objects.requireNonNull(response.getBody())).get("success"));
+        assertEquals("Пользователь успешно зарегистрирован", ((Map<?, ?>) response.getBody()).get("message"));
+        verify(userService, times(1)).save(user);
+    }
+
+    @Test
+    void registerUser_ReturnsErrorResponse_WhenUserServiceThrowsException() {
+        User user = new User();
+        user.setUsername("testUser");
+        user.setFirstName("John");
+        user.setLastName("Doe");
+        user.setEmail("john.doe@example.com");
+        user.setPassword("333");
+
+        String errorMessage = "Пароль слишком короткий";
+        doThrow(new IllegalArgumentException(errorMessage)).when(userService).save(user);
+
+        ResponseEntity<?> response = userController.registerUser(user);
+
+        assertEquals(400, response.getStatusCodeValue());
+        assertNotEquals(true, ((Map<?, ?>) Objects.requireNonNull(response.getBody())).get("success"));
+        assertEquals(errorMessage, ((Map<?, ?>) response.getBody()).get("message"));
+        verify(userService, times(1)).save(user);
+    }
+
+    @Test
+    void registerUser_ReturnsErrorResponse_WhenUserIsNull() {
+        doThrow(new IllegalArgumentException("Пользователь не может быть null"))
+                .when(userService).save(null);
+
+        ResponseEntity<?> response = userController.registerUser(null);
+
+        assertEquals(400, response.getStatusCodeValue());
+        assertEquals("Пользователь не может быть null", ((Map<?, ?>) Objects.requireNonNull(response.getBody())).get("message"));
+    }
+
+    @Test
+    void registerUser_ResponseContainsRequiredFields() {
+        User user = new User();
+        user.setUsername("testUser");
+        user.setFirstName("John");
+        user.setLastName("Doe");
+        user.setEmail("john.doe@example.com");
+
+        when(userService.save(user)).thenReturn(user);
+
+        ResponseEntity<?> response = userController.registerUser(user);
+        Map<?, ?> responseBody = (Map<?, ?>) response.getBody();
+
+        assertTrue(responseBody.containsKey("success"));
+        assertTrue(responseBody.containsKey("message"));
     }
 
     @Test

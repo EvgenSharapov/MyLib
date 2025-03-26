@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.lib.handler.exeptions.user.UserNotFoundException;
 import org.example.lib.model.User;
 import org.example.lib.repository.UserRepository;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -37,17 +38,6 @@ public class UserServiceImpl implements UserDetailsService,UserService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
-
-//    @Override
-//    public User findById(UUID id) {
-//        return userRepository.findById(id)
-//                .orElseThrow(() -> new UserNotFoundException(id));
-//    }
-//
-//    @Override
-//    public void delete(UUID id) {
-//        userRepository.deleteById(id);
-//    }
 
     @Override
     public Optional<User> findUserByName(String username) {
@@ -83,5 +73,6 @@ public class UserServiceImpl implements UserDetailsService,UserService {
     public boolean existsByEmail(String email) {
         return userRepository.existsByEmail(email);
     }
+
 
 }

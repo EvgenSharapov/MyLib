@@ -1,8 +1,5 @@
 package org.example.lib.tests.service;
 
-import org.aspectj.lang.ProceedingJoinPoint;
-import org.example.lib.aspect.RetryAspect;
-import org.example.lib.config.TestConfig;
 import org.example.lib.dto.QuestionRequestDTO;
 import org.example.lib.mapper.QuestionMapper;
 import org.example.lib.model.Difficulty;
@@ -17,14 +14,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.example.lib.handler.exeptions.question.QuestionNotFoundException;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.retry.annotation.EnableRetry;
-import org.springframework.retry.annotation.Retryable;
-import org.springframework.retry.backoff.FixedBackOffPolicy;
-import org.springframework.retry.policy.SimpleRetryPolicy;
-import org.springframework.retry.support.RetryTemplate;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.lang.reflect.Field;
@@ -35,10 +24,9 @@ import static org.example.lib.tests.utils.CreateEntityForTests.createQuestionReq
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-//@SpringBootTest
+
 @ExtendWith(MockitoExtension.class)
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = TestConfig.class)
 public class QuestionServiceImplTest {
 
     @Mock

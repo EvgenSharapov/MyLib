@@ -23,25 +23,24 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers("/login", "/sing-up", "/register", "/css/**", "/js/**", "/images/**").permitAll() // Разрешаем доступ к этим страницам без аутентификации
-                        .requestMatchers("/", "/index","/change-language","/update","/api/topics/**").authenticated() // Требуем авторизации для главной страницы
-                        .anyRequest().authenticated() // Все остальные запросы требуют аутентификации
+                        .requestMatchers("/login", "/sing-up", "/register", "/css/**", "/js/**", "/images/**").permitAll()
+                        .requestMatchers("/", "/index","/change-language","/update","/api/topics/**").authenticated()
+                        .anyRequest().authenticated()
                 )
                 .formLogin((form) -> form
-                        .loginPage("/login") // Страница логина
-                        .defaultSuccessUrl("/", true) // Перенаправление на / после успешного входа
-                        .permitAll() // Разрешаем доступ к странице логина всем
+                        .loginPage("/login")
+                        .defaultSuccessUrl("/", true)
+                        .permitAll()
                 )
                 .logout((logout) -> logout
-                        .logoutUrl("/logout") // URL для выхода
-                        .logoutSuccessUrl("/login") // Перенаправление на страницу логина после выхода
-                        .invalidateHttpSession(true) // Уничтожение сессии
-                        .deleteCookies("JSESSIONID") // Удаление cookies
-                        .permitAll() // Разрешаем доступ к logout всем
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/login")
+                        .invalidateHttpSession(true)
+                        .deleteCookies("JSESSIONID")
+                        .permitAll()
                 )
                 .exceptionHandling((exception) -> exception
                         .authenticationEntryPoint((request, response, authException) -> {
-                            // Перенаправление на /login, если пользователь не авторизован
                             response.sendRedirect("/login");
                         })
                 );
@@ -54,8 +53,8 @@ public class SecurityConfig {
     @Bean
     public AuthenticationProvider authenticationProvider(PasswordEncoder passwordEncoder) {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setPasswordEncoder(passwordEncoder); // Устанавливаем кодировщик паролей
-        authProvider.setUserDetailsService(userDetailsService); // Устанавливаем UserDetailsService
+        authProvider.setPasswordEncoder(passwordEncoder);
+        authProvider.setUserDetailsService(userDetailsService);
         return authProvider;
     }
 

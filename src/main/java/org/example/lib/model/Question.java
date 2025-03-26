@@ -21,7 +21,6 @@ public class Question {
     private UUID id;
 
     @NotBlank(message = "Поле не должно быть пустым")
-    @Size(max = 50, message = "Максимальный размер поля 50 символов")
     @Column(name = "themes",length = 50)
     private String tableOfContent;
 
