@@ -53,34 +53,19 @@ pipeline {
             }
         }
 
-        stage('5. Test Access') {
+        stage('5. Deploy to K8s') {
             steps {
-                sh """
-                    echo "Testing application access..."
-
-                    kubectl port-forward svc/myapp ${env.APP_PORT}:${env.APP_PORT} &
-                    PF_PID=\$!
-
-                    sleep 5
-
-                    echo "Testing http://localhost:${env.APP_PORT}..."
-
-                    if curl -f http://localhost:${env.APP_PORT}/actuator/health; then
-                        echo "/actuator/health available"
-                    elif curl -f http://localhost:${env.APP_PORT}/health; then
-                        echo "/health available"
-                    elif curl -f http://localhost:${env.APP_PORT}/; then
-                        echo "Root URL available"
-                    else
-                        echo "Could not connect to app"
-                        echo "Check logs: kubectl logs deployment/myapp"
-                    fi
-
-                    kill \$PF_PID 2>/dev/null || true
-                """
+                script {
+                    sh """
+                        helm upgrade --install ${APP_NAME} ./helm/myapp \
+                            --set image.repository=localhost:5000/myapp \
+                            --set image.tag=latest \
+                            --set image.pullPolicy=IfNotPresent \
+                            --namespace default
+                    """
+                }
             }
         }
-    }
 
     post {
         always {
