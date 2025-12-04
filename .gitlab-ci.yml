@@ -161,3 +161,4 @@ test-pipeline:
   script: echo "Single line script"
   tags:
     - k8s
+    -
