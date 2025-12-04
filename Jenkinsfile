@@ -37,40 +37,18 @@ pipeline {
         stage('4. Deploy to K8s') {
             steps {
                 sh """
-                    cat <<EOF | kubectl apply -f -
-        apiVersion: apps/v1
-        kind: Deployment
-        metadata:
-          name: myapp
-        spec:
-          replicas: 1
-          selector:
-            matchLabels:
-              app: myapp
-          template:
-            metadata:
-              labels:
-                app: myapp
-            spec:
-              containers:
-              - name: myapp
-                image: myapp:latest
-                imagePullPolicy: IfNotPresent
-                ports:
-                - containerPort: 8080
-        ---
-        apiVersion: v1
-        kind: Service
-        metadata:
-          name: myapp
-        spec:
-          selector:
-            app: myapp
-          ports:
-          - port: ${env.APP_PORT}
-            targetPort: 8080
-          type: ClusterIP
-        EOF
+                    kubectl run myapp --image=myapp:latest --image-pull-policy=Never --port=8080
+                    kubectl expose pod myapp --port=${env.APP_PORT} --target-port=8080 --type=ClusterIP
+
+                    echo "Waiting 120 seconds for Tomcat..."
+                    sleep 120
+
+                    echo "Status:"
+                    kubectl get pods
+                    kubectl get svc
+
+                    echo ""
+                    echo "To access: kubectl port-forward pod/myapp ${env.APP_PORT}:${env.APP_PORT}"
                 """
             }
         }
