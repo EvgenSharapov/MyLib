@@ -24,88 +24,53 @@ pipeline {
 
         stage('3. Build Docker') {
             steps {
-                sh """
-                    WAR_FILE=\$(ls target/*.war | head -1)
-                    echo "WAR file found: \$WAR_FILE"
-
-                    echo "FROM tomcat:9-jre11" > Dockerfile
-                    echo "COPY target/\${WAR_FILE##*/} /usr/local/tomcat/webapps/ROOT.war" >> Dockerfile
-                    echo "EXPOSE 8080" >> Dockerfile
-                    echo 'CMD ["catalina.sh", "run"]' >> Dockerfile
-
-                    echo "Dockerfile created:"
-                    cat Dockerfile
-
+                sh '''
                     docker build -t myapp:latest .
-                    echo "Docker image built"
-                    docker images myapp
-                """
+
+                    docker tag myapp:latest localhost:5000/myapp:latest
+
+                    docker push localhost:5000/myapp:latest 2>/dev/null || echo "Local registry not running, using local image"
+                '''
             }
         }
 
         stage('4. Deploy to K8s') {
             steps {
                 sh """
-                    kubectl delete deployment myapp 2>/dev/null || true
-                    kubectl delete service myapp 2>/dev/null || true
-
                     cat <<EOF | kubectl apply -f -
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: myapp
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: myapp
-  template:
-    metadata:
-      labels:
-        app: myapp
-    spec:
-      containers:
-      - name: myapp
-        image: myapp:latest
-        imagePullPolicy: IfNotPresent
-        ports:
-        - containerPort: 8080
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: myapp
-spec:
-  selector:
-    app: myapp
-  ports:
-  - name: http
-    port: ${env.APP_PORT}
-    targetPort: 8080
-    protocol: TCP
-  type: ClusterIP
-EOF
-
-                    echo "Waiting for deployment..."
-                    sleep 20
-
-                    echo "Deployment status:"
-                    kubectl get pods,svc,deploy -l app=myapp
-
-                    POD_NAME=\$(kubectl get pods -l app=myapp -o jsonpath='{.items[0].metadata.name}' 2>/dev/null || echo "")
-                    if [ -n "\$POD_NAME" ]; then
-                        echo "Pod logs:"
-                        kubectl logs \$POD_NAME --tail=20
-                    fi
-
-                    echo ""
-                    echo "DEPLOYMENT SUCCESSFUL!"
-                    echo ""
-                    echo "Jenkins: http://192.168.1.249:8080"
-                    echo "Your app: http://localhost:${env.APP_PORT}"
-                    echo ""
-                    echo "To access: kubectl port-forward svc/myapp ${env.APP_PORT}:${env.APP_PORT}"
-                    echo "Then open: http://localhost:${env.APP_PORT}"
+        apiVersion: apps/v1
+        kind: Deployment
+        metadata:
+          name: myapp
+        spec:
+          replicas: 1
+          selector:
+            matchLabels:
+              app: myapp
+          template:
+            metadata:
+              labels:
+                app: myapp
+            spec:
+              containers:
+              - name: myapp
+                image: myapp:latest
+                imagePullPolicy: IfNotPresent
+                ports:
+                - containerPort: 8080
+        ---
+        apiVersion: v1
+        kind: Service
+        metadata:
+          name: myapp
+        spec:
+          selector:
+            app: myapp
+          ports:
+          - port: ${env.APP_PORT}
+            targetPort: 8080
+          type: ClusterIP
+        EOF
                 """
             }
         }
