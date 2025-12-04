@@ -24,6 +24,8 @@ pipeline {
 
         stage('3. Build Docker') {
             steps {
+                sh """
+                    # Создаем Dockerfile
                     echo "FROM tomcat:9-jre11" > Dockerfile
                     echo "COPY target/*.war /usr/local/tomcat/webapps/ROOT.war" >> Dockerfile
                     echo "EXPOSE 8080" >> Dockerfile
@@ -35,7 +37,7 @@ pipeline {
                     docker build -t myapp:latest .
                     echo "Docker image built"
                     docker images myapp
-                '''
+                """
             }
         }
 
