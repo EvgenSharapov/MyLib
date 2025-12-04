@@ -24,17 +24,16 @@ pipeline {
 
         stage('3. Build Docker') {
             steps {
-                sh '''
-                    cat > Dockerfile << EOF
-FROM tomcat:9-jre11
-COPY target/*.war /usr/local/tomcat/webapps/ROOT.war
-RUN sed -i 's/port="8080"/port="8080"/' /usr/local/tomcat/conf/server.xml
-EXPOSE 8080
-CMD ["catalina.sh", "run"]
-EOF
+                    echo "FROM tomcat:9-jre11" > Dockerfile
+                    echo "COPY target/*.war /usr/local/tomcat/webapps/ROOT.war" >> Dockerfile
+                    echo "EXPOSE 8080" >> Dockerfile
+                    echo 'CMD ["catalina.sh", "run"]' >> Dockerfile
+
+                    echo "Dockerfile created:"
+                    cat Dockerfile
 
                     docker build -t myapp:latest .
-                    echo "✅ Docker image built"
+                    echo "Docker image built"
                     docker images myapp
                 '''
             }
@@ -67,9 +66,6 @@ spec:
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8080
-        env:
-        - name: PORT
-          value: "8080"
 ---
 apiVersion: v1
 kind: Service
@@ -86,30 +82,26 @@ spec:
   type: ClusterIP
 EOF
 
-                    echo "⏳ Waiting for deployment..."
+                    echo "Waiting for deployment..."
                     sleep 20
 
-                    echo "📊 Deployment status:"
+                    echo "Deployment status:"
                     kubectl get pods,svc,deploy -l app=myapp
 
                     POD_NAME=\$(kubectl get pods -l app=myapp -o jsonpath='{.items[0].metadata.name}' 2>/dev/null || echo "")
                     if [ -n "\$POD_NAME" ]; then
-                        echo "📝 Pod logs:"
+                        echo "Pod logs:"
                         kubectl logs \$POD_NAME --tail=20
                     fi
 
                     echo ""
-                    echo "🎉 ДЕПЛОЙ УСПЕШЕН!"
+                    echo "DEPLOYMENT SUCCESSFUL!"
                     echo ""
-                    echo "Jenkins работает на: http://192.168.1.249:8080"
-                    echo "Твое приложение будет на: http://localhost:${env.APP_PORT}"
+                    echo "Jenkins: http://192.168.1.249:8080"
+                    echo "Your app: http://localhost:${env.APP_PORT}"
                     echo ""
-                    echo "Команды для доступа:"
-                    echo "1. Проброс портов: kubectl port-forward svc/myapp ${env.APP_PORT}:${env.APP_PORT}"
-                    echo "2. Проверить логи: kubectl logs -f deployment/myapp"
-                    echo "3. Удалить: kubectl delete deployment myapp"
-                    echo ""
-                    echo "После port-forward открой: http://localhost:${env.APP_PORT}"
+                    echo "To access: kubectl port-forward svc/myapp ${env.APP_PORT}:${env.APP_PORT}"
+                    echo "Then open: http://localhost:${env.APP_PORT}"
                 """
             }
         }
@@ -117,7 +109,7 @@ EOF
         stage('5. Test Access') {
             steps {
                 sh """
-                    echo "🔍 Testing application access..."
+                    echo "Testing application access..."
 
                     kubectl port-forward svc/myapp ${env.APP_PORT}:${env.APP_PORT} &
                     PF_PID=\$!
@@ -127,14 +119,14 @@ EOF
                     echo "Testing http://localhost:${env.APP_PORT}..."
 
                     if curl -f http://localhost:${env.APP_PORT}/actuator/health; then
-                        echo "✅ /actuator/health доступен"
+                        echo "/actuator/health available"
                     elif curl -f http://localhost:${env.APP_PORT}/health; then
-                        echo "✅ /health доступен"
+                        echo "/health available"
                     elif curl -f http://localhost:${env.APP_PORT}/; then
-                        echo "✅ Корневой URL доступен"
+                        echo "Root URL available"
                     else
-                        echo "⚠️  Не удалось подключиться к приложению"
-                        echo "Проверь логи: kubectl logs deployment/myapp"
+                        echo "Could not connect to app"
+                        echo "Check logs: kubectl logs deployment/myapp"
                     fi
 
                     kill \$PF_PID 2>/dev/null || true
@@ -145,21 +137,20 @@ EOF
 
     post {
         always {
-            echo '🧹 Cleaning up...'
+            echo 'Cleaning up...'
             sh '''
                 pkill -f "kubectl port-forward" 2>/dev/null || true
             '''
         }
         success {
-            echo '✅ ВСЁ ГОТОВО!'
-            echo "🌐 Jenkins: http://192.168.1.249:8080"
-            echo "🚀 Твое приложение: http://localhost:${env.APP_PORT} (после port-forward)"
+            echo 'SUCCESS!'
+            echo "Jenkins: http://192.168.1.249:8080"
+            echo "Your app: http://localhost:${env.APP_PORT} (after port-forward)"
             echo ""
-            echo "Запусти команду для доступа:"
-            echo "kubectl port-forward svc/myapp ${env.APP_PORT}:${env.APP_PORT}"
+            echo "Run: kubectl port-forward svc/myapp ${env.APP_PORT}:${env.APP_PORT}"
         }
         failure {
-            echo '❌ Что-то пошло не так'
+            echo 'FAILED'
         }
     }
 }
