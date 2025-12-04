@@ -25,11 +25,9 @@ pipeline {
         stage('3. Build Docker') {
             steps {
                 sh '''
-                    # Создаем Dockerfile для WAR (Tomcat)
                     cat > Dockerfile << EOF
 FROM tomcat:9-jre11
 COPY target/*.war /usr/local/tomcat/webapps/ROOT.war
-# Можно изменить порт Tomcat внутри контейнера
 RUN sed -i 's/port="8080"/port="8080"/' /usr/local/tomcat/conf/server.xml
 EXPOSE 8080
 CMD ["catalina.sh", "run"]
@@ -71,7 +69,6 @@ spec:
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8080
-        # Можно задать переменную окружения для порта
         env:
         - name: PORT
           value: "8080"
@@ -85,8 +82,8 @@ spec:
     app: myapp
   ports:
   - name: http
-    port: ${env.APP_PORT}      # Наружный порт - 8081
-    targetPort: 8080           # Внутренний порт контейнера
+    port: ${env.APP_PORT}
+    targetPort: 8080
     protocol: TCP
   type: ClusterIP
 EOF
@@ -124,7 +121,6 @@ EOF
                 sh """
                     echo "🔍 Testing application access..."
 
-                    # Запускаем port-forward в фоне
                     kubectl port-forward svc/myapp ${env.APP_PORT}:${env.APP_PORT} &
                     PF_PID=\$!
 
@@ -132,7 +128,6 @@ EOF
 
                     echo "Testing http://localhost:${env.APP_PORT}..."
 
-                    # Пробуем разные endpoints
                     if curl -f http://localhost:${env.APP_PORT}/actuator/health; then
                         echo "✅ /actuator/health доступен"
                     elif curl -f http://localhost:${env.APP_PORT}/health; then
@@ -144,7 +139,6 @@ EOF
                         echo "Проверь логи: kubectl logs deployment/myapp"
                     fi
 
-                    # Убиваем port-forward
                     kill \$PF_PID 2>/dev/null || true
                 """
             }
@@ -155,7 +149,6 @@ EOF
         always {
             echo '🧹 Cleaning up...'
             sh '''
-                # Убиваем все port-forward процессы
                 pkill -f "kubectl port-forward" 2>/dev/null || true
             '''
         }
