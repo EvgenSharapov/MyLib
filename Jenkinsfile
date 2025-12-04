@@ -1,16 +1,31 @@
 pipeline {
     agent any
+
     stages {
         stage('Checkout') {
             steps {
-                echo 'Repository URL: ' + env.GIT_URL
                 checkout scm
             }
         }
-        stage('Test') {
+
+        stage('Build Maven') {
             steps {
-                sh 'ls -la'
-                echo 'Hello from Jenkins!'
+                sh './mvnw clean package -DskipTests'
+                archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
+            }
+        }
+
+        stage('Build Docker') {
+            steps {
+                script {
+                    docker.build("mylib:latest")
+                }
+            }
+        }
+
+        stage('Test Docker') {
+            steps {
+                sh 'docker run --rm mylib:latest java -version || true'
             }
         }
     }
