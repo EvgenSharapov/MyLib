@@ -10,7 +10,7 @@ pipeline {
 
         stage('Build Maven') {
             steps {
-                sh './mvnw clean package -DskipTests'
+                sh 'mvn clean package -DskipTests'
                 archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
             }
         }
@@ -20,12 +20,6 @@ pipeline {
                 script {
                     docker.build("mylib:latest")
                 }
-            }
-        }
-
-        stage('Test Docker') {
-            steps {
-                sh 'docker run --rm mylib:latest java -version || true'
             }
         }
     }
