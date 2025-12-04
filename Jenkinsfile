@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        APP_PORT = "8081"  # Используем другой порт
+        APP_PORT = "8081"
     }
 
     stages {
@@ -43,11 +43,9 @@ EOF
         stage('4. Deploy to K8s') {
             steps {
                 sh """
-                    # Удаляем старое если есть
                     kubectl delete deployment myapp 2>/dev/null || true
                     kubectl delete service myapp 2>/dev/null || true
 
-                    # Создаем новое с портом ${env.APP_PORT}
                     cat <<EOF | kubectl apply -f -
 apiVersion: apps/v1
 kind: Deployment
