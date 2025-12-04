@@ -27,7 +27,7 @@ pipeline {
                 sh """
                     WAR_FILE=\$(ls target/*.war | head -1)
                     echo "WAR file found: \$WAR_FILE"
-                    
+
                     echo "FROM tomcat:9-jre11" > Dockerfile
                     echo "COPY target/\${WAR_FILE##*/} /usr/local/tomcat/webapps/ROOT.war" >> Dockerfile
                     echo "EXPOSE 8080" >> Dockerfile
