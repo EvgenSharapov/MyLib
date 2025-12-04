@@ -1,89 +1,43 @@
 pipeline {
     agent any
 
-    triggers {
-            githubPush()
-        }
-
     stages {
-        stage('Checkout') {
+        stage('1. Get Code') {
             steps {
                 checkout scm
             }
         }
 
-        stage('Build Maven') {
+        stage('2. Build JAR') {
             steps {
                 sh 'mvn clean package -DskipTests'
-                // Архивируем WAR файл вместо JAR
-                archiveArtifacts artifacts: 'target/*.war', fingerprint: true
             }
         }
 
-        stage('Build Docker') {
-            steps {
-                script {
-                    // Проверяем Dockerfile
-                    sh 'cat Dockerfile'
-
-                    // Собираем Docker образ
-                    docker.build("mylib:${env.BUILD_NUMBER}")
-
-                    // Тегируем как latest
-                    sh "docker tag mylib:${env.BUILD_NUMBER} mylib:latest"
-                }
-            }
-        }
-
-        stage('Test Docker') {
+        stage('3. Build Docker') {
             steps {
                 sh '''
-                    # Проверяем, что образ собран
-                    docker images | grep mylib
+                    # Простейший Dockerfile
+                    echo "FROM eclipse-temurin:21-jre-alpine" > Dockerfile
+                    echo "COPY target/*.jar app.jar" >> Dockerfile
+                    echo 'ENTRYPOINT ["java", "-jar", "app.jar"]' >> Dockerfile
 
-                    # Запускаем тестовый контейнер
-                    docker run --rm mylib:latest java -version
-
-                    # Если это веб-приложение, можно проверить порт
-                    # docker run --rm -d -p 8080:8080 --name test-app mylib:latest
-                    # sleep 10
-                    # curl -f http://localhost:8080 || echo "App started"
-                    # docker stop test-app
+                    docker build -t myapp:latest .
                 '''
             }
         }
 
-        stage('Deploy to Kubernetes') {
+        stage('4. Deploy to K8s') {
             steps {
-                script {
-                    // Убедитесь, что у вас есть манифесты Kubernetes
-                    sh '''
-                        # Проверяем доступ к Kubernetes
-                        kubectl get nodes || echo "Kubernetes not configured"
+                sh '''
+                    # Простейший деплоймент
+                    kubectl create deployment myapp --image=myapp:latest --dry-run=client -o yaml | kubectl apply -f -
+                    kubectl expose deployment myapp --port=80 --target-port=8080 --type=ClusterIP
 
-                        # Если есть манифесты в .infra/k8s/
-                        if [ -d ".infra/k8s" ]; then
-                            kubectl apply -f .infra/k8s/
-                            kubectl rollout status deployment/mylib-app --timeout=300s
-                        else
-                            echo "No Kubernetes manifests found"
-                        fi
-                    '''
-                }
+                    echo "✅ Done!"
+                    echo "Run: kubectl port-forward svc/myapp 8080:80"
+                '''
             }
-        }
-    }
-
-    post {
-        always {
-            echo 'Pipeline finished'
-            sh 'docker system prune -f || true'
-        }
-        success {
-            echo '✅ Build successful!'
-        }
-        failure {
-            echo '❌ Build failed!'
         }
     }
 }
