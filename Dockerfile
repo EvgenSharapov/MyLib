@@ -41,7 +41,8 @@ COPY --from=build /app/target/*.war app.jar
 #COPY config/ /config/
 
 # Права доступа
-RUN chown -R appuser:appgroup /app /config
+#RUN chown -R appuser:appgroup /app /config
+RUN chown -R appuser:appgroup /app
 USER appuser:appgroup
 
 # Health check
