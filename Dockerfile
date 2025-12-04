@@ -38,7 +38,7 @@ WORKDIR /app
 COPY --from=build /app/target/*.war app.jar
 
 # Конфигурация
-COPY config/ /config/
+#COPY config/ /config/
 
 # Права доступа
 RUN chown -R appuser:appgroup /app /config
@@ -57,5 +57,6 @@ ENTRYPOINT ["java", \
     "app.jar"]
 
 # Аргументы по умолчанию
-CMD ["--spring.config.location=file:/config/application.properties", \
-     "--server.port=${PORT:-8080}"]
+#CMD ["--spring.config.location=file:/config/application.properties", \
+#     "--server.port=${PORT:-8080}"]
+CMD ["--server.port=${PORT:-8080}"]
