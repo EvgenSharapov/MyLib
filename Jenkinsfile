@@ -25,9 +25,11 @@ pipeline {
         stage('3. Build Docker') {
             steps {
                 sh """
-                    # Создаем Dockerfile
+                    WAR_FILE=\$(ls target/*.war | head -1)
+                    echo "WAR file found: \$WAR_FILE"
+                    
                     echo "FROM tomcat:9-jre11" > Dockerfile
-                    echo "COPY target/*.war /usr/local/tomcat/webapps/ROOT.war" >> Dockerfile
+                    echo "COPY target/\${WAR_FILE##*/} /usr/local/tomcat/webapps/ROOT.war" >> Dockerfile
                     echo "EXPOSE 8080" >> Dockerfile
                     echo 'CMD ["catalina.sh", "run"]' >> Dockerfile
 
