@@ -160,4 +160,3 @@ test-pipeline:
   stage: test
   script: echo "Single line script"
 
-
