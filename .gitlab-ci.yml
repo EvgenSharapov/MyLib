@@ -1,21 +1,171 @@
+#stages:
+#  - build
+#  - test
+#  - package
+#  - deploy
+#
+#variables:
+#  MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
+#  HELM_CHART_PATH: ".infra/helm"
+#  HELM_RELEASE_NAME: "spring-app"
+#  IMAGE_NAME: "spring-boot-app"
+#
+#cache:
+#  paths:
+#    - .m2/repository/
+#    - target/
+#
+## 1. Сборка
+#build:
+#  stage: build
+#  image: maven:3.9.6-eclipse-temurin-21-alpine
+#  script:
+#    - mvn clean compile -DskipTests
+#  artifacts:
+#    paths:
+#      - target/
+#    expire_in: 1 week
+#
+## 2. Тесты
+#test:
+#  stage: test
+#  image: maven:3.9.6-eclipse-temurin-21-alpine
+#  script:
+#    - mvn test
+#  dependencies:
+#    - build
+#
+## 3. Сборка JAR
+#package:
+#  stage: package
+#  image: maven:3.9.6-eclipse-temurin-21-alpine
+#  script:
+#    - mvn clean package -DskipTests
+#    - echo "JAR создан: $(ls target/*.jar)"
+#  artifacts:
+#    paths:
+#      - target/*.jar
+#    expire_in: 1 week
+#  dependencies:
+#    - test
+#
+## 4. Сборка Docker образа
+#docker-build:
+#  stage: package
+#  image: docker:24.0
+#  services:
+#    - docker:24.0-dind
+#  script:
+#    - |
+#      # Собираем образ
+#      IMAGE_TAG="${IMAGE_NAME}:${CI_COMMIT_SHORT_SHA}"
+#      docker build -t $IMAGE_TAG -t ${IMAGE_NAME}:latest .
+#
+#      # Сохраняем тег
+#      echo "$IMAGE_TAG" > image-tag.txt
+#  artifacts:
+#    paths:
+#      - image-tag.txt
+#    expire_in: 1 week
+#  dependencies:
+#    - package
+#
+## 5. Деплой в Dev через Helm
+#deploy-dev:
+#  stage: deploy
+#  image: alpine/helm:3.17.0
+#  before_script:
+#    - apk add --no-cache openssh-client
+#    - mkdir -p ~/.ssh
+#    - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+#    - chmod 600 ~/.ssh/id_rsa
+#    - echo "StrictHostKeyChecking no" > ~/.ssh/config
+#    # Копируем kubeconfig
+#    - scp -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_HOST:~/.kube/config /tmp/kubeconfig
+#    - export KUBECONFIG=/tmp/kubeconfig
+#  script:
+#    - |
+#      IMAGE_TAG=$(cat image-tag.txt)
+#      echo "Deploying: $IMAGE_TAG"
+#
+#      # Устанавливаем/обновляем релиз
+#      helm upgrade --install ${HELM_RELEASE_NAME}-dev \
+#        ${HELM_CHART_PATH} \
+#        --namespace dev \
+#        --create-namespace \
+#        --set image.tag=${CI_COMMIT_SHORT_SHA} \
+#        --set image.repository=${IMAGE_NAME} \
+#        --values ${HELM_CHART_PATH}/values-dev.yaml \
+#        --atomic \
+#        --wait \
+#        --timeout 5m
+#
+#      echo "✅ Dev deployment completed!"
+#  environment:
+#    name: dev
+#  only:
+#    - dev
+#  when: manual
+#  dependencies:
+#    - docker-build
+#
+## 6. Деплой в Prod
+#deploy-prod:
+#  stage: deploy
+#  image: alpine/helm:3.17.0
+#  before_script:
+#    - apk add --no-cache openssh-client
+#    - mkdir -p ~/.ssh
+#    - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+#    - chmod 600 ~/.ssh/id_rsa
+#    - echo "StrictHostKeyChecking no" > ~/.ssh/config
+#    - scp -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_HOST:~/.kube/config /tmp/kubeconfig
+#    - export KUBECONFIG=/tmp/kubeconfig
+#  script:
+#    - |
+#      IMAGE_TAG=$(cat image-tag.txt)
+#      echo "Deploying to production: $IMAGE_TAG"
+#
+#      # Создаем секреты для БД
+#      kubectl create secret generic db-credentials \
+#        --namespace production \
+#        --from-literal=username="$DB_USERNAME" \
+#        --from-literal=password="$DB_PASSWORD" \
+#        --dry-run=client -o yaml | kubectl apply -f -
+#
+#      # Деплой
+#      helm upgrade --install ${HELM_RELEASE_NAME} \
+#        ${HELM_CHART_PATH} \
+#        --namespace production \
+#        --create-namespace \
+#        --set image.tag=${CI_COMMIT_SHORT_SHA} \
+#        --set image.repository=${IMAGE_NAME} \
+#        --values ${HELM_CHART_PATH}/values-prod.yaml \
+#        --atomic \
+#        --wait \
+#        --timeout 10m
+#
+#      echo "✅ Production deployment completed!"
+#  environment:
+#    name: production
+#  only:
+#    - main
+#  when: manual
+#  dependencies:
+#    - docker-build
 stages:
   - build
   - test
-  - package
   - deploy
 
 variables:
   MAVEN_OPTS: "-Dmaven.repo.local=.m2/repository"
-  HELM_CHART_PATH: ".infra/helm"
-  HELM_RELEASE_NAME: "spring-app"
-  IMAGE_NAME: "spring-boot-app"
 
 cache:
   paths:
     - .m2/repository/
     - target/
 
-# 1. Сборка
 build:
   stage: build
   image: maven:3.9.6-eclipse-temurin-21-alpine
@@ -24,9 +174,7 @@ build:
   artifacts:
     paths:
       - target/
-    expire_in: 1 week
 
-# 2. Тесты
 test:
   stage: test
   image: maven:3.9.6-eclipse-temurin-21-alpine
@@ -35,121 +183,12 @@ test:
   dependencies:
     - build
 
-# 3. Сборка JAR
-package:
-  stage: package
-  image: maven:3.9.6-eclipse-temurin-21-alpine
-  script:
-    - mvn clean package -DskipTests
-    - echo "JAR создан: $(ls target/*.jar)"
-  artifacts:
-    paths:
-      - target/*.jar
-    expire_in: 1 week
-  dependencies:
-    - test
-
-# 4. Сборка Docker образа
-docker-build:
-  stage: package
-  image: docker:24.0
-  services:
-    - docker:24.0-dind
-  script:
-    - |
-      # Собираем образ
-      IMAGE_TAG="${IMAGE_NAME}:${CI_COMMIT_SHORT_SHA}"
-      docker build -t $IMAGE_TAG -t ${IMAGE_NAME}:latest .
-      
-      # Сохраняем тег
-      echo "$IMAGE_TAG" > image-tag.txt
-  artifacts:
-    paths:
-      - image-tag.txt
-    expire_in: 1 week
-  dependencies:
-    - package
-
-# 5. Деплой в Dev через Helm
-deploy-dev:
+deploy:
   stage: deploy
-  image: alpine/helm:3.17.0
-  before_script:
-    - apk add --no-cache openssh-client
-    - mkdir -p ~/.ssh
-    - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
-    - chmod 600 ~/.ssh/id_rsa
-    - echo "StrictHostKeyChecking no" > ~/.ssh/config
-    # Копируем kubeconfig
-    - scp -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_HOST:~/.kube/config /tmp/kubeconfig
-    - export KUBECONFIG=/tmp/kubeconfig
+  image: alpine:latest
   script:
-    - |
-      IMAGE_TAG=$(cat image-tag.txt)
-      echo "Deploying: $IMAGE_TAG"
-      
-      # Устанавливаем/обновляем релиз
-      helm upgrade --install ${HELM_RELEASE_NAME}-dev \
-        ${HELM_CHART_PATH} \
-        --namespace dev \
-        --create-namespace \
-        --set image.tag=${CI_COMMIT_SHORT_SHA} \
-        --set image.repository=${IMAGE_NAME} \
-        --values ${HELM_CHART_PATH}/values-dev.yaml \
-        --atomic \
-        --wait \
-        --timeout 5m
-      
-      echo "✅ Dev deployment completed!"
-  environment:
-    name: dev
-  only:
-    - dev
-  when: manual
-  dependencies:
-    - docker-build
-
-# 6. Деплой в Prod
-deploy-prod:
-  stage: deploy
-  image: alpine/helm:3.17.0
-  before_script:
-    - apk add --no-cache openssh-client
-    - mkdir -p ~/.ssh
-    - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
-    - chmod 600 ~/.ssh/id_rsa
-    - echo "StrictHostKeyChecking no" > ~/.ssh/config
-    - scp -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_HOST:~/.kube/config /tmp/kubeconfig
-    - export KUBECONFIG=/tmp/kubeconfig
-  script:
-    - |
-      IMAGE_TAG=$(cat image-tag.txt)
-      echo "Deploying to production: $IMAGE_TAG"
-      
-      # Создаем секреты для БД
-      kubectl create secret generic db-credentials \
-        --namespace production \
-        --from-literal=username="$DB_USERNAME" \
-        --from-literal=password="$DB_PASSWORD" \
-        --dry-run=client -o yaml | kubectl apply -f -
-      
-      # Деплой
-      helm upgrade --install ${HELM_RELEASE_NAME} \
-        ${HELM_CHART_PATH} \
-        --namespace production \
-        --create-namespace \
-        --set image.tag=${CI_COMMIT_SHORT_SHA} \
-        --set image.repository=${IMAGE_NAME} \
-        --values ${HELM_CHART_PATH}/values-prod.yaml \
-        --atomic \
-        --wait \
-        --timeout 10m
-      
-      echo "✅ Production deployment completed!"
-  environment:
-    name: production
+    - echo "Deployment would happen here"
+    - echo "Image tag: $CI_COMMIT_SHORT_SHA"
   only:
     - main
   when: manual
-  dependencies:
-    - docker-build
