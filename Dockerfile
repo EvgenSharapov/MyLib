@@ -35,7 +35,7 @@ RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 WORKDIR /app
 
 # Копируем приложение
-COPY --from=build /app/target/lib-0.0.1-SNAPSHOT.jar app.jar
+COPY --from=build /app/target/${APP_NAME}-${APP_VERSION}.jar app.jar
 
 # Конфигурация
 #COPY config/ /config/
@@ -47,7 +47,7 @@ USER appuser:appgroup
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=60s --retries=3 \
-    CMD wget -qO- http://localhost:8080/actuator/health | grep -q '"status":"UP"' || exit 1
+    CMD wget -qO- http://localhost:${PORT:-8081}/actuator/health | grep -q '"status":"UP"' || exit 1
 
 # Запуск
 ENTRYPOINT ["java", \
@@ -60,4 +60,4 @@ ENTRYPOINT ["java", \
 # Аргументы по умолчанию
 #CMD ["--spring.config.location=file:/config/application.properties", \
 #     "--server.port=${PORT:-8080}"]
-CMD ["--server.port=${PORT:-8080}"]
+CMD ["--server.port=${PORT:-8081}"]
