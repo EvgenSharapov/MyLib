@@ -140,20 +140,22 @@ EOF
             steps {
                 sh '''
                     echo "Waiting for pod to start..."
-                    timeout 60 bash -c '
-                        while [[ "\$(kubectl get pods -l app=myapp -o jsonpath=\\"{.items[0].status.phase}\\")" != "Running" ]]; do
-                            echo "Waiting..."
-                            sleep 5
-                        done
-                        echo "Pod is Running!"
-                    '
+                    for i in {1..30}; do
+                        STATUS=$(kubectl get pods -l app=myapp -o jsonpath="{.items[0].status.phase}" 2>/dev/null || echo "NotFound")
+                        if [ "$STATUS" = "Running" ]; then
+                            echo "✅ Pod is Running!"
+                            break
+                        fi
+                        echo "Waiting... (attempt $i/30)"
+                        sleep 2
+                    done
 
-                    echo "=== Status ==="
+                    echo "=== Final Status ==="
                     kubectl get pods -l app=myapp
                     kubectl get svc myapp
 
-                    echo "=== Pod logs ==="
-                    kubectl logs -l app=myapp --tail=20
+                    echo "=== Recent logs ==="
+                    kubectl logs -l app=myapp --since=1m
                 '''
             }
         }
