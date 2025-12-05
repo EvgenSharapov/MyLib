@@ -107,7 +107,7 @@ spec:
     spec:
       containers:
       - name: \${APP_NAME}
-        image: docker.io/library/myapp:latest
+        image: myapp:latest
         imagePullPolicy: IfNotPresent
         command: ["java", "-jar", "/app/app.jar", "--server.port=8081"]
         ports:
