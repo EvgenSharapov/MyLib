@@ -1,0 +1,10 @@
+databaseChangeLog:
+  - changeSet:
+      id: fix-themes-column-length
+      author: evgeny_sharapov
+      changes:
+        - modifyDataType:
+            tableName: topic_library
+            columnName: themes
+            newDataType: VARCHAR(255)
+            schemaName: public

@@ -7,4 +7,7 @@ databaseChangeLog:
       file: db/changelog/db.changelog15-03-2025.yaml
 
   - include:
+      file: db/changelog/db.changelog-fix-themes-length.yaml
+
+  - include:
       file: db/changelog/db.changelog-insert-topics.yaml
