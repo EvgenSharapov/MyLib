@@ -35,7 +35,7 @@ RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 WORKDIR /app
 
 # Копируем приложение
-COPY --from=build /app/target/*.war app.jar
+COPY --from=build /app/target/*.jar app.jar
 
 # Конфигурация
 #COPY config/ /config/
