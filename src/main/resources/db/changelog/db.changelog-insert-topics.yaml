@@ -1,0 +1,80 @@
+databaseChangeLog:
+  - changeSet:
+      id: insert-topic1-data
+      author: evgeny_sharapov
+      changes:
+        - sqlFile:
+            path: sql/topic1.sql
+            relativeToChangelogFile: true
+
+  - changeSet:
+      id: insert-topic2-data
+      author: evgeny_sharapov
+      changes:
+        - sqlFile:
+            path: sql/topic2.sql
+            relativeToChangelogFile: true
+
+  - changeSet:
+      id: insert-topic3-data
+      author: evgeny_sharapov
+      changes:
+        - sqlFile:
+            path: sql/topic3.sql
+            relativeToChangelogFile: true
+
+  - changeSet:
+      id: insert-topic4-data
+      author: evgeny_sharapov
+      changes:
+        - sqlFile:
+            path: sql/topic4.sql
+            relativeToChangelogFile: true
+
+  - changeSet:
+      id: insert-topic5-data
+      author: evgeny_sharapov
+      changes:
+        - sqlFile:
+            path: sql/topic5.sql
+            relativeToChangelogFile: true
+
+  - changeSet:
+      id: insert-topic6-data
+      author: evgeny_sharapov
+      changes:
+        - sqlFile:
+            path: sql/topic6.sql
+            relativeToChangelogFile: true
+
+  - changeSet:
+      id: insert-topic7-data
+      author: evgeny_sharapov
+      changes:
+        - sqlFile:
+            path: sql/topic7.sql
+            relativeToChangelogFile: true
+
+  - changeSet:
+      id: insert-topic8-data
+      author: evgeny_sharapov
+      changes:
+        - sqlFile:
+            path: sql/topic8.sql
+            relativeToChangelogFile: true
+
+  - changeSet:
+      id: insert-topic9-data
+      author: evgeny_sharapov
+      changes:
+        - sqlFile:
+            path: sql/topic9.sql
+            relativeToChangelogFile: true
+
+  - changeSet:
+      id: insert-topic10-data
+      author: evgeny_sharapov
+      changes:
+        - sqlFile:
+            path: sql/topic10.sql
+            relativeToChangelogFile: true

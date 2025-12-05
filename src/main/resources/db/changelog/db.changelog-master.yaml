@@ -5,3 +5,6 @@ databaseChangeLog:
       file: db/changelog/db.changelog12-03-2025.yaml
   - include:
       file: db/changelog/db.changelog15-03-2025.yaml
+
+  - include:
+      file: db/changelog/db.changelog-insert-topics.yaml
