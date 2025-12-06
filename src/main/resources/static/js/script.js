@@ -18,9 +18,10 @@ const TopicArea = {
     HTTP : 'HTTP',
     ALGORITHMS : 'ALGORITHMS',
     ORM : 'ORM',
-    SYSTEM_DESIGN : 'SYSTEM_DESIGN'
-
-
+    SYSTEM_DESIGN : 'SYSTEM_DESIGN',
+    BASIC_CONCEPTS : 'BASIC_CONCEPTS',
+    DOCKER : 'DOCKER',
+    KUBERNETES : 'KUBERNETES'
 };
 
 
@@ -950,7 +951,7 @@ function enableEditMode(row, topic) {
 
     const areaOptions = [
         'OOP', 'JAVA_CORE', 'GIT', 'SPRING', 'DATA_BASE', 'MULTITHREADING', 'OTHER',
-        'COLLECTIONS', 'TEST', 'STREAM', 'SQL', 'HIBERNATE', 'HTTP', 'ALGORITHMS', 'ORM', 'SYSTEM_DESIGN'
+        'COLLECTIONS', 'TEST', 'STREAM', 'SQL', 'HIBERNATE', 'HTTP', 'ALGORITHMS', 'ORM', 'SYSTEM_DESIGN','BASIC_CONCEPTS','DOCKER','KUBERNETES'
     ];
 
     areaOptions.forEach(optionValue => {

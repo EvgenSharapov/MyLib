@@ -16,5 +16,8 @@ public enum TopicArea {
     HTTP,
     ALGORITHMS,
     ORM,
-    SYSTEM_DESIGN
+    SYSTEM_DESIGN,
+    BASIC_CONCEPTS,
+    DOCKER,
+    KUBERNETES
 }
