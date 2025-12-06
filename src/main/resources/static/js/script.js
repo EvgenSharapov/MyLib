@@ -974,7 +974,7 @@ function enableEditMode(row, topic) {
     difficultySelect.style.borderRadius = '4px';
     difficultySelect.style.fontSize = '14px';
 
-    const difficultyOptions = ['EASY', 'AVERAGE', 'HARD']; // Варианты сложности
+    const difficultyOptions = ['EASY', 'AVERAGE', 'DEVOPS']; // Варианты сложности
     difficultyOptions.forEach(optionValue => {
         const option = document.createElement('option');
         option.value = optionValue;
@@ -1385,7 +1385,7 @@ document.querySelectorAll('.language-option').forEach(button => {
 const difficulty = {
     EASY: 'EASY',
     AVERAGE: 'AVERAGE',
-    HARD: 'HARD'
+    DEVOPS: 'DEVOPS'
 };
 
 let selectedDifficulty = localStorage.getItem('difficulty') || 'EASY'; // По умолчанию 'EASY'
