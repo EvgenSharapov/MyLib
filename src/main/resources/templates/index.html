@@ -65,7 +65,7 @@
                 <!-- Кнопки выбора языка -->
                 <button class="difficulty-option" th:text="#{liteDifficulty}" data-difficulty="EASY">Лёгкий</button>
                 <button class="difficulty-option" th:text="#{averageDifficulty}" data-difficulty="AVERAGE">Средний</button>
-                <button class="difficulty-option" th:text="#{hardDifficulty}" data-difficulty="DEVOPS">Сложный</button>
+                <button class="difficulty-option" th:text="#{hardDifficulty}" data-difficulty="DEVOPS">Devops</button>
             </div>
         </div>
     </div>
@@ -254,7 +254,7 @@
         <select id="topic-difficulty" name="topic-difficulty" required>
             <option value="EASY" th:text="#{liteDifficulty}">Лёгкий</option>
             <option value="AVERAGE" th:text="#{averageDifficulty}">Средний</option>
-            <option value="HARD" th:text="#{hardDifficulty}">Сложный</option>
+            <option value="DEVOPS" th:text="#{hardDifficulty}">Devops</option>
         </select>
 
         <button type="submit" th:text="#{saveButton}">Сохранить</button>
