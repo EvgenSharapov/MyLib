@@ -1294,3 +1294,39 @@ pre {
     width: 25px;
     height: 25px;
 }
+
+/* ФИКС ДЛЯ ЛОГОТИПА - гарантируем маленький размер */
+.left-section img.hover-zoom,
+.left-section .user-menu img,
+.left-section a img {
+    width: 25px !important;
+    height: 25px !important;
+    max-width: 25px !important;
+    max-height: 25px !important;
+    display: block;
+}
+
+/* Убираем возможные влияния других стилей */
+.left-section {
+    width: auto !important;
+    min-width: unset !important;
+    flex: 0 0 auto !important;
+}
+
+.left-section .user-menu {
+    width: auto !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+/* Для мобильных - тоже маленький */
+@media screen and (max-width: 768px) {
+    .left-section img.hover-zoom,
+    .left-section .user-menu img,
+    .left-section a img {
+        width: 25px !important;
+        height: 25px !important;
+        max-width: 25px !important;
+        max-height: 25px !important;
+    }
+}
