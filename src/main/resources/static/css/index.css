@@ -1135,3 +1135,134 @@ pre {
     color: white; /* Белый текст */
     border: 2px solid #45a049; /* Тёмно-синяя рамка */
 }
+
+/* Адаптивность для мобильных устройств */
+@media screen and (max-width: 768px) {
+    header {
+        flex-wrap: wrap;
+        padding: 10px 15px;
+        gap: 10px;
+    }
+
+    .left-section, .right-section {
+        flex: 0 0 auto;
+        min-width: unset;
+    }
+
+    .search-container {
+        order: 3;
+        width: 100%;
+        margin-top: 10px;
+        min-width: 100%;
+        max-width: 100%;
+    }
+
+    .search-input {
+        font-size: 14px;
+        padding: 8px 12px;
+        width: 100% !important;
+    }
+
+    .search-buttons {
+        position: static;
+        margin-top: 5px;
+        justify-content: center;
+    }
+
+    .user-menu {
+        margin: 0 5px;
+    }
+
+    .user-menu button {
+        width: 40px;
+        height: 40px;
+        font-size: 14px;
+        padding: 8px;
+    }
+
+    .right-section {
+        justify-content: space-between;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 5px;
+    }
+
+    .dropdown-menu {
+        position: fixed;
+        top: 60px;
+        right: 10px;
+        left: 10px;
+        width: auto;
+        max-width: 300px;
+        margin: 0 auto;
+        z-index: 1001;
+        opacity: 1 !important;
+        visibility: visible !important;
+    }
+
+    .center-menu .dropdown-menu {
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    .right-menu .dropdown-menu {
+        right: 0;
+        left: auto;
+        transform: none;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .user-menu button {
+        width: 36px;
+        height: 36px;
+        font-size: 12px;
+    }
+
+    #user-button-1 img {
+        width: 16px;
+        height: 16px;
+    }
+
+    .search-input {
+        font-size: 13px;
+        padding: 6px 10px;
+    }
+
+    .right-section {
+        gap: 5px;
+    }
+}
+
+/* Важно: вернуть display: block для dropdown-menu */
+.dropdown-menu {
+    display: block !important; /* Переопределяет инлайновый display: none */
+    position: absolute;
+    background-color: #ffffff;
+    min-width: 200px;
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    border-radius: 8px;
+    opacity: 0;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    visibility: hidden;
+}
+
+.user-menu:hover .dropdown-menu {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Для touch-устройств на мобильных */
+@media (hover: none) and (pointer: coarse) {
+    .user-menu .dropdown-menu {
+        display: none;
+    }
+
+    .user-menu.active .dropdown-menu {
+        display: block;
+        opacity: 1;
+        visibility: visible;
+    }
+}
