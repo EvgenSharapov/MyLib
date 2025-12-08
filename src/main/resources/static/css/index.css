@@ -1910,6 +1910,7 @@ pre {
 
 
 
+/* В самый конец index.css */
 @media screen and (max-width: 480px) {
     div.swal2-popup.topic-content-popup,
     div.swal2-popup[class*="topic-content"] {
@@ -1927,5 +1928,117 @@ pre {
     .swal2-container {
         padding: 0 !important;
         margin: 0 !important;
+    }
+
+    /* Уменьшаем внутренние отступы контента */
+    .topic-content-modal {
+        padding: 2px !important;
+        margin: 0 !important;
+    }
+
+    .topic-content-header {
+        margin-bottom: 8px !important;
+        padding: 5px 2px !important;
+        gap: 5px !important;
+    }
+
+    .topic-area-badge,
+    .topic-difficulty-badge {
+        padding: 3px 6px !important;
+        font-size: 11px !important;
+    }
+
+    /* Уменьшаем отступы заголовков */
+    .topic-content-body h1,
+    .topic-content-body h2,
+    .topic-content-body h3 {
+        margin: 8px 0 4px 0 !important;
+        padding: 0 2px !important;
+    }
+
+    .topic-content-body h1 {
+        font-size: 1.4em !important;
+        margin-bottom: 15px !important;
+    }
+
+    .topic-content-body h2 {
+        font-size: 1.1em !important;
+    }
+
+    .topic-content-body h2::before {
+        font-size: 1em !important;
+    }
+
+    /* Уменьшаем отступы текста */
+    .topic-content-body p {
+        margin-bottom: 6px !important;
+        padding: 0 2px !important;
+        font-size: 14px !important;
+        line-height: 1.4 !important;
+    }
+
+    /* Уменьшаем отступы списков */
+    .topic-content-body ul {
+        padding-left: 15px !important;
+        margin-bottom: 8px !important;
+    }
+
+    .topic-content-body li {
+        margin: 4px 0 !important;
+        padding-left: 5px !important;
+        font-size: 14px !important;
+    }
+
+    /* Уменьшаем специальные блоки */
+    .topic-content-body .example-container,
+    .topic-content-body .highlight-box {
+        padding: 10px !important;
+        margin: 10px 0 !important;
+        border-radius: 8px !important;
+    }
+
+    .topic-content-body .highlight-box::before {
+        font-size: 0.8em !important;
+        padding: 0 8px !important;
+        top: -8px !important;
+        left: 10px !important;
+    }
+
+    /* Уменьшаем сетку карточек */
+    .topic-content-body .type-grid {
+        gap: 8px !important;
+        margin: 10px 0 !important;
+    }
+
+    .topic-content-body .type-card {
+        padding: 12px !important;
+        margin: 2px !important;
+    }
+
+    .topic-content-body .type-card h3 {
+        font-size: 1em !important;
+        margin-bottom: 5px !important;
+    }
+
+    .topic-content-body .type-card p {
+        font-size: 0.8em !important;
+    }
+
+    /* Уменьшаем код */
+    .topic-content-body code {
+        padding: 2px 4px !important;
+        font-size: 12px !important;
+    }
+
+    .topic-content-body .example-title {
+        font-size: 0.9em !important;
+        margin-bottom: 8px !important;
+    }
+
+    /* Ключевые слова */
+    .topic-content-body .keyword {
+        padding: 2px 6px !important;
+        font-size: 0.8em !important;
+        margin-right: 4px !important;
     }
 }
