@@ -2042,3 +2042,64 @@ pre {
         margin-right: 4px !important;
     }
 }
+
+
+
+
+
+
+
+
+
+/* ФИКС ДЛЯ ОТСТУПОВ В МОДАЛЬНОМ ОКНЕ - ПОЛНОЕ ПЕРЕОПРЕДЕЛЕНИЕ */
+@media screen and (max-width: 480px) {
+    /* Убираем все отступы в модальном окне */
+    div.swal2-popup.topic-content-popup .swal2-html-container {
+        margin: 0 !important;
+        padding: 0 !important;
+        max-height: calc(100vh - 70px) !important;
+    }
+
+    /* Убираем паддинг у самого попапа */
+    div.swal2-popup.topic-content-popup {
+        padding: 5px !important;
+    }
+
+    /* Убираем все отступы у контента */
+    .topic-content-modal {
+        padding: 2px !important;
+        margin: 0 !important;
+    }
+
+    /* Уменьшаем отступы у всех элементов контента */
+    .topic-content-modal * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    /* Специфично для вашей структуры */
+    .topic-content-header {
+        margin: 5px 0 !important;
+        padding: 0 2px !important;
+    }
+
+    .topic-content-body h1,
+    .topic-content-body h2,
+    .topic-content-body h3,
+    .topic-content-body p,
+    .topic-content-body ul,
+    .topic-content-body li,
+    .topic-content-body div {
+        margin: 2px 0 !important;
+        padding: 0 2px !important;
+    }
+
+    /* Убираем лишние отступы у специальных блоков */
+    .topic-content-body .example-container,
+    .topic-content-body .highlight-box,
+    .topic-content-body .type-card {
+        margin: 5px 0 !important;
+        padding: 5px !important;
+    }
+}
