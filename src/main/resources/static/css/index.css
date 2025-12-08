@@ -1136,37 +1136,38 @@ pre {
     border: 2px solid #45a049; /* Тёмно-синяя рамка */
 }
 
-/* Адаптивность для мобильных устройств */
+/* Исправления для адаптивности */
+
+/* Для мобильных устройств */
 @media screen and (max-width: 768px) {
     header {
         flex-wrap: wrap;
         padding: 10px 15px;
-        gap: 10px;
     }
 
     .left-section, .right-section {
         flex: 0 0 auto;
-        min-width: unset;
+        width: auto;
     }
 
     .search-container {
         order: 3;
         width: 100%;
-        margin-top: 10px;
-        min-width: 100%;
-        max-width: 100%;
+        margin: 10px 0 5px 0;
+        flex: 1 0 100%;
     }
 
     .search-input {
-        font-size: 14px;
-        padding: 8px 12px;
         width: 100% !important;
+        max-width: 100%;
     }
 
-    .search-buttons {
-        position: static;
-        margin-top: 5px;
-        justify-content: center;
+    .right-section {
+        justify-content: space-between;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding-bottom: 5px;
+        -webkit-overflow-scrolling: touch;
     }
 
     .user-menu {
@@ -1174,79 +1175,88 @@ pre {
     }
 
     .user-menu button {
-        width: 40px;
-        height: 40px;
-        font-size: 14px;
-        padding: 8px;
+        width: 44px;
+        height: 44px;
+        min-width: 44px;
+        min-height: 44px;
     }
 
-    .right-section {
-        justify-content: space-between;
-        flex-wrap: nowrap;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-        padding-bottom: 5px;
+    #user-button-1 img {
+        width: 20px;
+        height: 20px;
     }
 
+    /* Исправление для dropdown меню */
     .dropdown-menu {
-        position: fixed;
-        top: 60px;
-        right: 10px;
-        left: 10px;
-        width: auto;
+        position: fixed !important;
+        top: 70px !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        right: auto !important;
+        width: 90% !important;
         max-width: 300px;
-        margin: 0 auto;
         z-index: 1001;
-        opacity: 1 !important;
-        visibility: visible !important;
-    }
-
-    .center-menu .dropdown-menu {
-        left: 50%;
-        transform: translateX(-50%);
     }
 
     .right-menu .dropdown-menu {
-        right: 0;
-        left: auto;
-        transform: none;
+        left: auto !important;
+        right: 10px !important;
+        transform: none !important;
+    }
+
+    /* Контейнеры контента */
+    #main-container {
+        padding: 10px;
+        width: calc(100% - 20px);
+    }
+
+    #table-container,
+    #content-display {
+        width: 100% !important;
+        margin-bottom: 20px;
+    }
+
+    #content-text {
+        height: 300px;
     }
 }
 
 @media screen and (max-width: 480px) {
+    header {
+        padding: 8px 10px;
+    }
+
     .user-menu button {
-        width: 36px;
-        height: 36px;
-        font-size: 12px;
+        width: 40px;
+        height: 40px;
     }
 
     #user-button-1 img {
-        width: 16px;
-        height: 16px;
+        width: 18px;
+        height: 18px;
     }
 
     .search-input {
-        font-size: 13px;
-        padding: 6px 10px;
+        font-size: 14px;
+        padding: 8px 12px;
     }
 
-    .right-section {
-        gap: 5px;
+    .pagination button {
+        padding: 8px 12px;
+        font-size: 14px;
+    }
+
+    #topics-table {
+        font-size: 12px;
     }
 }
 
-/* Важно: вернуть display: block для dropdown-menu */
+/* Важно: переопределить display для dropdown-menu */
 .dropdown-menu {
-    display: block !important; /* Переопределяет инлайновый display: none */
-    position: absolute;
-    background-color: #ffffff;
-    min-width: 200px;
-    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.15);
-    z-index: 1000;
-    border-radius: 8px;
+    display: block !important;
     opacity: 0;
-    transition: opacity 0.3s ease, visibility 0.3s ease;
     visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
 }
 
 .user-menu:hover .dropdown-menu {
@@ -1257,12 +1267,30 @@ pre {
 /* Для touch-устройств на мобильных */
 @media (hover: none) and (pointer: coarse) {
     .user-menu .dropdown-menu {
-        display: none;
+        opacity: 0;
+        visibility: hidden;
     }
 
     .user-menu.active .dropdown-menu {
-        display: block;
         opacity: 1;
         visibility: visible;
     }
+}
+
+/* Гарантия, что кнопки будут кликабельными на мобильных */
+.user-menu button {
+    min-height: 44px;
+    min-width: 44px;
+}
+
+/* Фикс для изображений в кнопках */
+#user-button-1 img {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+}
+
+.hover-zoom img {
+    width: 25px;
+    height: 25px;
 }
