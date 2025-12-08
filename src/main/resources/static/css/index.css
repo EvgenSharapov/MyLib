@@ -1571,85 +1571,11 @@ pre {
     100% { transform: rotate(360deg); }
 }
 
-/* Адаптивность для мобильных устройств */
-@media screen and (max-width: 768px) {
-    .areas-container {
-        padding: 15px;
-    }
-
-    .areas-title {
-        font-size: 1.5em;
-        margin-bottom: 20px;
-    }
-
-    .areas-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 15px;
-    }
-
-    .area-card {
-        padding: 15px;
-        height: 120px;
-    }
-
-    .area-icon {
-        font-size: 1.5em;
-    }
-
-    .area-name {
-        font-size: 1em;
-    }
-
-    .topics-area-container {
-        padding: 15px;
-    }
-
-    .area-topics-title {
-        font-size: 1.5em;
-    }
-
-    .topics-grid {
-        grid-template-columns: 1fr;
-        gap: 15px;
-    }
-
-    .topic-card {
-        padding: 15px;
-        height: 160px;
-        min-height: 160px;
-    }
-
-    .topic-title {
-        font-size: 1.1em;
-    }
-
-    .topic-content-popup .swal2-popup {
-        width: 95% !important;
-        max-width: 95% !important;
-        margin: 10px !important;
-    }
-
-    .back-button {
-        width: 100%;
-        justify-content: center;
-    }
-}
-
-@media screen and (max-width: 480px) {
-    .areas-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .area-card {
-        height: 100px;
-    }
-}
-
 /* Стили для модального окна с контентом */
 .topic-content-popup .swal2-popup {
-    padding: 20px;
+    padding: 10px;
     max-height: 85vh;
-    width: 90% !important;
+    width: 95% !important;
     max-width: 900px !important;
 }
 
@@ -1667,7 +1593,7 @@ pre {
     text-align: left;
     max-height: 70vh;
     overflow-y: auto;
-    padding: 10px;
+    padding: 5px;
 }
 
 .topic-content-header {
@@ -1720,7 +1646,7 @@ pre {
 .topic-content-body h2,
 .topic-content-body h3 {
     color: #2563eb;
-    margin: 25px 0 15px 0;
+    margin: 15px 0 10px 0;
     font-weight: 600;
     display: flex;
     align-items: center;
@@ -1877,8 +1803,71 @@ pre {
     font-size: 0.9em;
 }
 
-/* Адаптивность для модального окна */
-@media (max-width: 768px) {
+/* Адаптивность для мобильных устройств */
+@media screen and (max-width: 768px) {
+    .areas-container {
+        padding: 15px;
+    }
+
+    .areas-title {
+        font-size: 1.5em;
+        margin-bottom: 20px;
+    }
+
+    .areas-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+    }
+
+    .area-card {
+        padding: 15px;
+        height: 120px;
+    }
+
+    .area-icon {
+        font-size: 1.5em;
+    }
+
+    .area-name {
+        font-size: 1em;
+    }
+
+    .topics-area-container {
+        padding: 15px;
+    }
+
+    .area-topics-title {
+        font-size: 1.5em;
+    }
+
+    .topics-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .topic-card {
+        padding: 15px;
+        height: 160px;
+        min-height: 160px;
+    }
+
+    .topic-title {
+        font-size: 1.1em;
+    }
+
+    .topic-content-popup .swal2-popup {
+        width: 98% !important;
+        max-width: 98% !important;
+        margin: 5px !important;
+        padding: 15px !important;
+    }
+
+    .back-button {
+        width: 100%;
+        justify-content: center;
+    }
+
+    /* Стили для контента в модальном окне */
     .topic-content-body h1 {
         font-size: 2em;
     }
@@ -1890,8 +1879,30 @@ pre {
     .topic-content-body .highlight-box {
         padding: 20px;
     }
+}
 
+@media screen and (max-width: 480px) {
+    .areas-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .area-card {
+        height: 100px;
+    }
+
+    /* Для очень маленьких экранов */
     .topic-content-popup .swal2-popup {
-        padding: 15px;
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 10px !important;
+    }
+
+    .topic-content-body h1 {
+        font-size: 1.8em;
+    }
+
+    .topic-content-modal {
+        padding: 5px;
     }
 }
