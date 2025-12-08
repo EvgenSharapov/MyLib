@@ -53,6 +53,13 @@ const translations = {
 
 };
 
+let selectedDifficulty = localStorage.getItem('difficulty') || 'EASY';
+
+const difficulty = {
+    EASY: 'EASY',
+    AVERAGE: 'AVERAGE',
+    DEVOPS: 'DEVOPS'
+};
 
 
 
@@ -1382,37 +1389,6 @@ document.querySelectorAll('.language-option').forEach(button => {
         document.getElementById('language-selection-form').classList.add('hidden'); // Скрываем меню выбора языка
     });
 });
-
-const difficulty = {
-    EASY: 'EASY',
-    AVERAGE: 'AVERAGE',
-    DEVOPS: 'DEVOPS'
-};
-
-let selectedDifficulty = localStorage.getItem('difficulty') || 'EASY'; // По умолчанию 'EASY'
-
-// // Обработчики для кнопок выбора сложности
-// document.querySelectorAll('.difficulty-option').forEach(button => {
-//     button.addEventListener('click', () => {
-//         // Получаем выбранную сложность из атрибута data-difficulty
-//         selectedDifficulty = button.getAttribute('data-difficulty');
-//         highlightSelectedDifficulty();
-//         console.log(selectedDifficulty);
-//         Swal.fire({
-//             title: `Выбрана сложность: ${selectedDifficulty}`,
-//             icon: 'success', // Иконка успеха
-//             confirmButtonText: 'OK',
-//             timer: null, // Отключаем автоматическое закрытие
-//             customClass: {
-//                 popup: 'custom-swal-popup', // Класс для кастомного стиля
-//             },
-//         })
-//     });
-// });
-
-
-
-
 
 function highlightSelectedDifficulty() {
     const selectedDifficulty = localStorage.getItem('difficulty') || 'EASY';
