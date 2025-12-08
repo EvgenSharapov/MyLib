@@ -344,166 +344,502 @@ function displayTopic(topics) {
     // Добавляем контейнер на страницу
     document.body.appendChild(container);
 }
-
-
+let currentArea = null; // Для хранения текущей выбранной области
 
 // Функция для создания выпадающих кнопок по областям
-    function createAreaButtons() {
-        const container = document.createElement('div');
-        container.id = 'areas-container';
-        container.style.display = 'flex'; // Используем flexbox для расположения кнопок
-        container.style.flexWrap = 'wrap'; // Перенос кнопок на новую строку, если не хватает места
-        container.style.gap = '20px'; // Отступы между кнопками
-        container.style.padding = '20px'; // Отступы внутри контейнера
-        container.style.justifyContent = 'center'; // Центрируем кнопки
+function createAreaButtons() {
+    const container = document.createElement('div');
+    container.id = 'areas-container';
+    container.className = 'areas-container';
 
-        // Получаем все значения Enum (области тем)
-        const areas = Object.values(TopicArea);
+    const title = document.createElement('h2');
+    title.textContent = 'Выберите раздел';
+    title.className = 'areas-title';
+    container.appendChild(title);
 
-        areas.forEach(area => {
-            const areaButton = document.createElement('button');
-            areaButton.textContent = area; // Название области
-            areaButton.className = 'area-button'; // Добавляем класс для стилизации
-            areaButton.dataset.area = area; // Сохраняем область в data-атрибуте
-            areaButton.addEventListener('click', () => loadTopicsByArea(area)); // Обработчик клика
-            container.appendChild(areaButton);
+    const grid = document.createElement('div');
+    grid.className = 'areas-grid';
+
+    const areas = Object.values(TopicArea);
+
+    areas.forEach(area => {
+        const areaCard = document.createElement('div');
+        areaCard.className = 'area-card';
+        areaCard.dataset.area = area;
+
+        const areaIcon = document.createElement('div');
+        areaIcon.className = 'area-icon';
+
+        switch(area) {
+            case 'OOP':
+                areaIcon.innerHTML = '<i class="fas fa-shapes"></i>';
+                break;
+            case 'JAVA_CORE':
+                areaIcon.innerHTML = '<i class="fas fa-coffee"></i>';
+                break;
+            case 'GIT':
+                areaIcon.innerHTML = '<i class="fas fa-code-branch"></i>';
+                break;
+            case 'SPRING':
+                areaIcon.innerHTML = '<i class="fas fa-leaf"></i>';
+                break;
+            case 'DATA_BASE':
+                areaIcon.innerHTML = '<i class="fas fa-database"></i>';
+                break;
+            case 'MULTITHREADING':
+                areaIcon.innerHTML = '<i class="fas fa-tasks"></i>';
+                break;
+            case 'COLLECTIONS':
+                areaIcon.innerHTML = '<i class="fas fa-layer-group"></i>';
+                break;
+            case 'TEST':
+                areaIcon.innerHTML = '<i class="fas fa-vial"></i>';
+                break;
+            case 'STREAM':
+                areaIcon.innerHTML = '<i class="fas fa-stream"></i>';
+                break;
+            case 'SQL':
+                areaIcon.innerHTML = '<i class="fas fa-table"></i>';
+                break;
+            case 'HIBERNATE':
+                areaIcon.innerHTML = '<i class="fas fa-hippo"></i>';
+                break;
+            case 'HTTP':
+                areaIcon.innerHTML = '<i class="fas fa-globe"></i>';
+                break;
+            case 'ALGORITHMS':
+                areaIcon.innerHTML = '<i class="fas fa-sort-amount-down"></i>';
+                break;
+            case 'ORM':
+                areaIcon.innerHTML = '<i class="fas fa-project-diagram"></i>';
+                break;
+            case 'SYSTEM_DESIGN':
+                areaIcon.innerHTML = '<i class="fas fa-sitemap"></i>';
+                break;
+            case 'DOCKER':
+                areaIcon.innerHTML = '<i class="fab fa-docker"></i>';
+                break;
+            case 'KUBERNETES':
+                areaIcon.innerHTML = '<i class="fas fa-ship"></i>';
+                break;
+            default:
+                areaIcon.innerHTML = '<i class="fas fa-book"></i>';
+        }
+
+        const areaName = document.createElement('div');
+        areaName.className = 'area-name';
+        areaName.textContent = area.replace('_', ' ');
+
+        const areaCount = document.createElement('div');
+        areaCount.className = 'area-count';
+        areaCount.textContent = '0 тем';
+
+        areaCard.appendChild(areaIcon);
+        areaCard.appendChild(areaName);
+        areaCard.appendChild(areaCount);
+
+        areaCard.addEventListener('click', () => {
+            loadTopicsByArea(area);
+            currentArea = area;
         });
 
-        // Добавляем контейнер на страницу
-        document.body.appendChild(container);
-    }
+        grid.appendChild(areaCard);
+    });
+
+    container.appendChild(grid);
+    document.body.appendChild(container);
+}
 
 // Функция для загрузки тем по области
-    function loadTopicsByArea(area) {
-        clearContainers();
-        clearContainersFull();
-        fetch(`/api/topics/by-area/${area}`)
-            .then(response => response.json())
-            .then(topics => {
-                displayTopics(topics); // Отображаем темы
-            })
-            .catch(error => {
-                console.error('Ошибка:', error);
-                alert('Произошла ошибка при загрузке тем.');
+function loadTopicsByArea(area) {
+    clearContainers();
+    clearContainersFull();
+
+    const loader = document.createElement('div');
+    loader.className = 'loader';
+    loader.innerHTML = '<div class="spinner"></div><p>Загрузка тем...</p>';
+    document.body.appendChild(loader);
+
+    fetch(`/api/topics/by-area/${area}`)
+    .then(response => response.json())
+    .then(topics => {
+        loader.remove();
+        displayAreaTopics(topics, area);
+    })
+    .catch(error => {
+        console.error('Ошибка:', error);
+        loader.remove();
+        Swal.fire({
+            icon: 'error',
+            title: 'Ошибка',
+            text: 'Произошла ошибка при загрузке тем.',
+        });
+    });
+}
+
+// Функция для отображения тем в выбранной области
+function displayAreaTopics(topics, area) {
+    const container = document.createElement('div');
+    container.id = 'topics-area-container';
+    container.className = 'topics-area-container';
+
+    const backButton = document.createElement('button');
+    backButton.className = 'back-button';
+    backButton.innerHTML = '<i class="fas fa-arrow-left"></i> Назад к разделам';
+    backButton.addEventListener('click', () => {
+        container.remove();
+        createAreaButtons();
+    });
+
+    const title = document.createElement('h2');
+    title.className = 'area-topics-title';
+    title.textContent = `${area.replace('_', ' ')} (${topics.length} тем)`;
+
+    const grid = document.createElement('div');
+    grid.className = 'topics-grid';
+
+    if (topics.length === 0) {
+        grid.innerHTML = '<div class="no-topics">Темы не найдены</div>';
+    } else {
+        topics.forEach(topic => {
+            const topicCard = document.createElement('div');
+            topicCard.className = 'topic-card';
+            topicCard.dataset.topicId = topic.id;
+
+            const topicHeader = document.createElement('div');
+            topicHeader.className = 'topic-header';
+
+            const topicTitle = document.createElement('h3');
+            topicTitle.className = 'topic-title';
+            topicTitle.textContent = topic.tableOfContent;
+
+            const difficultyBadge = document.createElement('span');
+            difficultyBadge.className = `difficulty-badge ${topic.difficulty.toLowerCase()}`;
+            difficultyBadge.textContent = getDifficultyText(topic.difficulty);
+
+            topicHeader.appendChild(topicTitle);
+            topicHeader.appendChild(difficultyBadge);
+
+            const topicPreview = document.createElement('div');
+            topicPreview.className = 'topic-preview';
+            const previewText = topic.content.length > 150
+                ? topic.content.substring(0, 150) + '...'
+                : topic.content;
+            topicPreview.textContent = previewText;
+
+            const topicFooter = document.createElement('div');
+            topicFooter.className = 'topic-footer';
+
+            const readMoreBtn = document.createElement('button');
+            readMoreBtn.className = 'read-more-btn';
+            readMoreBtn.innerHTML = '<i class="fas fa-book-open"></i> Читать';
+            readMoreBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                showTopicContent(topic);
             });
+
+            topicFooter.appendChild(readMoreBtn);
+
+            topicCard.appendChild(topicHeader);
+            topicCard.appendChild(topicPreview);
+            topicCard.appendChild(topicFooter);
+
+            topicCard.addEventListener('click', () => {
+                showTopicContent(topic);
+            });
+
+            grid.appendChild(topicCard);
+        });
     }
 
+    container.appendChild(backButton);
+    container.appendChild(title);
+    container.appendChild(grid);
+    document.body.appendChild(container);
+}
 
-// Функция для отображения тем с пагинацией
-    function displayTopics(topics, page = 1, itemsPerPage = 12) {
-        const container = document.createElement('div');
-        container.id = 'topics-list-container';
-        container.className = 'topics-list-container';
-        container.innerHTML = '';
+// Функция для отображения содержания темы
+function showTopicContent(topic) {
+    const content = topic.content || "Нет данных";
 
-        if (topics.length === 0) {
-            container.innerHTML = '<p>Темы не найдены.</p>';
-            return;
+    Swal.fire({
+        title: topic.tableOfContent,
+        html: `
+            <div class="topic-content-modal">
+                <div class="topic-content-header">
+                    <span class="topic-area-badge">${topic.topicArea.replace('_', ' ')}</span>
+                    <span class="topic-difficulty-badge ${topic.difficulty.toLowerCase()}">
+                        ${getDifficultyText(topic.difficulty)}
+                    </span>
+                </div>
+                <div class="topic-content-body">
+                    ${formatContent(content)}
+                </div>
+            </div>
+        `,
+        width: '90%',
+        maxWidth: '800px',
+        showCloseButton: true,
+        showConfirmButton: false,
+        customClass: {
+            popup: 'topic-content-popup',
+            container: 'topic-content-container-modal'
+        },
+        didOpen: () => {
+            const style = document.createElement('style');
+            style.textContent = `
+                .topic-content-modal {
+                    text-align: left;
+                    max-height: 70vh;
+                    overflow-y: auto;
+                    padding: 10px;
+                }
+                .topic-content-header {
+                    display: flex;
+                    gap: 10px;
+                    margin-bottom: 20px;
+                    align-items: center;
+                }
+                .topic-area-badge {
+                    background: #4CAF50;
+                    color: white;
+                    padding: 5px 10px;
+                    border-radius: 15px;
+                    font-size: 14px;
+                }
+                .topic-difficulty-badge {
+                    padding: 5px 10px;
+                    border-radius: 15px;
+                    font-size: 14px;
+                    font-weight: bold;
+                }
+                .topic-difficulty-badge.easy {
+                    background: #4CAF50;
+                    color: white;
+                }
+                .topic-difficulty-badge.average {
+                    background: #FF9800;
+                    color: white;
+                }
+                .topic-difficulty-badge.devops {
+                    background: #F44336;
+                    color: white;
+                }
+                .topic-content-body {
+                    font-size: 16px;
+                    line-height: 1.6;
+                }
+                .topic-content-body pre {
+                    background: #f5f5f5;
+                    padding: 15px;
+                    border-radius: 5px;
+                    overflow-x: auto;
+                    font-family: 'Courier New', monospace;
+                    font-size: 14px;
+                }
+                .topic-content-body code {
+                    background: #f5f5f5;
+                    padding: 2px 5px;
+                    border-radius: 3px;
+                    font-family: 'Courier New', monospace;
+                }
+                .topic-content-body h1, 
+                .topic-content-body h2, 
+                .topic-content-body h3 {
+                    color: #333;
+                    margin-top: 20px;
+                    margin-bottom: 10px;
+                }
+                .topic-content-body ul, 
+                .topic-content-body ol {
+                    padding-left: 20px;
+                    margin-bottom: 15px;
+                }
+                .topic-content-body li {
+                    margin-bottom: 5px;
+                }
+            `;
+            document.head.appendChild(style);
         }
+    });
+}
 
-        // Вычисляем начальный и конечный индексы для текущей страницы
-        const startIndex = (page - 1) * itemsPerPage;
-        const endIndex = startIndex + itemsPerPage;
-        const paginatedTopics = topics.slice(startIndex, endIndex);
+// Функция для форматирования контента
+function formatContent(content) {
+    return content
+    .replace(/```([\s\S]*?)```/g, '<pre>$1</pre>')
+    .replace(/`([^`]+)`/g, '<code>$1</code>')
+    .replace(/\n/g, '<br>');
+}
 
-        // Отображаем темы для текущей страницы
-        paginatedTopics.forEach(topic => {
-            const topicDiv = document.createElement('div');
-            topicDiv.className = 'topic-item';
-            topicDiv.innerHTML = `
-            <p class="topic-title" data-topic-id="${topic.id}">${topic.tableOfContent}</p>`;
-            topicDiv.querySelector('.topic-title').addEventListener('click', () => {
-                loadTopicContent(topic.id); // Загружаем содержимое темы
-                setActiveTopic(topicDiv); // Выделяем активную тему
-            });
-            container.appendChild(topicDiv);
-        });
-
-        // Очищаем старые контейнеры и добавляем новый
-       clearContainersLibrary();
-        document.body.appendChild(container);
-
-
-        // Добавляем пагинацию
-        addPagination(topics, page, itemsPerPage);
-
-        // Выделяем первую тему после добавления контейнера в DOM
-        if (paginatedTopics.length > 0) {
-            const firstTopic = container.querySelector('.topic-item'); // Теперь контейнер в DOM
-            if (firstTopic) {
-                setActiveTopic(firstTopic); // Выделяем первую тему
-            }
-        }
+// Функция для получения текста сложности
+function getDifficultyText(difficulty) {
+    switch(difficulty) {
+        case 'EASY': return 'Лёгкий';
+        case 'AVERAGE': return 'Средний';
+        case 'DEVOPS': return 'DevOps';
+        default: return difficulty;
     }
-
-// Функция для добавления пагинации
-    function addPagination(topics, currentPage, itemsPerPage) {
-        const totalPages = Math.ceil(topics.length / itemsPerPage);
-
-        const paginationContainer = document.createElement('div');
-        paginationContainer.className = 'pagination-container';
-
-// Кнопка "Назад"
-        const prevButton = document.createElement('button');
-        clearPagination();
-        prevButton.innerHTML = '&larr;'; // Левый стрелка (←)
-        prevButton.disabled = currentPage === 1;
-        prevButton.classList.add('pagination-button', 'prev-button');
-        prevButton.addEventListener('click', () => {
-            displayTopics(topics, currentPage - 1, itemsPerPage);
-        });
-        paginationContainer.appendChild(prevButton);
-
-// Кнопка "Вперед"
-        const nextButton = document.createElement('button');
-        clearPagination();
-        nextButton.innerHTML = '&rarr;'; // Правый стрелка (→)
-        nextButton.disabled = currentPage === totalPages;
-        nextButton.classList.add('pagination-button', 'next-button');
-        nextButton.addEventListener('click', () => {
-            displayTopics(topics, currentPage + 1, itemsPerPage);
-        });
-        paginationContainer.appendChild(nextButton);
-
-// Добавляем пагинацию в DOM
-        document.body.appendChild(paginationContainer);
-    }
+}
 
 
+// // Функция для создания выпадающих кнопок по областям
+//     function createAreaButtons() {
+//         const container = document.createElement('div');
+//         container.id = 'areas-container';
+//         container.style.display = 'flex'; // Используем flexbox для расположения кнопок
+//         container.style.flexWrap = 'wrap'; // Перенос кнопок на новую строку, если не хватает места
+//         container.style.gap = '20px'; // Отступы между кнопками
+//         container.style.padding = '20px'; // Отступы внутри контейнера
+//         container.style.justifyContent = 'center'; // Центрируем кнопки
+//
+//         // Получаем все значения Enum (области тем)
+//         const areas = Object.values(TopicArea);
+//
+//         areas.forEach(area => {
+//             const areaButton = document.createElement('button');
+//             areaButton.textContent = area; // Название области
+//             areaButton.className = 'area-button'; // Добавляем класс для стилизации
+//             areaButton.dataset.area = area; // Сохраняем область в data-атрибуте
+//             areaButton.addEventListener('click', () => loadTopicsByArea(area)); // Обработчик клика
+//             container.appendChild(areaButton);
+//         });
+//
+//         // Добавляем контейнер на страницу
+//         document.body.appendChild(container);
+//     }
 
-// Функция для выделения активной темы
-    function setActiveTopic(activeTopic) {
-        const allTopics = document.querySelectorAll('.topic-item');
-        allTopics.forEach(topic => topic.classList.remove('active'));
-        activeTopic.classList.add('active');
-    }
+// // Функция для загрузки тем по области
+//     function loadTopicsByArea(area) {
+//         clearContainers();
+//         clearContainersFull();
+//         fetch(`/api/topics/by-area/${area}`)
+//             .then(response => response.json())
+//             .then(topics => {
+//                 displayTopics(topics); // Отображаем темы
+//             })
+//             .catch(error => {
+//                 console.error('Ошибка:', error);
+//                 alert('Произошла ошибка при загрузке тем.');
+//             });
+//     }
 
 
-// Функция для загрузки содержимого темы
-    function loadTopicContent(topicId) {
-        fetch(`/api/topics/${topicId}`)
-            .then(response => response.json())
-            .then(topic => {
-                displayTopicContent(topic); // Отображаем содержимое темы
-            })
-            .catch(error => {
-                console.error('Ошибка:', error);
-                alert('Произошла ошибка при загрузке содержимого темы.');
-            });
-    }
+// // Функция для отображения тем с пагинацией
+//     function displayTopics(topics, page = 1, itemsPerPage = 12) {
+//         const container = document.createElement('div');
+//         container.id = 'topics-list-container';
+//         container.className = 'topics-list-container';
+//         container.innerHTML = '';
+//
+//         if (topics.length === 0) {
+//             container.innerHTML = '<p>Темы не найдены.</p>';
+//             return;
+//         }
+//
+//         // Вычисляем начальный и конечный индексы для текущей страницы
+//         const startIndex = (page - 1) * itemsPerPage;
+//         const endIndex = startIndex + itemsPerPage;
+//         const paginatedTopics = topics.slice(startIndex, endIndex);
+//
+//         // Отображаем темы для текущей страницы
+//         paginatedTopics.forEach(topic => {
+//             const topicDiv = document.createElement('div');
+//             topicDiv.className = 'topic-item';
+//             topicDiv.innerHTML = `
+//             <p class="topic-title" data-topic-id="${topic.id}">${topic.tableOfContent}</p>`;
+//             topicDiv.querySelector('.topic-title').addEventListener('click', () => {
+//                 loadTopicContent(topic.id); // Загружаем содержимое темы
+//                 setActiveTopic(topicDiv); // Выделяем активную тему
+//             });
+//             container.appendChild(topicDiv);
+//         });
+//
+//         // Очищаем старые контейнеры и добавляем новый
+//        clearContainersLibrary();
+//         document.body.appendChild(container);
+//
+//
+//         // Добавляем пагинацию
+//         addPagination(topics, page, itemsPerPage);
+//
+//         // Выделяем первую тему после добавления контейнера в DOM
+//         if (paginatedTopics.length > 0) {
+//             const firstTopic = container.querySelector('.topic-item'); // Теперь контейнер в DOM
+//             if (firstTopic) {
+//                 setActiveTopic(firstTopic); // Выделяем первую тему
+//             }
+//         }
+//     }
+
+// // Функция для добавления пагинации
+//     function addPagination(topics, currentPage, itemsPerPage) {
+//         const totalPages = Math.ceil(topics.length / itemsPerPage);
+//
+//         const paginationContainer = document.createElement('div');
+//         paginationContainer.className = 'pagination-container';
+//
+// // Кнопка "Назад"
+//         const prevButton = document.createElement('button');
+//         clearPagination();
+//         prevButton.innerHTML = '&larr;'; // Левый стрелка (←)
+//         prevButton.disabled = currentPage === 1;
+//         prevButton.classList.add('pagination-button', 'prev-button');
+//         prevButton.addEventListener('click', () => {
+//             displayTopics(topics, currentPage - 1, itemsPerPage);
+//         });
+//         paginationContainer.appendChild(prevButton);
+//
+// // Кнопка "Вперед"
+//         const nextButton = document.createElement('button');
+//         clearPagination();
+//         nextButton.innerHTML = '&rarr;'; // Правый стрелка (→)
+//         nextButton.disabled = currentPage === totalPages;
+//         nextButton.classList.add('pagination-button', 'next-button');
+//         nextButton.addEventListener('click', () => {
+//             displayTopics(topics, currentPage + 1, itemsPerPage);
+//         });
+//         paginationContainer.appendChild(nextButton);
+//
+// // Добавляем пагинацию в DOM
+//         document.body.appendChild(paginationContainer);
+//     }
 
 
-// Функция для отображения содержимого темы
-    function displayTopicContent(topic) {
-        const container = document.createElement('div');
-        container.id = 'topic-content-container';
-        container.className = 'topic-content-container';
-        container.innerHTML = `<p>${topic.content}</p>`;
 
-        // Очищаем старые контейнеры и добавляем новый
-        clearContainers();
-        document.body.appendChild(container);
-    }
+// // Функция для выделения активной темы
+//     function setActiveTopic(activeTopic) {
+//         const allTopics = document.querySelectorAll('.topic-item');
+//         allTopics.forEach(topic => topic.classList.remove('active'));
+//         activeTopic.classList.add('active');
+//     }
+
+//
+// // Функция для загрузки содержимого темы
+//     function loadTopicContent(topicId) {
+//         fetch(`/api/topics/${topicId}`)
+//             .then(response => response.json())
+//             .then(topic => {
+//                 displayTopicContent(topic); // Отображаем содержимое темы
+//             })
+//             .catch(error => {
+//                 console.error('Ошибка:', error);
+//                 alert('Произошла ошибка при загрузке содержимого темы.');
+//             });
+//     }
+
+//
+// // Функция для отображения содержимого темы
+//     function displayTopicContent(topic) {
+//         const container = document.createElement('div');
+//         container.id = 'topic-content-container';
+//         container.className = 'topic-content-container';
+//         container.innerHTML = `<p>${topic.content}</p>`;
+//
+//         // Очищаем старые контейнеры и добавляем новый
+//         clearContainers();
+//         document.body.appendChild(container);
+//     }
 
 
 // Функция для очистки старых контейнеров
