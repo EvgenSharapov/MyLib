@@ -1,11 +1,11 @@
-package org.example.lib.model;
+package org.example.lib.model.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.GenericGenerator;
+import org.example.lib.model.enums.Difficulty;
+import org.example.lib.model.enums.TopicArea;
 
 import java.util.UUID;
 
@@ -40,5 +40,4 @@ public class Question {
 
     public Question() {
     }
-
 }

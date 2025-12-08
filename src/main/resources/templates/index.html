@@ -101,36 +101,11 @@
             </button>
         </div>
 
-        <!-- Кнопка "Редактировать темы" -->
-        <div class="user-menu">
+        <div class="user-menu" th:if="${isAdmin}">
             <button id="user-button-4" th:title="#{editTopicsTitle}" title="Редактировать темы">
                 <i class="fas fa-edit"></i>
             </button>
         </div>
-
-<!--        &lt;!&ndash; Кнопка "Добавить контент" &ndash;&gt;-->
-<!--        <div class="user-menu">-->
-<!--            <button id="user-button-3" th:title="#{addContentTitle}" title="Добавить контент" >-->
-<!--                <i class="fas fa-plus"></i> &lt;!&ndash; Иконка "плюс" &ndash;&gt;-->
-<!--            </button>-->
-<!--        </div>-->
-
-<!--        &lt;!&ndash; Кнопка "Библиотека" &ndash;&gt;-->
-<!--        <div class="user-menu">-->
-<!--            <button id="user-button-1" th:title="#{libraryTitle}" title="Библиотека">-->
-<!--                <img src="https://cdn-icons-png.flaticon.com/512/2169/2169840.png" alt="Книга" width="30" height="30">-->
-<!--            </button>-->
-
-<!--        </div>-->
-
-<!--        &lt;!&ndash; Кнопка "Профиль пользователя" &ndash;&gt;-->
-<!--        <div class="user-menu">-->
-<!--            <button id="user-button-2" th:title="#{userProfileTitle}" title="Профиль пользователя"></button>-->
-<!--        </div>-->
-<!--    </div>-->
-
-
-
 
         <!-- Кнопка "Добавить контент" -->
         <div class="user-menu center-menu">
@@ -165,22 +140,6 @@
                 <a href="#" id="logout-button" th:text="#{logout}"></a>
             </div>
         </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     <!-- Общий контейнер для меню -->
     <div id="dropdown-menu" class="dropdown-content">
@@ -307,10 +266,6 @@
         <textarea id="content-text" style="width: 100%; height: 650px;" disabled></textarea>
     </div>
 </div>
-
-
-
-
 
 <!-- Подключение JavaScript-файла -->
 <script src="/js/script.js">

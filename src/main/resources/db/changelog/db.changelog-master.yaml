@@ -5,9 +5,14 @@ databaseChangeLog:
       file: db/changelog/db.changelog12-03-2025.yaml
   - include:
       file: db/changelog/db.changelog15-03-2025.yaml
-
   - include:
       file: db/changelog/db.changelog-fix-themes-length.yaml
+  - include:
+      file: db/changelog/db.changelog-roles.yaml
+  - include:
+      file: db/changelog/db.changelog-user-roles.yaml
+  - include:
+      file: db/changelog/db.changelog-update-user-info.yaml
 
   - include:
       file: db/changelog/db.changelog-insert-topics.yaml

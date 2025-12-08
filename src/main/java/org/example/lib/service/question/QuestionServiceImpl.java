@@ -6,17 +6,15 @@ import lombok.RequiredArgsConstructor;
 import org.example.lib.dto.QuestionRequestDTO;
 import org.example.lib.handler.exeptions.question.QuestionNotFoundException;
 import org.example.lib.mapper.QuestionMapper;
-import org.example.lib.model.Question;
-import org.example.lib.model.TopicArea;
+import org.example.lib.model.entity.Question;
+import org.example.lib.model.enums.TopicArea;
 import org.example.lib.repository.QuestionRepository;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.annotation.Validated;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
@@ -65,6 +63,7 @@ public class QuestionServiceImpl implements QuestionService{
                 () -> new QuestionNotFoundException(id));
         QuestionRequestDTO dto = questionMapper.mapToQuestionRequestDTO(question);
         questionCache.put(id, dto);
+
         return dto;
     }
 
@@ -84,6 +83,7 @@ public class QuestionServiceImpl implements QuestionService{
         question = questionRepo.save(question);
         QuestionRequestDTO dto = questionMapper.mapToQuestionRequestDTO(question);
         questionCache.put(question.getId(), dto);
+
         return dto;
     }
 
@@ -92,7 +92,6 @@ public class QuestionServiceImpl implements QuestionService{
     public void delete(UUID id) {
         questionRepo.deleteById(id);
         questionCache.remove(id);
-
     }
 
     @Override
@@ -107,6 +106,7 @@ public class QuestionServiceImpl implements QuestionService{
     @Retryable(backoff = @Backoff(delay = 1000))
     public List<QuestionRequestDTO> getQuestionsByArea(TopicArea topicArea) {
         List<Question>questions =questionRepo.findByTopicArea(topicArea);
+
         return questionMapper.mapToQuestionRequestDTO(questions);
     }
 
@@ -117,6 +117,7 @@ public class QuestionServiceImpl implements QuestionService{
             throw new QuestionNotFoundException("Нет доступных тем");
         }
         List<QuestionRequestDTO> questions = new ArrayList<>(questionCache.values());
+
         return questions.get(ThreadLocalRandom.current().nextInt(questions.size()));
     }
 
@@ -134,16 +135,14 @@ public class QuestionServiceImpl implements QuestionService{
         if (filteredQuestions.isEmpty()) {
             throw new QuestionNotFoundException("Нет доступных вопросов для выбранного уровня сложности: " + difficulty);
         }
-
         return filteredQuestions.get(ThreadLocalRandom.current().nextInt(filteredQuestions.size()));
     }
-
-
 
     @Override
     @Retryable(backoff = @Backoff(delay = 1000))
     public List<QuestionRequestDTO> findThemeByText(String text) {
         List<Question>questions =questionRepo.findByTableOfContentContainingIgnoreCase(text);
+
         return questionMapper.mapToQuestionRequestDTO(questions);
     }
 
@@ -151,7 +150,7 @@ public class QuestionServiceImpl implements QuestionService{
     @Retryable(backoff = @Backoff(delay = 1000))
     public List<QuestionRequestDTO> findContentByText(String text) {
         List<Question>questions =questionRepo.findByContentContainingIgnoreCase(text);
+
         return questionMapper.mapToQuestionRequestDTO(questions);
     }
-
 }

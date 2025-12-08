@@ -2,9 +2,9 @@ package org.example.lib.tests.service;
 
 import org.example.lib.dto.QuestionRequestDTO;
 import org.example.lib.mapper.QuestionMapper;
-import org.example.lib.model.Difficulty;
-import org.example.lib.model.Question;
-import org.example.lib.model.TopicArea;
+import org.example.lib.model.enums.Difficulty;
+import org.example.lib.model.entity.Question;
+import org.example.lib.model.enums.TopicArea;
 import org.example.lib.repository.QuestionRepository;
 import org.example.lib.service.question.QuestionServiceImpl;
 import org.junit.jupiter.api.BeforeEach;

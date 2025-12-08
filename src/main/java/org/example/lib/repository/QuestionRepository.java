@@ -1,10 +1,8 @@
 package org.example.lib.repository;
 
-import org.example.lib.model.Question;
-import org.example.lib.model.TopicArea;
+import org.example.lib.model.entity.Question;
+import org.example.lib.model.enums.TopicArea;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

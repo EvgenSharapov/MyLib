@@ -1,4 +1,4 @@
-package org.example.lib.model;
+package org.example.lib.model.enums;
 
 public enum Difficulty {
     EASY,

@@ -1,15 +1,11 @@
 package org.example.lib.controller.question;
 
-
 import lombok.RequiredArgsConstructor;
 import org.example.lib.dto.QuestionRequestDTO;
-import org.example.lib.handler.ErrorResponses;
 import org.example.lib.handler.exeptions.question.QuestionNotFoundException;
-import org.example.lib.model.Question;
-import org.example.lib.model.TopicArea;
+import org.example.lib.model.entity.Question;
+import org.example.lib.model.enums.TopicArea;
 import org.example.lib.service.question.QuestionService;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
@@ -38,7 +34,6 @@ private final QuestionService questionService;
         if(question.getTableOfContent() == null||question.getContent()==null||question.getTopicArea()==null){
             throw new IllegalArgumentException("Question not found");
         }
-
         return questionService.save(question);
     }
 
@@ -55,6 +50,7 @@ private final QuestionService questionService;
         question.setDifficulty(quest.getDifficulty());
         question.setTableOfContent(quest.getTableOfContent());
         question.setTopicArea(quest.getTopicArea());
+
         return questionService.save(question);
     }
 
@@ -103,5 +99,4 @@ private final QuestionService questionService;
                 .map(Enum::name)
                 .toList();
     }
-
 }

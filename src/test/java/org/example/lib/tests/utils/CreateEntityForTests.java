@@ -1,9 +1,9 @@
 package org.example.lib.tests.utils;
 
 import org.example.lib.dto.QuestionRequestDTO;
-import org.example.lib.model.Difficulty;
-import org.example.lib.model.Question;
-import org.example.lib.model.TopicArea;
+import org.example.lib.model.enums.Difficulty;
+import org.example.lib.model.entity.Question;
+import org.example.lib.model.enums.TopicArea;
 
 import java.util.UUID;
 
