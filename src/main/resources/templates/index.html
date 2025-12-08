@@ -1,275 +1,513 @@
 <!DOCTYPE html>
 <html lang="ru" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="_csrf" th:content="${_csrf.token}" />
-    <meta name="_csrf_header" th:content="${_csrf.headerName}" />
-    <title>Библиотека</title>
-    <link rel="stylesheet" href="/css/index.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <!-- Подключение SweetAlert2 через CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="_csrf" th:content="${_csrf.token}" />
+  <meta name="_csrf_header" th:content="${_csrf.headerName}" />
+  <title>Библиотека</title>
+  <link rel="stylesheet" href="/css/index.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <!-- Подключение SweetAlert2 через CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+  <style>
+    /* Адаптивные стили для мобильных устройств */
+    @media screen and (max-width: 768px) {
+      header {
+        flex-wrap: wrap;
+        padding: 10px 15px;
+        gap: 10px;
+      }
 
+      .left-section, .right-section {
+        flex: 0 0 auto;
+        min-width: unset;
+      }
+
+      .search-container {
+        order: 3;
+        width: 100%;
+        margin-top: 10px;
+      }
+
+      .search-input {
+        font-size: 14px;
+        padding: 8px 12px;
+      }
+
+      .search-buttons {
+        position: static;
+        margin-top: 5px;
+        justify-content: center;
+      }
+
+      .user-menu {
+        margin: 0 3px;
+      }
+
+      .user-menu button {
+        width: 40px;
+        height: 40px;
+        font-size: 14px;
+      }
+
+      .user-menu img {
+        width: 20px;
+        height: 20px;
+      }
+
+      .right-section {
+        justify-content: space-between;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 5px;
+      }
+
+      .right-section::-webkit-scrollbar {
+        height: 3px;
+      }
+
+      .dropdown-menu {
+        position: fixed;
+        top: 60px;
+        right: 10px;
+        left: 10px;
+        width: auto;
+        max-width: 300px;
+        margin: 0 auto;
+        z-index: 1001;
+      }
+
+      #main-container, #app, #table-container, #content-display {
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+
+      #topics-table {
+        font-size: 12px;
+      }
+
+      #topics-table th,
+      #topics-table td {
+        padding: 8px 5px;
+      }
+
+      .pagination-controls-container {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      #content-text {
+        height: 400px;
+      }
+
+      /* Адаптивная форма */
+      #add-topic-form,
+      #add-test-form,
+      .add-test-form {
+        width: 95%;
+        max-width: 95%;
+        margin: 10px auto;
+        padding: 15px;
+      }
+
+      .form-group {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .form-group label {
+        margin-bottom: 5px;
+        width: 100%;
+      }
+
+      .form-group input {
+        width: 100%;
+      }
+
+      /* Мобильное меню пользователя */
+      #user-menu-modal .modal-content {
+        width: 90%;
+        max-width: 400px;
+        margin: 20px auto;
+        padding: 15px;
+      }
+
+      .user-info p {
+        flex-direction: column;
+        align-items: flex-start;
+        margin-bottom: 10px;
+      }
+    }
+
+    @media screen and (max-width: 480px) {
+      header {
+        padding: 8px 10px;
+      }
+
+      .user-menu {
+        margin: 0 2px;
+      }
+
+      .user-menu button {
+        width: 36px;
+        height: 36px;
+        font-size: 12px;
+      }
+
+      h1, h2, h3 {
+        font-size: 1.2em;
+        margin: 10px 0;
+      }
+
+      .search-input {
+        font-size: 13px;
+        padding: 6px 10px;
+      }
+
+      .right-section {
+        gap: 5px;
+      }
+
+      /* Таблица на маленьких экранах */
+      #table-container {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      #topics-table {
+        min-width: 600px; /* Минимальная ширина для прокрутки */
+      }
+
+      .pagination button {
+        padding: 6px 12px;
+        font-size: 12px;
+      }
+    }
+
+    /* Общие адаптивные улучшения */
+    body {
+      overflow-x: hidden;
+      width: 100%;
+    }
+
+    .container {
+      max-width: 100%;
+      overflow-x: hidden;
+    }
+
+    /* Улучшения для touch-устройств */
+    button, a, input, select, textarea {
+      min-height: 44px; /* Минимальный размер для touch */
+    }
+
+    .user-menu button:hover {
+      transform: scale(1.05);
+    }
+
+    /* Скрыть сложные элементы на мобильных */
+    @media screen and (max-width: 768px) {
+      .search-buttons {
+        display: flex;
+      }
+
+      .search-toggle-button {
+        padding: 6px 10px;
+        font-size: 12px;
+        margin: 0 2px;
+      }
+    }
+
+    /* Адаптивные иконки */
+    .fa-cube, .fa-edit, .fa-plus {
+      font-size: 16px;
+    }
+
+    @media screen and (max-width: 480px) {
+      .fa-cube, .fa-edit, .fa-plus {
+        font-size: 14px;
+      }
+    }
+
+    /* Предотвращение zoom на input focus в iOS */
+    @media screen and (max-width: 768px) {
+      input, select, textarea {
+        font-size: 16px !important; /* Предотвращает zoom в iOS */
+      }
+    }
+  </style>
 </head>
 <body>
 
-<header>
+<header style="display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: #f8f9fa; border-bottom: 1px solid #dee2e6; flex-wrap: wrap;">
 
-    <div id="user-menu-modal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <div class="user-info">
-                <div class="user-info">
-                    <p>
-                        <!-- Используем Thymeleaf для подстановки перевода -->
-                        <strong th:text="#{firstName}">Имя</strong>
-                        <span id="user-first-name">${userData.firstName}</span>
-                    </p>
-                    <p>
-                        <strong th:text="#{lastName}">Фамилия</strong>
-                        <span id="user-last-name">${userData.lastName}</span>
-                    </p>
-                    <p>
-                        <strong th:text="#{email}">Email</strong>
-                        <span id="user-email">${userData.email}</span>
-                    </p>
-                    <p>
-                        <strong th:text="#{registrationDate}">Дата регистрации</strong>
-                        <span id="user-registration-date">${registrationDate}</span>
-                    </p>
-                </div>
-            </div>
-            <div class="action-buttons">
-                <!-- Кнопки с переводами -->
-                <button id="edit-profile-button" th:text="#{editProfile}">Редактировать профиль</button>
-                <button id="select-language-button" th:text="#{selectLanguage}">Выбрать язык</button>
-                <button id="difficulty-profile-button" th:text="#{difficulty}">Сложность</button>
-
-            </div>
-            <div id="edit-profile-form" class="hidden">
-                <!-- Поля с плейсхолдерами -->
-                <input type="text" id="edit-first-name" th:placeholder="#{firstName}" autocomplete="off">
-                <input type="text" id="edit-last-name" th:placeholder="#{lastName}" autocomplete="off">
-                <input type="password" id="edit-password" th:placeholder="#{passwordPlaceholder}"  autocomplete="new-password">
-                <button id="save-profile-button" th:text="#{saveProfile}">Сохранить</button>
-            </div>
-            <div id="language-selection-form" class="hidden">
-                <!-- Кнопки выбора языка -->
-                <button class="language-option" data-lang="en">English</button>
-                <button class="language-option" data-lang="ru">Русский</button>
-                <button class="language-option" data-lang="de">Deutsch</button>
-            </div>
-            <div id="difficulty-selection-form" class="hidden">
-                <!-- Кнопки выбора языка -->
-                <button class="difficulty-option" th:text="#{liteDifficulty}" data-difficulty="EASY">Лёгкий</button>
-                <button class="difficulty-option" th:text="#{averageDifficulty}" data-difficulty="AVERAGE">Средний</button>
-                <button class="difficulty-option" th:text="#{hardDifficulty}" data-difficulty="DEVOPS">Devops</button>
-            </div>
+  <div id="user-menu-modal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <div class="user-info">
+        <div class="user-info">
+          <p>
+            <!-- Используем Thymeleaf для подстановки перевода -->
+            <strong th:text="#{firstName}">Имя</strong>
+            <span id="user-first-name">${userData.firstName}</span>
+          </p>
+          <p>
+            <strong th:text="#{lastName}">Фамилия</strong>
+            <span id="user-last-name">${userData.lastName}</span>
+          </p>
+          <p>
+            <strong th:text="#{email}">Email</strong>
+            <span id="user-email">${userData.email}</span>
+          </p>
+          <p>
+            <strong th:text="#{registrationDate}">Дата регистрации</strong>
+            <span id="user-registration-date">${registrationDate}</span>
+          </p>
         </div>
+      </div>
+      <div class="action-buttons">
+        <!-- Кнопки с переводами -->
+        <button id="edit-profile-button" th:text="#{editProfile}">Редактировать профиль</button>
+        <button id="select-language-button" th:text="#{selectLanguage}">Выбрать язык</button>
+        <button id="difficulty-profile-button" th:text="#{difficulty}">Сложность</button>
+
+      </div>
+      <div id="edit-profile-form" class="hidden">
+        <!-- Поля с плейсхолдерами -->
+        <input type="text" id="edit-first-name" th:placeholder="#{firstName}" autocomplete="off">
+        <input type="text" id="edit-last-name" th:placeholder="#{lastName}" autocomplete="off">
+        <input type="password" id="edit-password" th:placeholder="#{passwordPlaceholder}"  autocomplete="new-password">
+        <button id="save-profile-button" th:text="#{saveProfile}">Сохранить</button>
+      </div>
+      <div id="language-selection-form" class="hidden">
+        <!-- Кнопки выбора языка -->
+        <button class="language-option" data-lang="en">English</button>
+        <button class="language-option" data-lang="ru">Русский</button>
+        <button class="language-option" data-lang="de">Deutsch</button>
+      </div>
+      <div id="difficulty-selection-form" class="hidden">
+        <!-- Кнопки выбора языка -->
+        <button class="difficulty-option" th:text="#{liteDifficulty}" data-difficulty="EASY">Лёгкий</button>
+        <button class="difficulty-option" th:text="#{averageDifficulty}" data-difficulty="AVERAGE">Средний</button>
+        <button class="difficulty-option" th:text="#{hardDifficulty}" data-difficulty="DEVOPS">Devops</button>
+      </div>
+    </div>
+  </div>
+
+
+
+  <!-- Контейнер для картинки (левая часть) -->
+  <div class="left-section" style="flex: 0 0 auto;">
+    <div class="user-menu">
+      <a href="/"> <!-- Ссылка на начальную страницу -->
+        <img src="/images/Shey1.png" width="25" height="25" alt="Shey1" class="hover-zoom">
+      </a>
+    </div>
+  </div>
+
+  <div class="search-container" style="flex: 1 1 auto; min-width: 200px; max-width: 500px; margin: 0 10px;">
+    <input type="text" id="search-input" class="search-input" autocomplete="off"
+           th:placeholder="#{searchPlaceholder}" placeholder="Введите текст для поиска..."
+           style="width: 100%; padding: 10px 15px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
+    <div class="search-buttons" style="display: flex; gap: 5px; margin-top: 5px; justify-content: center;">
+      <button id="search-theme-button" class="search-toggle-button"
+              th:title="#{searchThemeButtonTitle}" title="Поиск по темам"
+              style="padding: 6px 12px; font-size: 12px; border: 1px solid #ccc; background: #fff; border-radius: 4px;">
+        <i class="fas fa-book"></i>
+      </button>
+      <button id="search-content-button" class="search-toggle-button"
+              th:title="#{searchContentButtonTitle}" title="Поиск по содержанию"
+              style="padding: 6px 12px; font-size: 12px; border: 1px solid #ccc; background: #fff; border-radius: 4px;">
+        <i class="fas fa-search"></i>
+      </button>
+    </div>
+  </div>
+  <!-- Контейнер для кнопок (правая часть) -->
+  <div class="right-section" style="flex: 0 0 auto; display: flex; align-items: center; gap: 8px; flex-wrap: nowrap;">
+    <!-- Кнопка "Случайный вопрос" -->
+    <div class="user-menu">
+      <button id="user-button-6" th:title="#{randomQuestionTitle}" title="Случайный вопрос"
+              style="width: 44px; height: 44px; border-radius: 50%; border: none; background: #007bff; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+        <i class="fas fa-cube"></i>
+      </button>
     </div>
 
-
-
-    <!-- Контейнер для картинки (левая часть) -->
-    <div class="left-section">
-        <div class="user-menu">
-
-            <a href="/"> <!-- Ссылка на начальную страницу -->
-                <img src="/images/Shey1.png" width="25" height="25" alt="Shey1" class="hover-zoom">
-            </a>
-        </div>
+    <div class="user-menu" th:if="${isAdmin}">
+      <button id="user-button-4" th:title="#{editTopicsTitle}" title="Редактировать темы"
+              style="width: 44px; height: 44px; border-radius: 50%; border: none; background: #28a745; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+        <i class="fas fa-edit"></i>
+      </button>
     </div>
 
-    <div class="search-container">
-        <input type="text" id="search-input" class="search-input" autocomplete="off"
-               th:placeholder="#{searchPlaceholder}" placeholder="Введите текст для поиска...">
-        <div class="search-buttons">
-            <button id="search-theme-button" class="search-toggle-button"
-                    th:title="#{searchThemeButtonTitle}" title="Поиск по темам"></button>
-            <button id="search-content-button" class="search-toggle-button"
-                    th:title="#{searchContentButtonTitle}" title="Поиск по содержанию"></button>
-        </div>
+    <!-- Кнопка "Добавить контент" -->
+    <div class="user-menu center-menu" style="position: relative;">
+      <button id="user-button-3"
+              style="width: 44px; height: 44px; border-radius: 50%; border: none; background: #17a2b8; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+        <i class="fas fa-plus"></i> <!-- Иконка "плюс" -->
+      </button>
+      <!-- Выпадающее меню -->
+      <div class="dropdown-menu center-dropdown" th:id="menu3" style="display: none; position: absolute; top: 100%; left: 0; background: white; border: 1px solid #ddd; border-radius: 4px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); z-index: 1000; min-width: 150px;">
+        <a href="#" id="add-test-button" th:text="#{addTest}" style="display: block; padding: 10px 15px; color: #333; text-decoration: none; border-bottom: 1px solid #eee;"></a>
+        <a href="#" id="add-library-button" th:text="#{addTopic}" style="display: block; padding: 10px 15px; color: #333; text-decoration: none;"></a>
+      </div>
     </div>
-    <!-- Контейнер для кнопок (правая часть) -->
-    <div class="right-section">
-        <!-- Кнопка "Случайный вопрос" -->
-        <div class="user-menu">
-            <button id="user-button-6" th:title="#{randomQuestionTitle}" title="Случайный вопрос">
-                <i class="fas fa-cube"></i>
-            </button>
-        </div>
 
-        <div class="user-menu" th:if="${isAdmin}">
-            <button id="user-button-4" th:title="#{editTopicsTitle}" title="Редактировать темы">
-                <i class="fas fa-edit"></i>
-            </button>
-        </div>
+    <!-- Кнопка "Библиотека" -->
+    <div class="user-menu center-menu" style="position: relative;">
+      <button id="user-button-1"
+              style="width: 44px; height: 44px; border-radius: 50%; border: none; background: #6c757d; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+        <img src="https://cdn-icons-png.flaticon.com/512/2169/2169840.png" alt="Книга" width="20" height="20">
+      </button>
+      <!-- Выпадающее меню -->
+      <div class="dropdown-menu center-dropdown" th:id="menu1" style="display: none; position: absolute; top: 100%; left: 0; background: white; border: 1px solid #ddd; border-radius: 4px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); z-index: 1000; min-width: 150px;">
+        <a href="/test" th:text="#{takeTest}" style="display: block; padding: 10px 15px; color: #333; text-decoration: none; border-bottom: 1px solid #eee;"></a>
+        <a href="#" id="show-library-button" th:text="#{library}" style="display: block; padding: 10px 15px; color: #333; text-decoration: none;"></a>
+      </div>
+    </div>
 
-        <!-- Кнопка "Добавить контент" -->
-        <div class="user-menu center-menu">
-            <button id="user-button-3">
-                <i class="fas fa-plus"></i> <!-- Иконка "плюс" -->
-            </button>
-            <!-- Выпадающее меню -->
-            <div class="dropdown-menu center-dropdown" th:id="menu3">
-                <a href="#" id="add-test-button" th:text="#{addTest}"></a>
-                <a href="#" id="add-library-button" th:text="#{addTopic}"></a>
-            </div>
-        </div>
-
-        <!-- Кнопка "Библиотека" -->
-        <div class="user-menu center-menu">
-            <button id="user-button-1">
-                <img src="https://cdn-icons-png.flaticon.com/512/2169/2169840.png" alt="Книга" width="24" height="24">
-            </button>
-            <!-- Выпадающее меню -->
-            <div class="dropdown-menu center-dropdown" th:id="menu1">
-                <a href="/test" th:text="#{takeTest}"></a>
-                <a href="#" id="show-library-button" th:text="#{library}"></a>
-            </div>
-        </div>
-
-        <!-- Кнопка "Профиль пользователя" -->
-        <div class="user-menu right-menu">
-            <button id="user-button-2"></button>
-            <!-- Выпадающее меню -->
-            <div class="dropdown-menu right-dropdown" th:id="menu2">
-                <a href="#" id="user-profile" th:text="#{userProfile}"></a>
-                <a href="#" id="logout-button" th:text="#{logout}"></a>
-            </div>
-        </div>
+    <!-- Кнопка "Профиль пользователя" -->
+    <div class="user-menu right-menu" style="position: relative;">
+      <button id="user-button-2"
+              style="width: 44px; height: 44px; border-radius: 50%; border: none; background: #343a40; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 20px;">
+        <i class="fas fa-user"></i>
+      </button>
+      <!-- Выпадающее меню -->
+      <div class="dropdown-menu right-dropdown" th:id="menu2" style="display: none; position: absolute; top: 100%; right: 0; background: white; border: 1px solid #ddd; border-radius: 4px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); z-index: 1000; min-width: 150px;">
+        <a href="#" id="user-profile" th:text="#{userProfile}" style="display: block; padding: 10px 15px; color: #333; text-decoration: none; border-bottom: 1px solid #eee;"></a>
+        <a href="#" id="logout-button" th:text="#{logout}" style="display: block; padding: 10px 15px; color: #333; text-decoration: none;"></a>
+      </div>
+    </div>
 
     <!-- Общий контейнер для меню -->
     <div id="dropdown-menu" class="dropdown-content">
-        <!-- Содержимое меню будет динамически изменяться -->
+      <!-- Содержимое меню будет динамически изменяться -->
     </div>
 </header>
-
 <!-- Форма для добавления теста -->
 <div id="add-test-form" class="add-test-form">
-    <h2 th:text="#{addTestTitle}">Добавить новый тест</h2>
-    <form id="test-form">
-        <div class="form-group">
-            <label for="question" th:text="#{questionLabel}">Вопрос:</label>
-            <input type="text" id="question" name="question" required>
-        </div>
-        <div class="form-group">
-            <label for="option1" th:text="#{optionLabel(1)}">Вариант ответа 1:</label>
-            <input type="text" id="option1" name="option1" required>
-            <input type="radio" id="correct-answer-1" name="correct-answer" value="1">
-            <label for="correct-answer-1" th:text="#{correctAnswerLabel}">Правильный</label>
-        </div>
-        <div class="form-group">
-            <label for="option2" th:text="#{optionLabel(2)}">Вариант ответа 2:</label>
-            <input type="text" id="option2" name="option2" required>
-            <input type="radio" id="correct-answer-2" name="correct-answer" value="2">
-            <label for="correct-answer-2" th:text="#{correctAnswerLabel}">Правильный</label>
-        </div>
-        <div class="form-group">
-            <label for="option3" th:text="#{optionLabel(3)}">Вариант ответа 3:</label>
-            <input type="text" id="option3" name="option3" required>
-            <input type="radio" id="correct-answer-3" name="correct-answer" value="3">
-            <label for="correct-answer-3" th:text="#{correctAnswerLabel}">Правильный</label>
-        </div>
-        <div class="form-group">
-            <label for="option4" th:text="#{optionLabel(4)}">Вариант ответа 4:</label>
-            <input type="text" id="option4" name="option4" required>
-            <input type="radio" id="correct-answer-4" name="correct-answer" value="4">
-            <label for="correct-answer-4" th:text="#{correctAnswerLabel}">Правильный</label>
-        </div>
-        <button type="submit" class="create-button" th:text="#{createButton}">Создать</button>
-    </form>
+  <h2 th:text="#{addTestTitle}">Добавить новый тест</h2>
+  <form id="test-form">
+    <div class="form-group">
+      <label for="question" th:text="#{questionLabel}">Вопрос:</label>
+      <input type="text" id="question" name="question" required>
+    </div>
+    <div class="form-group">
+      <label for="option1" th:text="#{optionLabel(1)}">Вариант ответа 1:</label>
+      <input type="text" id="option1" name="option1" required>
+      <input type="radio" id="correct-answer-1" name="correct-answer" value="1">
+      <label for="correct-answer-1" th:text="#{correctAnswerLabel}">Правильный</label>
+    </div>
+    <div class="form-group">
+      <label for="option2" th:text="#{optionLabel(2)}">Вариант ответа 2:</label>
+      <input type="text" id="option2" name="option2" required>
+      <input type="radio" id="correct-answer-2" name="correct-answer" value="2">
+      <label for="correct-answer-2" th:text="#{correctAnswerLabel}">Правильный</label>
+    </div>
+    <div class="form-group">
+      <label for="option3" th:text="#{optionLabel(3)}">Вариант ответа 3:</label>
+      <input type="text" id="option3" name="option3" required>
+      <input type="radio" id="correct-answer-3" name="correct-answer" value="3">
+      <label for="correct-answer-3" th:text="#{correctAnswerLabel}">Правильный</label>
+    </div>
+    <div class="form-group">
+      <label for="option4" th:text="#{optionLabel(4)}">Вариант ответа 4:</label>
+      <input type="text" id="option4" name="option4" required>
+      <input type="radio" id="correct-answer-4" name="correct-answer" value="4">
+      <label for="correct-answer-4" th:text="#{correctAnswerLabel}">Правильный</label>
+    </div>
+    <button type="submit" class="create-button" th:text="#{createButton}">Создать</button>
+  </form>
 </div>
 
 <div id="app">
-    <div id="topic-content-container" class="column" style="display: none;">
-        <!-- Содержимое темы будет здесь -->
-    </div>
-    <div id="topics-list-container" class="column" style="display: none;">
-        <!-- Список тем будет здесь -->
-    </div>
+  <div id="topic-content-container" class="column" style="display: none;">
+    <!-- Содержимое темы будет здесь -->
+  </div>
+  <div id="topics-list-container" class="column" style="display: none;">
+    <!-- Список тем будет здесь -->
+  </div>
 </div>
 
 
 
 <div id="add-topic-form" style="display: none;">
-    <h2 th:text="#{addTopicTitle}">Добавить новую тему</h2>
-    <form id="topic-form">
-        <label for="topic-title" th:text="#{topicTitleLabel}">Название темы:</label>
-        <input type="text" id="topic-title" name="topic-title" required>
+  <h2 th:text="#{addTopicTitle}">Добавить новую тему</h2>
+  <form id="topic-form">
+    <label for="topic-title" th:text="#{topicTitleLabel}">Название темы:</label>
+    <input type="text" id="topic-title" name="topic-title" required>
 
-        <label for="topic-content" th:text="#{topicContentLabel}">Содержимое темы:</label>
-        <textarea id="topic-content" name="topic-content" rows="10" required></textarea>
+    <label for="topic-content" th:text="#{topicContentLabel}">Содержимое темы:</label>
+    <textarea id="topic-content" name="topic-content" rows="10" required></textarea>
 
-        <label for="topic-area" th:text="#{topicAreaLabel}">Область темы:</label>
-        <select id="topic-area" name="topic-area" required>
-            <!-- Опции будут добавлены динамически -->
-        </select>
+    <label for="topic-area" th:text="#{topicAreaLabel}">Область темы:</label>
+    <select id="topic-area" name="topic-area" required>
+      <!-- Опции будут добавлены динамически -->
+    </select>
 
-        <!-- Добавляем поле для выбора сложности -->
-        <label for="topic-difficulty" th:text="#{difficulty}">Сложность:</label>
-        <select id="topic-difficulty" name="topic-difficulty" required>
-            <option value="EASY" th:text="#{liteDifficulty}">Лёгкий</option>
-            <option value="AVERAGE" th:text="#{averageDifficulty}">Средний</option>
-            <option value="DEVOPS" th:text="#{hardDifficulty}">Devops</option>
-        </select>
+    <!-- Добавляем поле для выбора сложности -->
+    <label for="topic-difficulty" th:text="#{difficulty}">Сложность:</label>
+    <select id="topic-difficulty" name="topic-difficulty" required>
+      <option value="EASY" th:text="#{liteDifficulty}">Лёгкий</option>
+      <option value="AVERAGE" th:text="#{averageDifficulty}">Средний</option>
+      <option value="DEVOPS" th:text="#{hardDifficulty}">Devops</option>
+    </select>
 
-        <button type="submit" th:text="#{saveButton}">Сохранить</button>
-        <button type="button" id="cancel-topic-button" th:text="#{cancelButton}">Отмена</button>
-    </form>
+    <button type="submit" th:text="#{saveButton}">Сохранить</button>
+    <button type="button" id="cancel-topic-button" th:text="#{cancelButton}">Отмена</button>
+  </form>
 </div>
 
 
 <!-- Контейнер для таблицы и контента -->
 <div id="main-container">
-    <!-- Таблица для отображения данных -->
-    <div id="table-container" style="display: none;">
-        <!-- Всплывающее меню для выбора количества элементов -->
-        <div class="pagination-controls-container">
-            <div class="pagination-controls">
-                <label for="items-per-page"></label>
-                <select id="items-per-page">
-                    <option value="10">10</option>
-                    <option value="15">15</option>
-                    <option value="20">20</option>
-                </select>
-            </div>
-            <!-- Пагинация -->
-            <div class="pagination">
-                <button id="prev-page" th:text="#{prevPageButton}">Назад</button>
-                <span id="page-info" th:text="${#messages.msg('pageInfo', 1, 1)}">1 ... 1</span>
-                <button id="next-page" th:text="#{nextPageButton}">Вперед</button>
-            </div>
-        </div>
-
-        <!-- Таблица -->
-        <table id="topics-table">
-            <thead>
-            <tr>
-                <th style="width: 55%;" th:text="#{topicNameColumn}">Название темы</th>
-                <th style="width: 15%;" th:text="#{sectionColumn}">Раздел</th>
-                <th style="width: 15%;" th:text="#{difficulty}">Сложность</th>
-                <th style="width: 30%;" th:text="#{actionsColumn}">Действия</th> <!-- Новая колонка для кнопок -->
-            </tr>
-            </thead>
-            <tbody>
-            <!-- Данные будут добавлены сюда -->
-            </tbody>
-        </table>
+  <!-- Таблица для отображения данных -->
+  <div id="table-container" style="display: none;">
+    <!-- Всплывающее меню для выбора количества элементов -->
+    <div class="pagination-controls-container">
+      <div class="pagination-controls">
+        <label for="items-per-page"></label>
+        <select id="items-per-page">
+          <option value="10">10</option>
+          <option value="15">15</option>
+          <option value="20">20</option>
+        </select>
+      </div>
+      <!-- Пагинация -->
+      <div class="pagination">
+        <button id="prev-page" th:text="#{prevPageButton}">Назад</button>
+        <span id="page-info" th:text="${#messages.msg('pageInfo', 1, 1)}">1 ... 1</span>
+        <button id="next-page" th:text="#{nextPageButton}">Вперед</button>
+      </div>
     </div>
 
-    <!-- Поле для отображения content -->
-    <div id="content-display">
-        <h3 th:text="#{contentTitle}">Содержание темы:</h3>
-        <textarea id="content-text" style="width: 100%; height: 650px;" disabled></textarea>
-    </div>
+    <!-- Таблица -->
+    <table id="topics-table">
+      <thead>
+      <tr>
+        <th style="width: 55%;" th:text="#{topicNameColumn}">Название темы</th>
+        <th style="width: 15%;" th:text="#{sectionColumn}">Раздел</th>
+        <th style="width: 15%;" th:text="#{difficulty}">Сложность</th>
+        <th style="width: 30%;" th:text="#{actionsColumn}">Действия</th> <!-- Новая колонка для кнопок -->
+      </tr>
+      </thead>
+      <tbody>
+      <!-- Данные будут добавлены сюда -->
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Поле для отображения content -->
+  <div id="content-display">
+    <h3 th:text="#{contentTitle}">Содержание темы:</h3>
+    <textarea id="content-text" style="width: 100%; height: 650px;" disabled></textarea>
+  </div>
 </div>
 
 <!-- Подключение JavaScript-файла -->
 <script src="/js/script.js">
-    highlightSelectedLanguage();
+  highlightSelectedLanguage();
 </script>
 
 </body>
