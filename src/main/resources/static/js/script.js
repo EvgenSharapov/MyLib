@@ -498,10 +498,7 @@ function displayTopic(topics) {
         const container = document.createElement('div');
         container.id = 'topic-content-container';
         container.className = 'topic-content-container';
-        container.innerHTML = `
-        <p><strong>Название темы:</strong> ${topic.tableOfContent}</p>
-        <p>${topic.content}</p>
-    `;
+        container.innerHTML = `<p>${topic.content}</p>`;
 
         // Очищаем старые контейнеры и добавляем новый
         clearContainers();
