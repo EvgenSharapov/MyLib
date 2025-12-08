@@ -1,7 +1,3 @@
-// Добавляем иконку пользователя во вторую кнопку
-const userButton2 = document.getElementById('user-button-2');
-userButton2.innerHTML = '<i class="fas fa-user"></i>'; // Иконка пользователя из Font Awesome
-
 const TopicArea = {
     OOP: 'OOP',
     JAVA_CORE: 'JAVA_CORE',
@@ -23,7 +19,6 @@ const TopicArea = {
     DOCKER : 'DOCKER',
     KUBERNETES : 'KUBERNETES'
 };
-
 
 const translations = {
     en: {
@@ -61,15 +56,40 @@ const difficulty = {
     DEVOPS: 'DEVOPS'
 };
 
-
-
-// Общий контейнер для меню
 const dropdownMenu = document.getElementById('dropdown-menu');
 
-// Форма для добавления теста
 const addTestForm = document.getElementById('add-test-form');
 
+const userButton2 = document.getElementById('user-button-2');
+userButton2.innerHTML = '<i class="fas fa-user"></i>';
+if (userButton2) {
+    userButton2.innerHTML = '<i class="fas fa-user"></i>';
 
+    userButton2.addEventListener('click', function(event) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        console.log('Кнопка профиля нажата');
+
+        const dropdownMenu = document.querySelector('.right-dropdown');
+        if (dropdownMenu) {
+            dropdownMenu.classList.toggle('show');
+            console.log('Меню профиля переключено');
+        }
+
+        const otherMenus = document.querySelectorAll('.dropdown-menu:not(.right-dropdown)');
+        otherMenus.forEach(menu => menu.classList.remove('show'));
+    });
+
+    document.addEventListener('click', function(event) {
+        if (!event.target.closest('.right-menu')) {
+            const dropdownMenu = document.querySelector('.right-dropdown');
+            if (dropdownMenu) {
+                dropdownMenu.classList.remove('show');
+            }
+        }
+    });
+}
 
 // Обработчик для кнопки "Выход"
 document.addEventListener('click', function(event) {
@@ -1003,11 +1023,6 @@ function enableEditMode(row, topic) {
     editingRow = null;
 }
 
-
-// // // Определяем переменную currentLanguage
-// let currentLanguage = 'en'; // По умолчанию русский язык
-
-
 const language = {
     en: 'en',
     ru: 'ru',
@@ -1168,37 +1183,70 @@ async function confirmDelete(topic) {
 
 
 
-document.getElementById('user-button-4').addEventListener('click', async () => {
-    clearContainersForEdit(); // Очищаем контейнеры
-    hideAddTestForm(); // Скрываем форму добавления теста
+// document.getElementById('user-button-4').addEventListener('click', async () => {
+//     clearContainersForEdit(); // Очищаем контейнеры
+//     hideAddTestForm(); // Скрываем форму добавления теста
+//
+//     // Открываем таблицу для редактирования
+//     const tableContainer = document.getElementById('table-container');
+//     tableContainer.style.display = 'block';
+//
+//     // Устанавливаем флаг, что таблица для редактирования открыта
+//     isEditTableOpen = true;
+//
+//     try {
+//         // Загружаем данные для таблицы редактирования
+//         const response = await fetch('/api/topics/all');
+//         if (!response.ok) throw new Error('Ошибка при загрузке данных');
+//
+//         allData = await response.json(); // Сохраняем данные в глобальный массив
+//         displayData(); // Отображаем данные в таблице
+//     } catch (error) {
+//         console.error('Ошибка:', error);
+//         alert('Произошла ошибка при загрузке данных.');
+//     }
+// });
+//
 
-    // Открываем таблицу для редактирования
-    const tableContainer = document.getElementById('table-container');
-    tableContainer.style.display = 'block';
+const editButton = document.getElementById('user-button-4');
+if (editButton) {
+    editButton.addEventListener('click', async (event) => {
+        event.preventDefault();
+        event.stopPropagation();
 
-    // Устанавливаем флаг, что таблица для редактирования открыта
-    isEditTableOpen = true;
+        console.log('Кнопка "Редактировать темы" нажата');
 
-    try {
-        // Загружаем данные для таблицы редактирования
-        const response = await fetch('/api/topics/all');
-        if (!response.ok) throw new Error('Ошибка при загрузке данных');
+        clearContainersForEdit();
 
-        allData = await response.json(); // Сохраняем данные в глобальный массив
-        displayData(); // Отображаем данные в таблице
-    } catch (error) {
-        console.error('Ошибка:', error);
-        alert('Произошла ошибка при загрузке данных.');
-    }
-});
+        hideAddTestForm();
 
+        const tableContainer = document.getElementById('table-container');
+        if (tableContainer) {
+            tableContainer.style.display = 'block';
 
+            isEditTableOpen = true;
 
+            try {
+                const response = await fetch('/api/topics/all');
+                if (!response.ok) throw new Error('Ошибка при загрузке данных');
 
+                allData = await response.json();
+                displayData();
 
-
-
-
+                console.log('Таблица для редактирования успешно загружена');
+            } catch (error) {
+                console.error('Ошибка:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Ошибка',
+                    text: 'Произошла ошибка при загрузке данных.',
+                });
+            }
+        }
+    });
+} else {
+    console.log('Кнопка "Редактировать темы" не найдена (пользователь не админ)');
+}
 
 // Обработчик для выбора количества элементов на странице
 document.getElementById('items-per-page').addEventListener('change', (e) => {
@@ -1222,9 +1270,6 @@ document.getElementById('next-page').addEventListener('click', () => {
     }
 });
 
-
-
-
 document.addEventListener('DOMContentLoaded', () => {
     const modal = document.getElementById('user-menu-modal');
     const selectLanguageButton = document.getElementById('select-language-button');
@@ -1233,8 +1278,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const languageSelectionForm = document.getElementById('language-selection-form');
     const editProfileForm = document.getElementById('edit-profile-form');
     const difficultyProfileForm = document.getElementById('difficulty-selection-form');
-
-
 
     // Обработчик клика на кнопку "Редактировать профиль"
     editProfileButton.addEventListener('click', () => {
@@ -1256,10 +1299,6 @@ document.addEventListener('DOMContentLoaded', () => {
         languageSelectionForm.classList.add('hidden'); // Скрываем меню выбора языка
         editProfileForm.classList.add('hidden'); // Скрываем форму редактирования
     });
-
-
-
-
 
     // Обработка выбора языка
     document.querySelectorAll('.language-option').forEach(button => {
@@ -1364,8 +1403,6 @@ document.addEventListener('DOMContentLoaded', () => {
         modal.style.display = 'block';
     }
 });
-
-
 
 function changeLanguage(lang) {
     // Отправляем запрос на сервер для изменения языка
@@ -1544,15 +1581,3 @@ document.getElementById('save-profile-button').addEventListener('click', functio
             });
         });
 });
-
-
-
-
-
-
-
-
-
-
-
-
