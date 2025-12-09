@@ -347,7 +347,7 @@ function displayTopic(topics) {
 let currentArea = null; // Для хранения текущей выбранной области
 
 // Функция для создания выпадающих кнопок по областям
-function createAreaButtons() {
+async function createAreaButtons() {
     const container = document.createElement('div');
     container.id = 'areas-container';
     container.className = 'areas-container';
@@ -362,95 +362,123 @@ function createAreaButtons() {
 
     const areas = Object.values(TopicArea);
 
-    areas.forEach(area => {
-        const areaCard = document.createElement('div');
-        areaCard.className = 'area-card';
-        areaCard.dataset.area = area;
+    const areaPromises = areas.map(async (area) => {
+        try {
+            const response = await fetch(`/api/topics/by-area/${area}`);
+            if (!response.ok) {
+                throw new Error(`Ошибка загрузки области ${area}`);
+            }
+            const topics = await response.json();
 
-        const areaIcon = document.createElement('div');
-        areaIcon.className = 'area-icon';
+            const areaCard = document.createElement('div');
+            areaCard.className = 'area-card';
+            areaCard.dataset.area = area;
 
-        switch(area) {
-            case 'OOP':
-                areaIcon.innerHTML = '<i class="fas fa-shapes"></i>';
-                break;
-            case 'JAVA_CORE':
-                areaIcon.innerHTML = '<i class="fas fa-coffee"></i>';
-                break;
-            case 'GIT':
-                areaIcon.innerHTML = '<i class="fas fa-code-branch"></i>';
-                break;
-            case 'SPRING':
-                areaIcon.innerHTML = '<i class="fas fa-leaf"></i>';
-                break;
-            case 'DATA_BASE':
-                areaIcon.innerHTML = '<i class="fas fa-database"></i>';
-                break;
-            case 'MULTITHREADING':
-                areaIcon.innerHTML = '<i class="fas fa-tasks"></i>';
-                break;
-            case 'COLLECTIONS':
-                areaIcon.innerHTML = '<i class="fas fa-layer-group"></i>';
-                break;
-            case 'TEST':
-                areaIcon.innerHTML = '<i class="fas fa-vial"></i>';
-                break;
-            case 'STREAM':
-                areaIcon.innerHTML = '<i class="fas fa-stream"></i>';
-                break;
-            case 'SQL':
-                areaIcon.innerHTML = '<i class="fas fa-table"></i>';
-                break;
-            case 'HIBERNATE':
-                areaIcon.innerHTML = '<i class="fas fa-hippo"></i>';
-                break;
-            case 'HTTP':
-                areaIcon.innerHTML = '<i class="fas fa-globe"></i>';
-                break;
-            case 'ALGORITHMS':
-                areaIcon.innerHTML = '<i class="fas fa-sort-amount-down"></i>';
-                break;
-            case 'ORM':
-                areaIcon.innerHTML = '<i class="fas fa-project-diagram"></i>';
-                break;
-            case 'SYSTEM_DESIGN':
-                areaIcon.innerHTML = '<i class="fas fa-sitemap"></i>';
-                break;
-            case 'DOCKER':
-                areaIcon.innerHTML = '<i class="fab fa-docker"></i>';
-                break;
-            case 'KUBERNETES':
-                areaIcon.innerHTML = '<i class="fas fa-ship"></i>';
-                break;
-            default:
-                areaIcon.innerHTML = '<i class="fas fa-book"></i>';
+            const areaIcon = document.createElement('div');
+            areaIcon.className = 'area-icon';
+
+            switch (area) {
+                case 'OOP':
+                    areaIcon.innerHTML = '<i class="fas fa-shapes"></i>';
+                    break;
+                case 'JAVA_CORE':
+                    areaIcon.innerHTML = '<i class="fas fa-coffee"></i>';
+                    break;
+                case 'GIT':
+                    areaIcon.innerHTML = '<i class="fas fa-code-branch"></i>';
+                    break;
+                case 'SPRING':
+                    areaIcon.innerHTML = '<i class="fas fa-leaf"></i>';
+                    break;
+                case 'DATA_BASE':
+                    areaIcon.innerHTML = '<i class="fas fa-database"></i>';
+                    break;
+                case 'MULTITHREADING':
+                    areaIcon.innerHTML = '<i class="fas fa-tasks"></i>';
+                    break;
+                case 'COLLECTIONS':
+                    areaIcon.innerHTML = '<i class="fas fa-layer-group"></i>';
+                    break;
+                case 'TEST':
+                    areaIcon.innerHTML = '<i class="fas fa-vial"></i>';
+                    break;
+                case 'STREAM':
+                    areaIcon.innerHTML = '<i class="fas fa-stream"></i>';
+                    break;
+                case 'SQL':
+                    areaIcon.innerHTML = '<i class="fas fa-table"></i>';
+                    break;
+                case 'HIBERNATE':
+                    areaIcon.innerHTML = '<i class="fas fa-hippo"></i>';
+                    break;
+                case 'HTTP':
+                    areaIcon.innerHTML = '<i class="fas fa-globe"></i>';
+                    break;
+                case 'ALGORITHMS':
+                    areaIcon.innerHTML = '<i class="fas fa-sort-amount-down"></i>';
+                    break;
+                case 'ORM':
+                    areaIcon.innerHTML = '<i class="fas fa-project-diagram"></i>';
+                    break;
+                case 'SYSTEM_DESIGN':
+                    areaIcon.innerHTML = '<i class="fas fa-sitemap"></i>';
+                    break;
+                case 'DOCKER':
+                    areaIcon.innerHTML = '<i class="fab fa-docker"></i>';
+                    break;
+                case 'KUBERNETES':
+                    areaIcon.innerHTML = '<i class="fas fa-ship"></i>';
+                    break;
+                default:
+                    areaIcon.innerHTML = '<i class="fas fa-book"></i>';
+            }
+
+            const areaName = document.createElement('div');
+            areaName.className = 'area-name';
+            areaName.textContent = area.replace('_', ' ');
+
+            const areaCount = document.createElement('div');
+            areaCount.className = 'area-count';
+
+            const topicCount = topics.length || 0;
+
+            const getTopicWord = (count) => {
+                if (count % 10 === 1 && count % 100 !== 11) return 'тема';
+                if (count % 10 >= 2 && count % 10 <= 4 &&
+                    (count % 100 < 10 || count % 100 >= 20)) return 'темы';
+                return 'тем';
+            };
+
+            areaCount.textContent = `${topicCount} ${getTopicWord(topicCount)}`;
+
+            areaCard.appendChild(areaIcon);
+            areaCard.appendChild(areaName);
+            areaCard.appendChild(areaCount);
+
+            areaCard.addEventListener('click', () => {
+                loadTopicsByArea(area);
+                currentArea = area;
+            });
+
+            return areaCard;
+        } catch (error) {
+            console.error(`Ошибка загрузки области ${area}:`, error);
+            return null;
         }
+    });
 
-        const areaName = document.createElement('div');
-        areaName.className = 'area-name';
-        areaName.textContent = area.replace('_', ' ');
+    const areaCards = await Promise.all(areaPromises);
 
-        const areaCount = document.createElement('div');
-        areaCount.className = 'area-count';
-        areaCount.textContent = '0 тем';
-
-        areaCard.appendChild(areaIcon);
-        areaCard.appendChild(areaName);
-        areaCard.appendChild(areaCount);
-
-        areaCard.addEventListener('click', () => {
-            loadTopicsByArea(area);
-            currentArea = area;
-        });
-
-        grid.appendChild(areaCard);
+    areaCards.forEach(card => {
+        if (card) {
+            grid.appendChild(card);
+        }
     });
 
     container.appendChild(grid);
     document.body.appendChild(container);
 }
 
-// Функция для загрузки тем по области
 function loadTopicsByArea(area) {
     clearContainers();
     clearContainersFull();
