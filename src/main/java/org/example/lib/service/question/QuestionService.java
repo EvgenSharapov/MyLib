@@ -1,5 +1,6 @@
 package org.example.lib.service.question;
 
+import java.util.Map;
 import org.example.lib.dto.QuestionRequestDTO;
 import org.example.lib.model.entity.Question;
 import org.example.lib.model.enums.TopicArea;
@@ -29,5 +30,5 @@ public interface QuestionService {
 
     QuestionRequestDTO getRandomQuestion();
 
-
+    Map<TopicArea, Long> countQuestionsByArea();
 }

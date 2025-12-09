@@ -341,144 +341,141 @@ function displayTopic(topics) {
         areaButton.dataset.area = areas; // Сохраняем область в data-атрибуте
         container.appendChild(areaButton);
 
-    // Добавляем контейнер на страницу
     document.body.appendChild(container);
 }
-let currentArea = null; // Для хранения текущей выбранной области
+let currentArea = null;
 
-// Функция для создания выпадающих кнопок по областям
 async function createAreaButtons() {
     const container = document.createElement('div');
     container.id = 'areas-container';
     container.className = 'areas-container';
 
     const title = document.createElement('h2');
-    title.textContent = 'Выберите раздел';
     title.className = 'areas-title';
     container.appendChild(title);
 
     const grid = document.createElement('div');
     grid.className = 'areas-grid';
 
-    const areas = Object.values(TopicArea);
+    // Показываем loader сразу
+    const loader = document.createElement('div');
+    loader.className = 'loader';
+    loader.innerHTML = '<div class="spinner"></div><p>Загрузка областей...</p>';
+    container.appendChild(loader);
 
-    const areaPromises = areas.map(async (area) => {
-        try {
-            const response = await fetch(`/api/topics/by-area/${area}`);
-            if (!response.ok) {
-                throw new Error(`Ошибка загрузки области ${area}`);
-            }
-            const topics = await response.json();
+    document.body.appendChild(container);
 
-            const areaCard = document.createElement('div');
-            areaCard.className = 'area-card';
-            areaCard.dataset.area = area;
-
-            const areaIcon = document.createElement('div');
-            areaIcon.className = 'area-icon';
-
-            switch (area) {
-                case 'OOP':
-                    areaIcon.innerHTML = '<i class="fas fa-shapes"></i>';
-                    break;
-                case 'JAVA_CORE':
-                    areaIcon.innerHTML = '<i class="fas fa-coffee"></i>';
-                    break;
-                case 'GIT':
-                    areaIcon.innerHTML = '<i class="fas fa-code-branch"></i>';
-                    break;
-                case 'SPRING':
-                    areaIcon.innerHTML = '<i class="fas fa-leaf"></i>';
-                    break;
-                case 'DATA_BASE':
-                    areaIcon.innerHTML = '<i class="fas fa-database"></i>';
-                    break;
-                case 'MULTITHREADING':
-                    areaIcon.innerHTML = '<i class="fas fa-tasks"></i>';
-                    break;
-                case 'COLLECTIONS':
-                    areaIcon.innerHTML = '<i class="fas fa-layer-group"></i>';
-                    break;
-                case 'TEST':
-                    areaIcon.innerHTML = '<i class="fas fa-vial"></i>';
-                    break;
-                case 'STREAM':
-                    areaIcon.innerHTML = '<i class="fas fa-stream"></i>';
-                    break;
-                case 'SQL':
-                    areaIcon.innerHTML = '<i class="fas fa-table"></i>';
-                    break;
-                case 'HIBERNATE':
-                    areaIcon.innerHTML = '<i class="fas fa-hippo"></i>';
-                    break;
-                case 'HTTP':
-                    areaIcon.innerHTML = '<i class="fas fa-globe"></i>';
-                    break;
-                case 'ALGORITHMS':
-                    areaIcon.innerHTML = '<i class="fas fa-sort-amount-down"></i>';
-                    break;
-                case 'ORM':
-                    areaIcon.innerHTML = '<i class="fas fa-project-diagram"></i>';
-                    break;
-                case 'SYSTEM_DESIGN':
-                    areaIcon.innerHTML = '<i class="fas fa-sitemap"></i>';
-                    break;
-                case 'DOCKER':
-                    areaIcon.innerHTML = '<i class="fab fa-docker"></i>';
-                    break;
-                case 'KUBERNETES':
-                    areaIcon.innerHTML = '<i class="fas fa-ship"></i>';
-                    break;
-                default:
-                    areaIcon.innerHTML = '<i class="fas fa-book"></i>';
-            }
-
-            const areaName = document.createElement('div');
-            areaName.className = 'area-name';
-            areaName.textContent = area.replace('_', ' ');
-
-            const areaCount = document.createElement('div');
-            areaCount.className = 'area-count';
-
-            const topicCount = topics.length || 0;
-
-            const getTopicWord = (count) => {
-                if (count % 10 === 1 && count % 100 !== 11) return 'тема';
-                if (count % 10 >= 2 && count % 10 <= 4 &&
-                    (count % 100 < 10 || count % 100 >= 20)) return 'темы';
-                return 'тем';
-            };
-
-            areaCount.textContent = `${topicCount} ${getTopicWord(topicCount)}`;
-
-            areaCard.appendChild(areaIcon);
-            areaCard.appendChild(areaName);
-            areaCard.appendChild(areaCount);
-
-            areaCard.addEventListener('click', () => {
-                loadTopicsByArea(area);
-                currentArea = area;
-            });
-
-            return areaCard;
-        } catch (error) {
-            console.error(`Ошибка загрузки области ${area}:`, error);
-            return null;
+    try {
+        // ОДИН быстрый запрос для получения счетчиков всех областей
+        const response = await fetch('/api/topics/topic-counts');
+        if (!response.ok) {
+            throw new Error('Ошибка загрузки статистики областей');
         }
-    });
 
-    const areaCards = await Promise.all(areaPromises);
+        const counts = await response.json(); // Получаем Map<TopicArea, Long>
 
-    areaCards.forEach(card => {
-        if (card) {
-            grid.appendChild(card);
-        }
-    });
+        // Убираем loader
+        loader.remove();
+
+        // Создаем карточки для всех областей
+        Object.keys(counts).forEach(area => {
+            const topicCount = counts[area] || 0;
+            const areaCard = createAreaCard(area, topicCount);
+            grid.appendChild(areaCard);
+        });
+
+    } catch (error) {
+        console.error('Ошибка загрузки статистики областей:', error);
+
+        // Fallback: создаем карточки без счетчиков
+        loader.remove();
+        Object.values(TopicArea).forEach(area => {
+            const areaCard = createAreaCard(area, 0);
+            grid.appendChild(areaCard);
+        });
+    }
 
     container.appendChild(grid);
-    document.body.appendChild(container);
 }
 
+// Функция для создания карточки области
+function createAreaCard(area, topicCount) {
+    const areaCard = document.createElement('div');
+    areaCard.className = 'area-card';
+    areaCard.dataset.area = area;
+    areaCard.dataset.count = topicCount;
+
+    const areaIcon = document.createElement('div');
+    areaIcon.className = 'area-icon';
+    areaIcon.innerHTML = getIconForArea(area);
+
+    const areaName = document.createElement('div');
+    areaName.className = 'area-name';
+    areaName.textContent = formatAreaName(area);
+
+    const areaCount = document.createElement('div');
+    areaCount.className = 'area-count';
+    areaCount.textContent = `${topicCount} ${getTopicWord(topicCount)}`;
+
+    areaCard.appendChild(areaIcon);
+    areaCard.appendChild(areaName);
+    areaCard.appendChild(areaCount);
+
+    areaCard.addEventListener('click', () => {
+        loadTopicsByArea(area);
+        currentArea = area;
+
+        // Добавляем визуальное выделение активной области
+        document.querySelectorAll('.area-card').forEach(card => {
+            card.classList.remove('active');
+        });
+        areaCard.classList.add('active');
+    });
+
+    return areaCard;
+}
+
+// Функция для получения иконки по области
+function getIconForArea(area) {
+    const icons = {
+        'OOP': '<i class="fas fa-shapes"></i>',
+        'JAVA_CORE': '<i class="fas fa-coffee"></i>',
+        'GIT': '<i class="fas fa-code-branch"></i>',
+        'SPRING': '<i class="fas fa-leaf"></i>',
+        'DATA_BASE': '<i class="fas fa-database"></i>',
+        'MULTITHREADING': '<i class="fas fa-tasks"></i>',
+        'COLLECTIONS': '<i class="fas fa-layer-group"></i>',
+        'TEST': '<i class="fas fa-vial"></i>',
+        'STREAM': '<i class="fas fa-stream"></i>',
+        'SQL': '<i class="fas fa-table"></i>',
+        'HIBERNATE': '<i class="fas fa-hippo"></i>',
+        'HTTP': '<i class="fas fa-globe"></i>',
+        'ALGORITHMS': '<i class="fas fa-sort-amount-down"></i>',
+        'ORM': '<i class="fas fa-project-diagram"></i>',
+        'SYSTEM_DESIGN': '<i class="fas fa-sitemap"></i>',
+        'DOCKER': '<i class="fab fa-docker"></i>',
+        'KUBERNETES': '<i class="fas fa-ship"></i>'
+    };
+
+    return icons[area] || '<i class="fas fa-book"></i>';
+}
+
+// Функция для форматирования названия области
+function formatAreaName(area) {
+    // Заменяем подчеркивания на пробелы и делаем первую букву заглавной
+    return area.replace(/_/g, ' ')
+    .replace(/\b\w/g, char => char.toUpperCase());
+}
+
+// Функция для правильного склонения слова "тема"
+function getTopicWord(count) {
+    if (count % 10 === 1 && count % 100 !== 11) return 'тема';
+    if (count % 10 >= 2 && count % 10 <= 4 &&
+        (count % 100 < 10 || count % 100 >= 20)) return 'темы';
+    return 'тем';
+}
+
+// Оптимизированная функция загрузки тем
 function loadTopicsByArea(area) {
     clearContainers();
     clearContainersFull();
@@ -489,19 +486,98 @@ function loadTopicsByArea(area) {
     document.body.appendChild(loader);
 
     fetch(`/api/topics/by-area/${area}`)
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`Ошибка HTTP: ${response.status}`);
+        }
+        return response.json();
+    })
     .then(topics => {
         loader.remove();
         displayAreaTopics(topics, area);
+
+        // Обновляем счетчик на карточке, если количество изменилось
+        const areaCard = document.querySelector(`.area-card[data-area="${area}"]`);
+        if (areaCard && topics.length !== parseInt(areaCard.dataset.count)) {
+            const countElement = areaCard.querySelector('.area-count');
+            if (countElement) {
+                const newCount = topics.length;
+                areaCard.dataset.count = newCount;
+                countElement.textContent = `${newCount} ${getTopicWord(newCount)}`;
+            }
+        }
     })
     .catch(error => {
-        console.error('Ошибка:', error);
+        console.error('Ошибка загрузки тем:', error);
         loader.remove();
+
+        // Более информативное сообщение об ошибке
+        let errorMessage = 'Произошла ошибка при загрузке тем.';
+        if (error.message.includes('404')) {
+            errorMessage = `Область "${formatAreaName(area)}" не найдена.`;
+        } else if (error.message.includes('network')) {
+            errorMessage = 'Проблема с сетью. Проверьте подключение.';
+        }
+
         Swal.fire({
             icon: 'error',
             title: 'Ошибка',
-            text: 'Произошла ошибка при загрузке тем.',
+            text: errorMessage,
+            footer: `<small>Попробуйте обновить страницу или выбрать другую область</small>`
         });
+    });
+}
+
+// Дополнительно: функция для обновления всех счетчиков
+async function refreshAreaCounts() {
+    try {
+        const response = await fetch('/api/stats/question-counts');
+        const counts = await response.json();
+
+        // Обновляем все карточки
+        Object.keys(counts).forEach(area => {
+            const areaCard = document.querySelector(`.area-card[data-area="${area}"]`);
+            if (areaCard) {
+                const count = counts[area] || 0;
+                const countElement = areaCard.querySelector('.area-count');
+                if (countElement) {
+                    areaCard.dataset.count = count;
+                    countElement.textContent = `${count} ${getTopicWord(count)}`;
+                }
+            }
+        });
+
+        return true;
+    } catch (error) {
+        console.error('Ошибка обновления счетчиков:', error);
+        return false;
+    }
+}
+
+// Дополнительно: функция для показа статистики
+function showAreaStats() {
+    const cards = document.querySelectorAll('.area-card');
+    let totalTopics = 0;
+
+    cards.forEach(card => {
+        totalTopics += parseInt(card.dataset.count) || 0;
+    });
+
+    Swal.fire({
+        icon: 'info',
+        title: 'Статистика',
+        html: `
+            <div style="text-align: left;">
+                <p><strong>Всего областей:</strong> ${cards.length}</p>
+                <p><strong>Всего тем:</strong> ${totalTopics}</p>
+                <hr>
+                <p style="font-size: 0.9em; color: #666;">
+                    <i class="fas fa-sync-alt"></i> 
+                    Обновлено: ${new Date().toLocaleTimeString()}
+                </p>
+            </div>
+        `,
+        showCloseButton: true
     });
 }
 

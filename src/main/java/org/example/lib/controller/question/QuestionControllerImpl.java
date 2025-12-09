@@ -1,5 +1,6 @@
 package org.example.lib.controller.question;
 
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.example.lib.dto.QuestionRequestDTO;
 import org.example.lib.handler.exeptions.question.QuestionNotFoundException;
@@ -98,5 +99,10 @@ private final QuestionService questionService;
         return Arrays.stream(TopicArea.values())
                 .map(Enum::name)
                 .toList();
+    }
+
+    @Override
+    public Map<TopicArea, Long> getQuestionCounts() {
+        return questionService.countQuestionsByArea();
     }
 }

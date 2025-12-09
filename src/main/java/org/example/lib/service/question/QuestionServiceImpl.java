@@ -153,4 +153,21 @@ public class QuestionServiceImpl implements QuestionService{
 
         return questionMapper.mapToQuestionRequestDTO(questions);
     }
+
+    public Map<TopicArea, Long> countQuestionsByArea() {
+        List<Object[]> rawCounts = questionRepo.countQuestionsByArea();
+
+        Map<TopicArea, Long> result = rawCounts.stream()
+            .collect(Collectors.toMap(
+                row -> (TopicArea) row[0],
+                row -> (Long) row[1],
+                (existing, replacement) -> existing,
+                () -> new EnumMap<>(TopicArea.class)
+            ));
+
+        Arrays.stream(TopicArea.values())
+            .forEach(area -> result.putIfAbsent(area, 0L));
+
+        return result;
+    }
 }

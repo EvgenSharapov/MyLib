@@ -1,6 +1,7 @@
 package org.example.lib.controller.question;
 
 import jakarta.validation.Valid;
+import java.util.Map;
 import org.example.lib.dto.QuestionRequestDTO;
 import org.example.lib.model.entity.Question;
 import org.example.lib.model.enums.TopicArea;
@@ -57,4 +58,7 @@ public interface QuestionController {
 
     @GetMapping("/random")
     QuestionRequestDTO getRandomQuestion(@Valid @RequestParam(required = false) String difficulty);
+
+    @GetMapping("/topic-counts")
+    Map<TopicArea, Long> getQuestionCounts();
 }
