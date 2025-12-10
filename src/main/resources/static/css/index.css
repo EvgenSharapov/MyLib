@@ -1529,7 +1529,7 @@ header {
 /* Для десктопов (компьютеров) */
 @media screen and (min-width: 1024px) {
     .topic-content-popup .swal2-popup {
-        width: 55% !important;
+        width: 70% !important;
         max-width: 900px !important;
         min-width: 600px;
         margin: 5% auto !important;

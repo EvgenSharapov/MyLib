@@ -687,235 +687,274 @@ function showTopicContent(topic) {
             popup: 'topic-content-popup',
             container: 'topic-content-container-modal'
         },
-        // didOpen: () => {
-        //     // Добавляем стили для форматирования контента из вашего HTML шаблона
-        //     const style = document.createElement('style');
-        //     style.textContent = `
-        //         .topic-content-modal {
-        //             text-align: left;
-        //             max-height: 70vh;
-        //             overflow-y: auto;
-        //             padding: 10px;
-        //         }
-        //         .topic-content-header {
-        //             display: flex;
-        //             gap: 10px;
-        //             margin-bottom: 20px;
-        //             align-items: center;
-        //             flex-wrap: wrap;
-        //         }
-        //         .topic-area-badge {
-        //             background: #4CAF50;
-        //             color: white;
-        //             padding: 5px 10px;
-        //             border-radius: 15px;
-        //             font-size: 14px;
-        //             font-weight: 500;
-        //         }
-        //         .topic-difficulty-badge {
-        //             padding: 5px 10px;
-        //             border-radius: 15px;
-        //             font-size: 14px;
-        //             font-weight: bold;
-        //         }
-        //         .topic-difficulty-badge.easy {
-        //             background: #4CAF50;
-        //             color: white;
-        //         }
-        //         .topic-difficulty-badge.average {
-        //             background: #FF9800;
-        //             color: white;
-        //         }
-        //         .topic-difficulty-badge.devops {
-        //             background: #F44336;
-        //             color: white;
-        //         }
-        //
-        //         /* Стили из вашего HTML шаблона */
-        //         .topic-content-body {
-        //             font-family: Arial, sans-serif;
-        //             line-height: 1.6;
-        //             color: #333;
-        //         }
-        //
-        //         .topic-content-body h1,
-        //         .topic-content-body h2,
-        //         .topic-content-body h3 {
-        //             color: #2563eb;
-        //             margin: 25px 0 15px 0;
-        //             font-weight: 600;
-        //             display: flex;
-        //             align-items: center;
-        //             gap: 10px;
-        //         }
-        //
-        //         .topic-content-body h1 {
-        //             font-size: 2.5em;
-        //             background: linear-gradient(90deg, #2563eb, #1d4ed8);
-        //             -webkit-background-clip: text;
-        //             -webkit-text-fill-color: transparent;
-        //             background-clip: text;
-        //             text-align: center;
-        //             margin-bottom: 40px;
-        //         }
-        //
-        //         .topic-content-body h2 {
-        //             font-size: 1.4em;
-        //         }
-        //
-        //         .topic-content-body h2::before {
-        //             content: "▸";
-        //             color: #3b82f6;
-        //             font-size: 1.2em;
-        //         }
-        //
-        //         .topic-content-body p {
-        //             margin-bottom: 15px;
-        //             color: #4a5568;
-        //             font-size: 16px;
-        //             line-height: 1.6;
-        //         }
-        //
-        //         .topic-content-body ul {
-        //             margin: 0;
-        //             padding-left: 25px;
-        //             margin-bottom: 15px;
-        //         }
-        //
-        //         .topic-content-body li {
-        //             margin: 12px 0;
-        //             padding-left: 10px;
-        //             color: #4a5568;
-        //             position: relative;
-        //             list-style-type: none;
-        //         }
-        //
-        //         .topic-content-body li::before {
-        //             content: "•";
-        //             color: #3b82f6;
-        //             font-weight: bold;
-        //             display: inline-block;
-        //             width: 1em;
-        //             margin-left: -1em;
-        //         }
-        //
-        //         .topic-content-body .keyword {
-        //             display: inline-block;
-        //             background: #dbeafe;
-        //             color: #1e40af;
-        //             padding: 4px 12px;
-        //             border-radius: 20px;
-        //             font-weight: 500;
-        //             font-size: 0.9em;
-        //             margin-right: 8px;
-        //             border: 1px solid #bfdbfe;
-        //         }
-        //
-        //         .topic-content-body code {
-        //             font-family: 'JetBrains Mono', 'Fira Code', monospace;
-        //             background: #1e293b;
-        //             color: #e2e8f0;
-        //             padding: 3px 8px;
-        //             border-radius: 6px;
-        //             font-size: 0.95em;
-        //             border: 1px solid #334155;
-        //             display: inline-block;
-        //             margin: 4px 0;
-        //         }
-        //
-        //         .topic-content-body .example-container {
-        //             background: #1e293b;
-        //             border-radius: 12px;
-        //             padding: 25px;
-        //             margin: 25px 0;
-        //             border: 1px solid #334155;
-        //         }
-        //
-        //         .topic-content-body .example-title {
-        //             color: #60a5fa;
-        //             font-weight: 500;
-        //             margin-bottom: 15px;
-        //             display: flex;
-        //             align-items: center;
-        //             gap: 10px;
-        //             font-size: 1.1em;
-        //         }
-        //
-        //         .topic-content-body .example-title::before {
-        //             content: "💡";
-        //         }
-        //
-        //         .topic-content-body .highlight-box {
-        //             background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
-        //             border: 2px solid #bae6fd;
-        //             border-radius: 12px;
-        //             padding: 25px;
-        //             margin: 30px 0;
-        //             position: relative;
-        //         }
-        //
-        //         .topic-content-body .highlight-box::before {
-        //             content: "⚠️ Важно";
-        //             position: absolute;
-        //             top: -12px;
-        //             left: 25px;
-        //             background: white;
-        //             padding: 0 15px;
-        //             color: #0369a1;
-        //             font-weight: 600;
-        //             font-size: 0.9em;
-        //         }
-        //
-        //         .topic-content-body .type-grid {
-        //             display: grid;
-        //             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        //             gap: 15px;
-        //             margin: 20px 0;
-        //         }
-        //
-        //         .topic-content-body .type-card {
-        //             background: white;
-        //             border-radius: 12px;
-        //             padding: 20px;
-        //             text-align: center;
-        //             border: 2px solid #e2e8f0;
-        //             transition: all 0.3s ease;
-        //         }
-        //
-        //         .topic-content-body .type-card:hover {
-        //             border-color: #3b82f6;
-        //             transform: translateY(-3px);
-        //         }
-        //
-        //         .topic-content-body .type-card h3 {
-        //             margin: 0 0 10px 0;
-        //             color: #2563eb;
-        //             font-size: 1.1em;
-        //         }
-        //
-        //         .topic-content-body .type-card p {
-        //             margin: 0;
-        //             color: #64748b;
-        //             font-size: 0.9em;
-        //         }
-        //
-        //         /* Адаптивность */
-        //         @media (max-width: 768px) {
-        //             .topic-content-body h1 {
-        //                 font-size: 2em;
-        //             }
-        //
-        //             .topic-content-body .type-grid {
-        //                 grid-template-columns: 1fr;
-        //             }
-        //
-        //             .topic-content-body .highlight-box {
-        //                 padding: 20px;
-        //             }
-        //         }
-        //     `;
-        //     document.head.appendChild(style);
-        // }
+        didOpen: () => {
+            // Добавляем общие стили для всех модальных окон
+            const style = document.createElement('style');
+            style.id = 'topic-content-styles';
+
+            // Проверяем, есть ли уже эти стили
+            if (!document.getElementById('topic-content-styles')) {
+                style.textContent = `
+                    /* Общие стили для контента тем */
+                    .topic-content-modal {
+                        text-align: left;
+                        max-height: 70vh;
+                        overflow-y: auto;
+                        padding: 10px;
+                    }
+                    
+                    .topic-content-header {
+                        display: flex;
+                        gap: 10px;
+                        margin-bottom: 20px;
+                        align-items: center;
+                        flex-wrap: wrap;
+                    }
+                    
+                    .topic-area-badge {
+                        background: #4CAF50;
+                        color: white;
+                        padding: 5px 10px;
+                        border-radius: 15px;
+                        font-size: 14px;
+                        font-weight: 500;
+                    }
+                    
+                    .topic-difficulty-badge {
+                        padding: 5px 10px;
+                        border-radius: 15px;
+                        font-size: 14px;
+                        font-weight: bold;
+                    }
+                    
+                    .topic-difficulty-badge.easy {
+                        background: #4CAF50;
+                        color: white;
+                    }
+                    
+                    .topic-difficulty-badge.average {
+                        background: #FF9800;
+                        color: white;
+                    }
+                    
+                    .topic-difficulty-badge.devops {
+                        background: #F44336;
+                        color: white;
+                    }
+                    
+                    /* СТИЛИ ИЗ ВАШЕГО HTML ШАБЛОНА */
+                    /* Эти стили будут применяться ко ВСЕМ темам */
+                    
+                    /* Базовые стили контента */
+                    .topic-content-body {
+                        font-family: 'Georgia', 'Times New Roman', serif;
+                        line-height: 1.75;
+                        color: #444;
+                        background-color: #fefefe;
+                        padding: 48px 32px;
+                        max-width: 850px;
+                        margin: 0 auto;
+                        background-image: linear-gradient(to bottom, #f8f5f0 0px, #f8f5f0 1px, transparent 1px);
+                        background-size: 100% 1.75em;
+                    }
+                    
+                    /* Заголовки */
+                    .topic-content-body h1 {
+                        font-size: 2.75rem;
+                        font-weight: 400;
+                        color: #2c1810;
+                        margin-bottom: 2rem;
+                        padding-bottom: 1.5rem;
+                        border-bottom: 2px solid #d4a574;
+                        font-family: 'Palatino Linotype', 'Book Antiqua', serif;
+                    }
+                    
+                    .topic-content-body h2 {
+                        font-size: 1.625rem;
+                        font-weight: 600;
+                        color: #3d2c1a;
+                        margin: 3.5rem 0 1.75rem;
+                        padding: 0.5rem 0 0.5rem 1.25rem;
+                        border-left: 4px solid #d4a574;
+                        background-color: #faf6f0;
+                        border-radius: 0 8px 8px 0;
+                        font-family: 'Palatino Linotype', 'Book Antiqua', serif;
+                    }
+                    
+                    /* Параграфы */
+                    .topic-content-body p {
+                        font-size: 1.125rem;
+                        line-height: 1.9;
+                        margin-bottom: 2rem;
+                        color: #555;
+                        text-align: justify;
+                    }
+                    
+                    /* Списки */
+                    .topic-content-body ul {
+                        list-style: none;
+                        margin-bottom: 2.5rem;
+                    }
+                    
+                    .topic-content-body li {
+                        margin-bottom: 1.5rem;
+                        padding-left: 2rem;
+                        position: relative;
+                    }
+                    
+                    .topic-content-body li::before {
+                        content: '▸';
+                        position: absolute;
+                        left: 0;
+                        color: #8b7355;
+                        font-size: 1.2em;
+                    }
+                    
+                    /* Вложенные списки */
+                    .topic-content-body ul ul {
+                        margin: 1.25rem 0 1.25rem 2rem;
+                        background-color: #f8f4ec;
+                        padding: 1.25rem;
+                        border-radius: 6px;
+                        border: 1px solid #e8e0d4;
+                    }
+                    
+                    .topic-content-body ul ul li {
+                        margin-bottom: 0.75rem;
+                        padding-left: 1.5rem;
+                    }
+                    
+                    .topic-content-body ul ul li::before {
+                        content: '–';
+                        color: #a08c6e;
+                    }
+                    
+                    /* Выделенный текст */
+                    .topic-content-body .highlight {
+                        font-weight: 600;
+                        color: #3d2c1a;
+                        font-style: italic;
+                        background-color: transparent;
+                    }
+                    
+                    /* Код */
+                    .topic-content-body code {
+                        font-family: 'Courier New', monospace;
+                        font-size: 0.95rem;
+                        background-color: #f5f2e9;
+                        color: #3d2c1a;
+                        padding: 3px 8px;
+                        border-radius: 4px;
+                        border: 1px solid #d9cfbe;
+                    }
+                    
+                    .topic-content-body pre {
+                        background-color: #f8f5f0;
+                        border: 1px solid #d9cfbe;
+                        border-radius: 8px;
+                        padding: 1.75rem;
+                        margin: 1.75rem 0;
+                        overflow-x: auto;
+                        font-size: 0.95rem;
+                        line-height: 1.7;
+                        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+                    }
+                    
+                    .topic-content-body pre code {
+                        background-color: transparent;
+                        border: none;
+                        padding: 0;
+                        color: #4a3c2a;
+                    }
+                    
+                    /* Блоки с заметками */
+                    .topic-content-body .note {
+                        background-color: #f0f4f8;
+                        border: 1px solid #c9d6e2;
+                        border-radius: 10px;
+                        padding: 2rem;
+                        margin: 3.5rem 0;
+                        position: relative;
+                    }
+                    
+                    .topic-content-body .note::before {
+                        content: '💡';
+                        position: absolute;
+                        left: -12px;
+                        top: -12px;
+                        background-color: #4a6fa5;
+                        color: white;
+                        width: 32px;
+                        height: 32px;
+                        border-radius: 50%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        font-size: 16px;
+                    }
+                    
+                    .topic-content-body .note p {
+                        margin: 0;
+                        color: #2c3e50;
+                        font-size: 1.05rem;
+                        line-height: 1.8;
+                    }
+                    
+                    /* Адаптивность */
+                    @media (max-width: 768px) {
+                        .topic-content-body {
+                            padding: 32px 20px;
+                            background-image: none;
+                        }
+                        
+                        .topic-content-body h1 {
+                            font-size: 2.25rem;
+                        }
+                        
+                        .topic-content-body h2 {
+                            font-size: 1.5rem;
+                            margin: 2.5rem 0 1.5rem;
+                        }
+                        
+                        .topic-content-body ul ul {
+                            margin-left: 1rem;
+                            padding: 1rem;
+                        }
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+
+            // Очищаем встроенные стили из HTML контента
+            const contentBody = document.querySelector('.topic-content-body');
+            if (contentBody) {
+                // Удаляем все теги <style>
+                const styleTags = contentBody.querySelectorAll('style');
+                styleTags.forEach(tag => tag.remove());
+
+                // Удаляем атрибуты style у всех элементов
+                const styledElements = contentBody.querySelectorAll('[style]');
+                styledElements.forEach(el => {
+                    el.removeAttribute('style');
+
+                    // Добавляем классы вместо инлайн-стилей
+                    if (el.tagName === 'H1' || el.tagName === 'H2') {
+                        el.className = 'topic-heading';
+                    } else if (el.tagName === 'CODE') {
+                        el.className = 'code-inline';
+                    } else if (el.tagName === 'PRE') {
+                        el.className = 'code-block';
+                    }
+                });
+            }
+        },
+        willClose: () => {
+            // Очищаем динамически добавленные стили при закрытии
+            const dynamicStyle = document.getElementById('topic-content-styles');
+            if (dynamicStyle) {
+                dynamicStyle.remove();
+            }
+        }
     });
 }
 
