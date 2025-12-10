@@ -1515,12 +1515,46 @@ header {
     100% { transform: rotate(360deg); }
 }
 
-/* Стили для модального окна с контентом */
+/* Стили для модального окна с контентом темы */
 .topic-content-popup .swal2-popup {
     padding: 10px;
     max-height: 85vh;
-    width: 95% !important;
-    max-width: 900px !important;
+    width: auto !important;
+    max-width: 1200px !important;
+    min-width: 300px;
+    border-radius: 15px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+/* Для десктопов (компьютеров) */
+@media screen and (min-width: 1024px) {
+    .topic-content-popup .swal2-popup {
+        width: 55% !important;
+        max-width: 900px !important;
+        min-width: 600px;
+        margin: 5% auto !important;
+    }
+}
+
+/* Для планшетов */
+@media screen and (min-width: 768px) and (max-width: 1023px) {
+    .topic-content-popup .swal2-popup {
+        width: 85% !important;
+        max-width: 800px !important;
+        min-width: 500px;
+        margin: 8% auto !important;
+    }
+}
+
+/* Для мобильных (оставляем как было) */
+@media screen and (max-width: 767px) {
+    .topic-content-popup .swal2-popup {
+        width: 95% !important;
+        max-width: 95% !important;
+        min-width: unset;
+        margin: 2% auto !important;
+        border-radius: 10px;
+    }
 }
 
 .topic-content-popup .swal2-close {
