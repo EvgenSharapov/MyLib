@@ -679,8 +679,8 @@ function showTopicContent(topic) {
                 </div>
             </div>
         `,
-        // width: '90%',
-        // maxWidth: '900px',
+        width: '75%',
+        maxWidth: '900px',
         showCloseButton: true,
         showConfirmButton: false,
         customClass: {
