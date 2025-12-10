@@ -772,12 +772,8 @@ function showTopicContent(topic) {
                     .topic-content-body h2 {
                         font-size: 1.625rem;
                         font-weight: 600;
-                        color: #3d2c1a;
                         margin: 3.5rem 0 1.75rem;
                         padding: 0.5rem 0 0.5rem 1.25rem;
-                        border-left: 4px solid #d4a574;
-                        background-color: #faf6f0;
-                        border-radius: 0 8px 8px 0;
                         font-family: 'Palatino Linotype', 'Book Antiqua', serif;
                     }
                     
