@@ -679,243 +679,243 @@ function showTopicContent(topic) {
                 </div>
             </div>
         `,
-        width: '90%',
-        maxWidth: '900px',
+        // width: '90%',
+        // maxWidth: '900px',
         showCloseButton: true,
         showConfirmButton: false,
         customClass: {
             popup: 'topic-content-popup',
             container: 'topic-content-container-modal'
         },
-        didOpen: () => {
-            // Добавляем стили для форматирования контента из вашего HTML шаблона
-            const style = document.createElement('style');
-            style.textContent = `
-                .topic-content-modal {
-                    text-align: left;
-                    max-height: 70vh;
-                    overflow-y: auto;
-                    padding: 10px;
-                }
-                .topic-content-header {
-                    display: flex;
-                    gap: 10px;
-                    margin-bottom: 20px;
-                    align-items: center;
-                    flex-wrap: wrap;
-                }
-                .topic-area-badge {
-                    background: #4CAF50;
-                    color: white;
-                    padding: 5px 10px;
-                    border-radius: 15px;
-                    font-size: 14px;
-                    font-weight: 500;
-                }
-                .topic-difficulty-badge {
-                    padding: 5px 10px;
-                    border-radius: 15px;
-                    font-size: 14px;
-                    font-weight: bold;
-                }
-                .topic-difficulty-badge.easy {
-                    background: #4CAF50;
-                    color: white;
-                }
-                .topic-difficulty-badge.average {
-                    background: #FF9800;
-                    color: white;
-                }
-                .topic-difficulty-badge.devops {
-                    background: #F44336;
-                    color: white;
-                }
-                
-                /* Стили из вашего HTML шаблона */
-                .topic-content-body {
-                    font-family: Arial, sans-serif;
-                    line-height: 1.6;
-                    color: #333;
-                }
-                
-                .topic-content-body h1,
-                .topic-content-body h2,
-                .topic-content-body h3 {
-                    color: #2563eb;
-                    margin: 25px 0 15px 0;
-                    font-weight: 600;
-                    display: flex;
-                    align-items: center;
-                    gap: 10px;
-                }
-                
-                .topic-content-body h1 {
-                    font-size: 2.5em;
-                    background: linear-gradient(90deg, #2563eb, #1d4ed8);
-                    -webkit-background-clip: text;
-                    -webkit-text-fill-color: transparent;
-                    background-clip: text;
-                    text-align: center;
-                    margin-bottom: 40px;
-                }
-                
-                .topic-content-body h2 {
-                    font-size: 1.4em;
-                }
-                
-                .topic-content-body h2::before {
-                    content: "▸";
-                    color: #3b82f6;
-                    font-size: 1.2em;
-                }
-                
-                .topic-content-body p {
-                    margin-bottom: 15px;
-                    color: #4a5568;
-                    font-size: 16px;
-                    line-height: 1.6;
-                }
-                
-                .topic-content-body ul {
-                    margin: 0;
-                    padding-left: 25px;
-                    margin-bottom: 15px;
-                }
-                
-                .topic-content-body li {
-                    margin: 12px 0;
-                    padding-left: 10px;
-                    color: #4a5568;
-                    position: relative;
-                    list-style-type: none;
-                }
-                
-                .topic-content-body li::before {
-                    content: "•";
-                    color: #3b82f6;
-                    font-weight: bold;
-                    display: inline-block;
-                    width: 1em;
-                    margin-left: -1em;
-                }
-                
-                .topic-content-body .keyword {
-                    display: inline-block;
-                    background: #dbeafe;
-                    color: #1e40af;
-                    padding: 4px 12px;
-                    border-radius: 20px;
-                    font-weight: 500;
-                    font-size: 0.9em;
-                    margin-right: 8px;
-                    border: 1px solid #bfdbfe;
-                }
-                
-                .topic-content-body code {
-                    font-family: 'JetBrains Mono', 'Fira Code', monospace;
-                    background: #1e293b;
-                    color: #e2e8f0;
-                    padding: 3px 8px;
-                    border-radius: 6px;
-                    font-size: 0.95em;
-                    border: 1px solid #334155;
-                    display: inline-block;
-                    margin: 4px 0;
-                }
-                
-                .topic-content-body .example-container {
-                    background: #1e293b;
-                    border-radius: 12px;
-                    padding: 25px;
-                    margin: 25px 0;
-                    border: 1px solid #334155;
-                }
-                
-                .topic-content-body .example-title {
-                    color: #60a5fa;
-                    font-weight: 500;
-                    margin-bottom: 15px;
-                    display: flex;
-                    align-items: center;
-                    gap: 10px;
-                    font-size: 1.1em;
-                }
-                
-                .topic-content-body .example-title::before {
-                    content: "💡";
-                }
-                
-                .topic-content-body .highlight-box {
-                    background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
-                    border: 2px solid #bae6fd;
-                    border-radius: 12px;
-                    padding: 25px;
-                    margin: 30px 0;
-                    position: relative;
-                }
-                
-                .topic-content-body .highlight-box::before {
-                    content: "⚠️ Важно";
-                    position: absolute;
-                    top: -12px;
-                    left: 25px;
-                    background: white;
-                    padding: 0 15px;
-                    color: #0369a1;
-                    font-weight: 600;
-                    font-size: 0.9em;
-                }
-                
-                .topic-content-body .type-grid {
-                    display: grid;
-                    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-                    gap: 15px;
-                    margin: 20px 0;
-                }
-                
-                .topic-content-body .type-card {
-                    background: white;
-                    border-radius: 12px;
-                    padding: 20px;
-                    text-align: center;
-                    border: 2px solid #e2e8f0;
-                    transition: all 0.3s ease;
-                }
-                
-                .topic-content-body .type-card:hover {
-                    border-color: #3b82f6;
-                    transform: translateY(-3px);
-                }
-                
-                .topic-content-body .type-card h3 {
-                    margin: 0 0 10px 0;
-                    color: #2563eb;
-                    font-size: 1.1em;
-                }
-                
-                .topic-content-body .type-card p {
-                    margin: 0;
-                    color: #64748b;
-                    font-size: 0.9em;
-                }
-                
-                /* Адаптивность */
-                @media (max-width: 768px) {
-                    .topic-content-body h1 {
-                        font-size: 2em;
-                    }
-                    
-                    .topic-content-body .type-grid {
-                        grid-template-columns: 1fr;
-                    }
-                    
-                    .topic-content-body .highlight-box {
-                        padding: 20px;
-                    }
-                }
-            `;
-            document.head.appendChild(style);
-        }
+        // didOpen: () => {
+        //     // Добавляем стили для форматирования контента из вашего HTML шаблона
+        //     const style = document.createElement('style');
+        //     style.textContent = `
+        //         .topic-content-modal {
+        //             text-align: left;
+        //             max-height: 70vh;
+        //             overflow-y: auto;
+        //             padding: 10px;
+        //         }
+        //         .topic-content-header {
+        //             display: flex;
+        //             gap: 10px;
+        //             margin-bottom: 20px;
+        //             align-items: center;
+        //             flex-wrap: wrap;
+        //         }
+        //         .topic-area-badge {
+        //             background: #4CAF50;
+        //             color: white;
+        //             padding: 5px 10px;
+        //             border-radius: 15px;
+        //             font-size: 14px;
+        //             font-weight: 500;
+        //         }
+        //         .topic-difficulty-badge {
+        //             padding: 5px 10px;
+        //             border-radius: 15px;
+        //             font-size: 14px;
+        //             font-weight: bold;
+        //         }
+        //         .topic-difficulty-badge.easy {
+        //             background: #4CAF50;
+        //             color: white;
+        //         }
+        //         .topic-difficulty-badge.average {
+        //             background: #FF9800;
+        //             color: white;
+        //         }
+        //         .topic-difficulty-badge.devops {
+        //             background: #F44336;
+        //             color: white;
+        //         }
+        //
+        //         /* Стили из вашего HTML шаблона */
+        //         .topic-content-body {
+        //             font-family: Arial, sans-serif;
+        //             line-height: 1.6;
+        //             color: #333;
+        //         }
+        //
+        //         .topic-content-body h1,
+        //         .topic-content-body h2,
+        //         .topic-content-body h3 {
+        //             color: #2563eb;
+        //             margin: 25px 0 15px 0;
+        //             font-weight: 600;
+        //             display: flex;
+        //             align-items: center;
+        //             gap: 10px;
+        //         }
+        //
+        //         .topic-content-body h1 {
+        //             font-size: 2.5em;
+        //             background: linear-gradient(90deg, #2563eb, #1d4ed8);
+        //             -webkit-background-clip: text;
+        //             -webkit-text-fill-color: transparent;
+        //             background-clip: text;
+        //             text-align: center;
+        //             margin-bottom: 40px;
+        //         }
+        //
+        //         .topic-content-body h2 {
+        //             font-size: 1.4em;
+        //         }
+        //
+        //         .topic-content-body h2::before {
+        //             content: "▸";
+        //             color: #3b82f6;
+        //             font-size: 1.2em;
+        //         }
+        //
+        //         .topic-content-body p {
+        //             margin-bottom: 15px;
+        //             color: #4a5568;
+        //             font-size: 16px;
+        //             line-height: 1.6;
+        //         }
+        //
+        //         .topic-content-body ul {
+        //             margin: 0;
+        //             padding-left: 25px;
+        //             margin-bottom: 15px;
+        //         }
+        //
+        //         .topic-content-body li {
+        //             margin: 12px 0;
+        //             padding-left: 10px;
+        //             color: #4a5568;
+        //             position: relative;
+        //             list-style-type: none;
+        //         }
+        //
+        //         .topic-content-body li::before {
+        //             content: "•";
+        //             color: #3b82f6;
+        //             font-weight: bold;
+        //             display: inline-block;
+        //             width: 1em;
+        //             margin-left: -1em;
+        //         }
+        //
+        //         .topic-content-body .keyword {
+        //             display: inline-block;
+        //             background: #dbeafe;
+        //             color: #1e40af;
+        //             padding: 4px 12px;
+        //             border-radius: 20px;
+        //             font-weight: 500;
+        //             font-size: 0.9em;
+        //             margin-right: 8px;
+        //             border: 1px solid #bfdbfe;
+        //         }
+        //
+        //         .topic-content-body code {
+        //             font-family: 'JetBrains Mono', 'Fira Code', monospace;
+        //             background: #1e293b;
+        //             color: #e2e8f0;
+        //             padding: 3px 8px;
+        //             border-radius: 6px;
+        //             font-size: 0.95em;
+        //             border: 1px solid #334155;
+        //             display: inline-block;
+        //             margin: 4px 0;
+        //         }
+        //
+        //         .topic-content-body .example-container {
+        //             background: #1e293b;
+        //             border-radius: 12px;
+        //             padding: 25px;
+        //             margin: 25px 0;
+        //             border: 1px solid #334155;
+        //         }
+        //
+        //         .topic-content-body .example-title {
+        //             color: #60a5fa;
+        //             font-weight: 500;
+        //             margin-bottom: 15px;
+        //             display: flex;
+        //             align-items: center;
+        //             gap: 10px;
+        //             font-size: 1.1em;
+        //         }
+        //
+        //         .topic-content-body .example-title::before {
+        //             content: "💡";
+        //         }
+        //
+        //         .topic-content-body .highlight-box {
+        //             background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+        //             border: 2px solid #bae6fd;
+        //             border-radius: 12px;
+        //             padding: 25px;
+        //             margin: 30px 0;
+        //             position: relative;
+        //         }
+        //
+        //         .topic-content-body .highlight-box::before {
+        //             content: "⚠️ Важно";
+        //             position: absolute;
+        //             top: -12px;
+        //             left: 25px;
+        //             background: white;
+        //             padding: 0 15px;
+        //             color: #0369a1;
+        //             font-weight: 600;
+        //             font-size: 0.9em;
+        //         }
+        //
+        //         .topic-content-body .type-grid {
+        //             display: grid;
+        //             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        //             gap: 15px;
+        //             margin: 20px 0;
+        //         }
+        //
+        //         .topic-content-body .type-card {
+        //             background: white;
+        //             border-radius: 12px;
+        //             padding: 20px;
+        //             text-align: center;
+        //             border: 2px solid #e2e8f0;
+        //             transition: all 0.3s ease;
+        //         }
+        //
+        //         .topic-content-body .type-card:hover {
+        //             border-color: #3b82f6;
+        //             transform: translateY(-3px);
+        //         }
+        //
+        //         .topic-content-body .type-card h3 {
+        //             margin: 0 0 10px 0;
+        //             color: #2563eb;
+        //             font-size: 1.1em;
+        //         }
+        //
+        //         .topic-content-body .type-card p {
+        //             margin: 0;
+        //             color: #64748b;
+        //             font-size: 0.9em;
+        //         }
+        //
+        //         /* Адаптивность */
+        //         @media (max-width: 768px) {
+        //             .topic-content-body h1 {
+        //                 font-size: 2em;
+        //             }
+        //
+        //             .topic-content-body .type-grid {
+        //                 grid-template-columns: 1fr;
+        //             }
+        //
+        //             .topic-content-body .highlight-box {
+        //                 padding: 20px;
+        //             }
+        //         }
+        //     `;
+        //     document.head.appendChild(style);
+        // }
     });
 }
 
