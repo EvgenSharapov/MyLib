@@ -754,8 +754,6 @@ function showTopicContent(topic) {
                         padding: 48px 32px;
                         max-width: 850px;
                         margin: 0 auto;
-                        background-image: linear-gradient(to bottom, #f8f5f0 0px, #f8f5f0 1px, transparent 1px);
-                        background-size: 100% 1.75em;
                     }
                     
                     /* Заголовки */
