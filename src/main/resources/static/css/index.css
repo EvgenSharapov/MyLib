@@ -33,14 +33,6 @@ header {
     gap: 10px; /* Расстояние между кнопками */
 }
 
-/*!* Меню пользователя *!*/
-/*.user-menu {*/
-/*    padding: 10px;*/
-/*    position: relative;*/
-/*    display: inline-block;*/
-/*    margin-right: 10px; !* Отступ между кнопками *!*/
-/*}*/
-
 #user-button-1,
 #user-button-2,
 #user-button-3,
@@ -86,15 +78,6 @@ header {
     width: 40px;
     height: 40px;
 }
-
-
-
-
-
-
-
-
-
 
 /* Общий контейнер для меню */
 .dropdown-content {
@@ -268,31 +251,18 @@ header {
 
 }
 
-
-
-
-
-/* Стили для блока кода */
-pre {
-    background-color: #f4f4f4; /* Светлый фон */
-    border: 1px solid #ccc; /* Тонкая рамка */
-    border-radius: 8px; /* Закругленные углы */
-    padding: 15px; /* Отступы внутри блока */
-    font-size: 14px; /* Размер шрифта */
-    font-family: "Courier New", monospace; /* Моноширинный шрифт */
-    overflow-x: auto; /* Горизонтальная прокрутка, если код слишком широкий */
-    margin: 20px 0; /* Отступы снаружи */
-    line-height: 1.5; /* Межстрочный интервал */
-}
-
-
-
-
-
-
-
-
-
+/*!* Стили для блока кода *!*/
+/*pre {*/
+/*    background-color: #f4f4f4; !* Светлый фон *!*/
+/*    border: 1px solid #ccc; !* Тонкая рамка *!*/
+/*    border-radius: 8px; !* Закругленные углы *!*/
+/*    padding: 15px; !* Отступы внутри блока *!*/
+/*    font-size: 14px; !* Размер шрифта *!*/
+/*    font-family: "Courier New", monospace; !* Моноширинный шрифт *!*/
+/*    overflow-x: auto; !* Горизонтальная прокрутка, если код слишком широкий *!*/
+/*    margin: 20px 0; !* Отступы снаружи *!*/
+/*    line-height: 1.5; !* Межстрочный интервал *!*/
+/*}*/
 
 /* Стили для кнопок областей */
 .area-button {
@@ -322,8 +292,6 @@ pre {
     transform: scale(0.95); /* Легкое уменьшение */
 }
 
-
-
 /* Контейнер для списка тем */
 .topics-list-container {
     margin-left: 60%;
@@ -336,9 +304,6 @@ pre {
     top: 10%; /* Отступ сверху */
     right: 20px; /* Отступ справа */
     z-index: 1; /* Устанавливаем z-index, чтобы контейнер был поверх */
-
-
-
     font-size: 18px; /* Увеличьте размер шрифта, если необходимо */
 }
 
@@ -354,9 +319,6 @@ pre {
     top: 10%; /* Отступ сверху */
     right: 20px; /* Отступ справа */
     z-index: 1; /* Устанавливаем z-index, чтобы контейнер был поверх */
-
-
-
     font-size: 18px; /* Увеличьте размер шрифта, если необходимо */
 }
 
@@ -390,8 +352,6 @@ pre {
     background-color: #9ea3a8; /* Цвет активной темы */
     color: #fff; /* Цвет текста активной темы */
 }
-
-
 
 #add-topic-form {
     font-family: 'Montserrat', sans-serif;
@@ -459,9 +419,6 @@ pre {
     border-color: #444444; /* Изменение цвета рамки при фокусе */
 }
 
-
-
-
 /* Общий стиль для контейнера пагинации */
 .pagination-container {
     display: flex; /* Используем flexbox для выравнивания элементов */
@@ -483,9 +440,6 @@ pre {
     font-size: 20px; /* Размер шрифта */
     transition: background-color 0.3s; /* Плавный переход фона */
 }
-
-
-
 /* Эффект при наведении */
 .pagination-button:hover {
     background-color: #333333; /* Темнее фон при наведении */
@@ -573,7 +527,6 @@ pre {
     position: relative;
 }
 
-
 #user-button-1[title]:hover::after,
 #user-button-2[title]:hover::after,
 #user-button-3[title]:hover::after,
@@ -594,9 +547,6 @@ pre {
     white-space: nowrap;
     z-index: 1000;
 }
-
-
-
 
 /* Основной контейнер для таблицы и контента */
 #main-container {
@@ -792,10 +742,6 @@ pre {
     box-shadow: 0 0 5px rgba(34, 94, 159, 0.5); /* Легкая тень при фокусе */
 }
 
-
-
-
-
 /* Стили для модального окна */
 .modal {
     font-family: 'Montserrat', sans-serif;
@@ -871,8 +817,6 @@ pre {
 .hidden {
     display: none;
 }
-
-
 
 /* Стили для кнопки "Редактировать профиль" */
 #difficulty-profile-button,
