@@ -43,19 +43,8 @@ public class UserRegistrationDto {
     @Size(max = 50, message = "Длина электронной почты не должна превышать 50 символов")
     private String email;
 
-    @AssertTrue(message = "Необходимо согласие с условиями использования")
-    private boolean termsAccepted;
-
     @Builder.Default
     private Set<String> roles = new HashSet<>();
-
-    @NotBlank(message = "Подтверждение пароля обязательно")
-    private String confirmPassword;
-
-    @AssertTrue(message = "Пароли не совпадают")
-    public boolean isPasswordMatching() {
-        return password != null && password.equals(confirmPassword);
-    }
 
     public Set<String> getRolesOrDefault() {
         if (roles == null || roles.isEmpty()) {

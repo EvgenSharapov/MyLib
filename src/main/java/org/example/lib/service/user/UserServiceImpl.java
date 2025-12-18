@@ -45,9 +45,6 @@ public class UserServiceImpl implements UserDetailsService,UserService {
     @Override
     @Transactional
     public User registerUser(UserRegistrationDto userRegistrationDto) {
-        if (!userRegistrationDto.isTermsAccepted()) {
-            throw new IllegalArgumentException("Необходимо согласие с условиями использования");
-        }
         if (userRepository.existsByUsername(userRegistrationDto.getUsername())) {
             throw new IllegalArgumentException("Пользователь с таким именем уже существует");
         }
