@@ -1,7 +1,6 @@
 databaseChangeLog:
-
   - changeSet:
-      id: 4
+      id: 3
       author: evgeny_sharapov
       changes:
         - addColumn:

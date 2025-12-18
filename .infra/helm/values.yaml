@@ -1,0 +1,111 @@
+# ==========================================
+# Общие настройки приложения
+# ==========================================
+replicaCount: 1
+
+image:
+  repository: spring-boot-app
+  tag: latest
+  pullPolicy: IfNotPresent
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+# ==========================================
+# Сервис
+# ==========================================
+service:
+  type: ClusterIP
+  port: 8080
+  nodePort: null
+  annotations: {}
+
+# ==========================================
+# Ingress
+# ==========================================
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+  hosts:
+    - host: chart-example.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
+
+# ==========================================
+# Ресурсы
+# ==========================================
+resources:
+  limits:
+    cpu: 1000m
+    memory: 2000Mi
+  requests:
+    cpu: 2-00m
+    memory: 2500Mi
+
+# ==========================================
+# Autoscaling
+# ==========================================
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 3
+  targetCPUUtilizationPercentage: 80
+  targetMemoryUtilizationPercentage: 80
+
+# ==========================================
+# Пробы здоровья
+# ==========================================
+livenessProbe:
+  httpGet:
+    path: /actuator/health/liveness
+    port: http
+  initialDelaySeconds: 60
+  periodSeconds: 10
+  timeoutSeconds: 5
+  failureThreshold: 3
+
+readinessProbe:
+  httpGet:
+    path: /actuator/health/readiness
+    port: http
+  initialDelaySeconds: 30
+  periodSeconds: 5
+  timeoutSeconds: 3
+  failureThreshold: 3
+
+# ==========================================
+# Переменные окружения
+# ==========================================
+env:
+  SPRING_PROFILES_ACTIVE: "default"
+  JAVA_OPTS: "-Xmx256m -Xms128m"
+  SERVER_PORT: "8080"
+
+# Переменные для базы данных
+db:
+  enabled: false
+  secretName: ""
+  host: "localhost"
+  port: "3306"
+  name: "appdb"
+
+# ==========================================
+# Volumes
+# ==========================================
+volumes: []
+volumeMounts: []
+
+# ==========================================
+# Дополнительные аннотации и метки
+# ==========================================
+podAnnotations: {}
+podLabels: {}
+
+serviceAccount:
+  create: false
+  annotations: {}
+  name: ""

@@ -1,0 +1,10 @@
+.git
+.gitlab-ci.yml
+.m2/
+*.iml
+.idea/
+*.log
+.DS_Store
+*.ear
+/docker/
+/config/development/

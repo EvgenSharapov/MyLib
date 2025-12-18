@@ -1,0 +1,23 @@
+  databaseChangeLog:
+    - changeSet:
+        id: 1
+        author: evgeny_sharapov
+        changes:
+          - createTable:
+              tableName: topic_library
+              columns:
+                - column:
+                    name: topic_library_id
+                    type: UUID
+                    constraints:
+                      primaryKey: true
+                      nullable: false
+                - column:
+                    name: themes
+                    type: varchar(50)
+                - column:
+                    name: content
+                    type: TEXT
+                - column:
+                    name: topic_area
+                    type: varchar(50)

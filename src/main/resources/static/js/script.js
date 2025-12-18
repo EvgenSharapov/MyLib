@@ -1,7 +1,3 @@
-// Добавляем иконку пользователя во вторую кнопку
-const userButton2 = document.getElementById('user-button-2');
-userButton2.innerHTML = '<i class="fas fa-user"></i>'; // Иконка пользователя из Font Awesome
-
 const TopicArea = {
     OOP: 'OOP',
     JAVA_CORE: 'JAVA_CORE',
@@ -18,11 +14,11 @@ const TopicArea = {
     HTTP : 'HTTP',
     ALGORITHMS : 'ALGORITHMS',
     ORM : 'ORM',
-    SYSTEM_DESIGN : 'SYSTEM_DESIGN'
-
-
+    SYSTEM_DESIGN : 'SYSTEM_DESIGN',
+    BASIC_CONCEPTS : 'BASIC_CONCEPTS',
+    DOCKER : 'DOCKER',
+    KUBERNETES : 'KUBERNETES'
 };
-
 
 const translations = {
     en: {
@@ -52,16 +48,48 @@ const translations = {
 
 };
 
+let selectedDifficulty = localStorage.getItem('difficulty') || 'EASY';
 
+const difficulty = {
+    EASY: 'EASY',
+    AVERAGE: 'AVERAGE',
+    DEVOPS: 'DEVOPS'
+};
 
-
-// Общий контейнер для меню
 const dropdownMenu = document.getElementById('dropdown-menu');
 
-// Форма для добавления теста
 const addTestForm = document.getElementById('add-test-form');
 
+const userButton2 = document.getElementById('user-button-2');
+userButton2.innerHTML = '<i class="fas fa-user"></i>';
+if (userButton2) {
+    userButton2.innerHTML = '<i class="fas fa-user"></i>';
 
+    userButton2.addEventListener('click', function(event) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        console.log('Кнопка профиля нажата');
+
+        const dropdownMenu = document.querySelector('.right-dropdown');
+        if (dropdownMenu) {
+            dropdownMenu.classList.toggle('show');
+            console.log('Меню профиля переключено');
+        }
+
+        const otherMenus = document.querySelectorAll('.dropdown-menu:not(.right-dropdown)');
+        otherMenus.forEach(menu => menu.classList.remove('show'));
+    });
+
+    document.addEventListener('click', function(event) {
+        if (!event.target.closest('.right-menu')) {
+            const dropdownMenu = document.querySelector('.right-dropdown');
+            if (dropdownMenu) {
+                dropdownMenu.classList.remove('show');
+            }
+        }
+    });
+}
 
 // Обработчик для кнопки "Выход"
 document.addEventListener('click', function(event) {
@@ -313,172 +341,790 @@ function displayTopic(topics) {
         areaButton.dataset.area = areas; // Сохраняем область в data-атрибуте
         container.appendChild(areaButton);
 
-    // Добавляем контейнер на страницу
+    document.body.appendChild(container);
+}
+let currentArea = null;
+
+async function createAreaButtons() {
+    const container = document.createElement('div');
+    container.id = 'areas-container';
+    container.className = 'areas-container';
+
+    const title = document.createElement('h2');
+    title.className = 'areas-title';
+    container.appendChild(title);
+
+    const grid = document.createElement('div');
+    grid.className = 'areas-grid';
+
+    // Показываем loader сразу
+    const loader = document.createElement('div');
+    loader.className = 'loader';
+    loader.innerHTML = '<div class="spinner"></div><p>Загрузка областей...</p>';
+    container.appendChild(loader);
+
+    document.body.appendChild(container);
+
+    try {
+        // ОДИН быстрый запрос для получения счетчиков всех областей
+        const response = await fetch('/api/topics/topic-counts');
+        if (!response.ok) {
+            throw new Error('Ошибка загрузки статистики областей');
+        }
+
+        const counts = await response.json(); // Получаем Map<TopicArea, Long>
+
+        // Убираем loader
+        loader.remove();
+
+        // Создаем карточки для всех областей
+        Object.keys(counts).forEach(area => {
+            const topicCount = counts[area] || 0;
+            const areaCard = createAreaCard(area, topicCount);
+            grid.appendChild(areaCard);
+        });
+
+    } catch (error) {
+        console.error('Ошибка загрузки статистики областей:', error);
+
+        // Fallback: создаем карточки без счетчиков
+        loader.remove();
+        Object.values(TopicArea).forEach(area => {
+            const areaCard = createAreaCard(area, 0);
+            grid.appendChild(areaCard);
+        });
+    }
+
+    container.appendChild(grid);
+}
+
+// Функция для создания карточки области
+function createAreaCard(area, topicCount) {
+    const areaCard = document.createElement('div');
+    areaCard.className = 'area-card';
+    areaCard.dataset.area = area;
+    areaCard.dataset.count = topicCount;
+
+    const areaIcon = document.createElement('div');
+    areaIcon.className = 'area-icon';
+    areaIcon.innerHTML = getIconForArea(area);
+
+    const areaName = document.createElement('div');
+    areaName.className = 'area-name';
+    areaName.textContent = formatAreaName(area);
+
+    const areaCount = document.createElement('div');
+    areaCount.className = 'area-count';
+    areaCount.textContent = `${topicCount} ${getTopicWord(topicCount)}`;
+
+    areaCard.appendChild(areaIcon);
+    areaCard.appendChild(areaName);
+    areaCard.appendChild(areaCount);
+
+    areaCard.addEventListener('click', () => {
+        loadTopicsByArea(area);
+        currentArea = area;
+
+        // Добавляем визуальное выделение активной области
+        document.querySelectorAll('.area-card').forEach(card => {
+            card.classList.remove('active');
+        });
+        areaCard.classList.add('active');
+    });
+
+    return areaCard;
+}
+
+// Функция для получения иконки по области
+function getIconForArea(area) {
+    const icons = {
+        'OOP': '<i class="fas fa-shapes"></i>',
+        'JAVA_CORE': '<i class="fas fa-coffee"></i>',
+        'GIT': '<i class="fas fa-code-branch"></i>',
+        'SPRING': '<i class="fas fa-leaf"></i>',
+        'DATA_BASE': '<i class="fas fa-database"></i>',
+        'MULTITHREADING': '<i class="fas fa-tasks"></i>',
+        'COLLECTIONS': '<i class="fas fa-layer-group"></i>',
+        'TEST': '<i class="fas fa-vial"></i>',
+        'STREAM': '<i class="fas fa-stream"></i>',
+        'SQL': '<i class="fas fa-table"></i>',
+        'HIBERNATE': '<i class="fas fa-hippo"></i>',
+        'HTTP': '<i class="fas fa-globe"></i>',
+        'ALGORITHMS': '<i class="fas fa-sort-amount-down"></i>',
+        'ORM': '<i class="fas fa-project-diagram"></i>',
+        'SYSTEM_DESIGN': '<i class="fas fa-sitemap"></i>',
+        'DOCKER': '<i class="fab fa-docker"></i>',
+        'KUBERNETES': '<i class="fas fa-ship"></i>'
+    };
+
+    return icons[area] || '<i class="fas fa-book"></i>';
+}
+
+// Функция для форматирования названия области
+function formatAreaName(area) {
+    // Заменяем подчеркивания на пробелы и делаем первую букву заглавной
+    return area.replace(/_/g, ' ')
+    .replace(/\b\w/g, char => char.toUpperCase());
+}
+
+// Функция для правильного склонения слова "тема"
+function getTopicWord(count) {
+    if (count % 10 === 1 && count % 100 !== 11) return 'тема';
+    if (count % 10 >= 2 && count % 10 <= 4 &&
+        (count % 100 < 10 || count % 100 >= 20)) return 'темы';
+    return 'тем';
+}
+
+// Оптимизированная функция загрузки тем
+function loadTopicsByArea(area) {
+    clearContainers();
+    clearContainersFull();
+
+    const loader = document.createElement('div');
+    loader.className = 'loader';
+    loader.innerHTML = '<div class="spinner"></div><p>Загрузка тем...</p>';
+    document.body.appendChild(loader);
+
+    fetch(`/api/topics/by-area/${area}`)
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`Ошибка HTTP: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(topics => {
+        loader.remove();
+        displayAreaTopics(topics, area);
+
+        // Обновляем счетчик на карточке, если количество изменилось
+        const areaCard = document.querySelector(`.area-card[data-area="${area}"]`);
+        if (areaCard && topics.length !== parseInt(areaCard.dataset.count)) {
+            const countElement = areaCard.querySelector('.area-count');
+            if (countElement) {
+                const newCount = topics.length;
+                areaCard.dataset.count = newCount;
+                countElement.textContent = `${newCount} ${getTopicWord(newCount)}`;
+            }
+        }
+    })
+    .catch(error => {
+        console.error('Ошибка загрузки тем:', error);
+        loader.remove();
+
+        // Более информативное сообщение об ошибке
+        let errorMessage = 'Произошла ошибка при загрузке тем.';
+        if (error.message.includes('404')) {
+            errorMessage = `Область "${formatAreaName(area)}" не найдена.`;
+        } else if (error.message.includes('network')) {
+            errorMessage = 'Проблема с сетью. Проверьте подключение.';
+        }
+
+        Swal.fire({
+            icon: 'error',
+            title: 'Ошибка',
+            text: errorMessage,
+            footer: `<small>Попробуйте обновить страницу или выбрать другую область</small>`
+        });
+    });
+}
+
+// Дополнительно: функция для обновления всех счетчиков
+async function refreshAreaCounts() {
+    try {
+        const response = await fetch('/api/stats/question-counts');
+        const counts = await response.json();
+
+        // Обновляем все карточки
+        Object.keys(counts).forEach(area => {
+            const areaCard = document.querySelector(`.area-card[data-area="${area}"]`);
+            if (areaCard) {
+                const count = counts[area] || 0;
+                const countElement = areaCard.querySelector('.area-count');
+                if (countElement) {
+                    areaCard.dataset.count = count;
+                    countElement.textContent = `${count} ${getTopicWord(count)}`;
+                }
+            }
+        });
+
+        return true;
+    } catch (error) {
+        console.error('Ошибка обновления счетчиков:', error);
+        return false;
+    }
+}
+
+// Дополнительно: функция для показа статистики
+function showAreaStats() {
+    const cards = document.querySelectorAll('.area-card');
+    let totalTopics = 0;
+
+    cards.forEach(card => {
+        totalTopics += parseInt(card.dataset.count) || 0;
+    });
+
+    Swal.fire({
+        icon: 'info',
+        title: 'Статистика',
+        html: `
+            <div style="text-align: left;">
+                <p><strong>Всего областей:</strong> ${cards.length}</p>
+                <p><strong>Всего тем:</strong> ${totalTopics}</p>
+                <hr>
+                <p style="font-size: 0.9em; color: #666;">
+                    <i class="fas fa-sync-alt"></i> 
+                    Обновлено: ${new Date().toLocaleTimeString()}
+                </p>
+            </div>
+        `,
+        showCloseButton: true
+    });
+}
+
+// Функция для отображения тем в выбранной области
+function displayAreaTopics(topics, area) {
+    const container = document.createElement('div');
+    container.id = 'topics-area-container';
+    container.className = 'topics-area-container';
+
+    const backButton = document.createElement('button');
+    backButton.className = 'back-button';
+    backButton.innerHTML = '<i class="fas fa-arrow-left"></i> Назад к разделам';
+    backButton.addEventListener('click', () => {
+        container.remove();
+        createAreaButtons();
+    });
+
+    const title = document.createElement('h2');
+    title.className = 'area-topics-title';
+    title.textContent = `${area.replace('_', ' ')} (${topics.length} тем)`;
+
+    const grid = document.createElement('div');
+    grid.className = 'topics-grid';
+
+    if (topics.length === 0) {
+        grid.innerHTML = '<div class="no-topics">Темы не найдены</div>';
+    } else {
+        topics.forEach(topic => {
+            const topicCard = document.createElement('div');
+            topicCard.className = 'topic-card';
+            topicCard.dataset.topicId = topic.id;
+
+            const topicHeader = document.createElement('div');
+            topicHeader.className = 'topic-header';
+
+            const topicTitle = document.createElement('h3');
+            topicTitle.className = 'topic-title';
+            topicTitle.textContent = topic.tableOfContent;
+
+            const difficultyBadge = document.createElement('span');
+            difficultyBadge.className = `difficulty-badge ${topic.difficulty.toLowerCase()}`;
+            difficultyBadge.textContent = getDifficultyText(topic.difficulty);
+
+            topicHeader.appendChild(topicTitle);
+            topicHeader.appendChild(difficultyBadge);
+
+            const topicPreview = document.createElement('div');
+            topicPreview.className = 'topic-preview';
+            const previewText = topic.content.length > 150
+                ? topic.content.substring(0, 150) + '...'
+                : topic.content;
+            topicPreview.textContent = previewText;
+
+            const topicFooter = document.createElement('div');
+            topicFooter.className = 'topic-footer';
+
+            const readMoreBtn = document.createElement('button');
+            readMoreBtn.className = 'read-more-btn';
+            readMoreBtn.innerHTML = '<i class="fas fa-book-open"></i> Читать';
+            readMoreBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                showTopicContent(topic);
+            });
+
+            topicFooter.appendChild(readMoreBtn);
+
+            topicCard.appendChild(topicHeader);
+            topicCard.appendChild(topicPreview);
+            topicCard.appendChild(topicFooter);
+
+            topicCard.addEventListener('click', () => {
+                showTopicContent(topic);
+            });
+
+            grid.appendChild(topicCard);
+        });
+    }
+
+    container.appendChild(backButton);
+    container.appendChild(title);
+    container.appendChild(grid);
     document.body.appendChild(container);
 }
 
+// Функция для отображения содержания темы
+function showTopicContent(topic) {
+    Swal.fire({
+        title: topic.tableOfContent,
+        html: `
+            <div class="topic-content-modal">
+                <div class="topic-content-header">
+                    <span class="topic-area-badge">${topic.topicArea.replace('_', ' ')}</span>
+                    <span class="topic-difficulty-badge ${topic.difficulty.toLowerCase()}">
+                        ${getDifficultyText(topic.difficulty)}
+                    </span>
+                </div>
+                <div class="topic-content-body">
+                    ${topic.content}
+                </div>
+            </div>
+        `,
+        width: '75%',
+        maxWidth: '900px',
+        showCloseButton: true,
+        showConfirmButton: false,
+        customClass: {
+            popup: 'topic-content-popup',
+            container: 'topic-content-container-modal'
+        },
+        didOpen: () => {
+            // Добавляем общие стили для всех модальных окон
+            const style = document.createElement('style');
+            style.id = 'topic-content-styles';
 
+            // Проверяем, есть ли уже эти стили
+            if (!document.getElementById('topic-content-styles')) {
+                style.textContent = `
+                    /* Общие стили для контента тем */
+                    .topic-content-modal {
+                        text-align: left;
+                        max-height: 70vh;
+                        overflow-y: auto;
+                        padding: 10px;
+                    }
+                    
+                    .topic-content-header {
+                        display: flex;
+                        gap: 10px;
+                        margin-bottom: 20px;
+                        align-items: center;
+                        flex-wrap: wrap;
+                    }
+                    
+                    .topic-area-badge {
+                        background: #4CAF50;
+                        color: white;
+                        padding: 5px 10px;
+                        border-radius: 15px;
+                        font-size: 14px;
+                        font-weight: 500;
+                    }
+                    
+                    .topic-difficulty-badge {
+                        padding: 5px 10px;
+                        border-radius: 15px;
+                        font-size: 14px;
+                        font-weight: bold;
+                    }
+                    
+                    .topic-difficulty-badge.easy {
+                        background: #4CAF50;
+                        color: white;
+                    }
+                    
+                    .topic-difficulty-badge.average {
+                        background: #FF9800;
+                        color: white;
+                    }
+                    
+                    .topic-difficulty-badge.devops {
+                        background: #F44336;
+                        color: white;
+                    }
+                    
+                    /* СТИЛИ ИЗ ВАШЕГО HTML ШАБЛОНА */
+                    /* Эти стили будут применяться ко ВСЕМ темам */
+                    
+                    /* Базовые стили контента */
+                    .topic-content-body {
+                        font-family: 'Georgia', 'Times New Roman', serif;
+                        line-height: 1.75;
+                        color: #444;
+                        background-color: #fefefe;
+                        padding: 48px 32px;
+                        max-width: 850px;
+                        margin: 0 auto;
+                    }
+                    
+                    /* Заголовки */
+                    .topic-content-body h1 {
+                        font-size: 2.75rem;
+                        font-weight: 400;
+                        color: #2c1810;
+                        margin-bottom: 2rem;
+                        padding-bottom: 1.5rem;
+                        border-bottom: 2px solid #d4a574;
+                        font-family: 'Palatino Linotype', 'Book Antiqua', serif;
+                    }
+                    
+                    .topic-content-body h2 {
+                        font-size: 1.625rem;
+                        font-weight: 600;
+                        margin: 3.5rem 0 1.75rem;
+                        padding: 0.5rem 0 0.5rem 1.25rem;
+                        font-family: 'Palatino Linotype', 'Book Antiqua', serif;
+                    }
+                    
+                    /* Параграфы */
+                    .topic-content-body p {
+                        font-size: 1.125rem;
+                        line-height: 1.9;
+                        margin-bottom: 2rem;
+                        color: #555;
+                        text-align: justify;
+                    }
+                    
+                    /* Списки */
+                    .topic-content-body ul {
+                        list-style: none;
+                        margin-bottom: 2.5rem;
+                    }
+                    
+                    .topic-content-body li {
+                        margin-bottom: 1.5rem;
+                        padding-left: 2rem;
+                        position: relative;
+                    }
+                    
+                    .topic-content-body li::before {
+                        content: '▸';
+                        position: absolute;
+                        left: 0;
+                        color: #8b7355;
+                        font-size: 1.2em;
+                    }
+                    
+                    /* Вложенные списки */
+                    .topic-content-body ul ul {
+                        margin: 1.25rem 0 1.25rem 2rem;
+                        background-color: #f8f4ec;
+                        padding: 1.25rem;
+                        border-radius: 6px;
+                        border: 1px solid #e8e0d4;
+                    }
+                    
+                    .topic-content-body ul ul li {
+                        margin-bottom: 0.75rem;
+                        padding-left: 1.5rem;
+                    }
+                    
+                    .topic-content-body ul ul li::before {
+                        content: '–';
+                        color: #a08c6e;
+                    }
+                    
+                    /* Выделенный текст */
+                    .topic-content-body .highlight {
+                        font-weight: 600;
+                        color: #3d2c1a;
+                        font-style: italic;
+                        background-color: transparent;
+                    }
+                    
+                    /* Код */
+                    .topic-content-body code {
+                        font-family: 'Courier New', monospace;
+                        font-size: 0.95rem;
+                        background-color: #f5f2e9;
+                        color: #3d2c1a;
+                        padding: 3px 8px;
+                        border-radius: 4px;
+                        border: 1px solid #d9cfbe;
+                    }
+                    
+                    .topic-content-body pre {
+                        background-color: #f8f5f0;
+                        border: 1px solid #d9cfbe;
+                        border-radius: 8px;
+                        padding: 1.75rem;
+                        margin: 1.75rem 0;
+                        overflow-x: auto;
+                        font-size: 0.95rem;
+                        line-height: 1.7;
+                        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+                    }
+                    
+                    .topic-content-body pre code {
+                        background-color: transparent;
+                        border: none;
+                        padding: 0;
+                        color: #4a3c2a;
+                    }
+                    
+                    /* Блоки с заметками */
+                    .topic-content-body .note {
+                        background-color: #f0f4f8;
+                        border: 1px solid #c9d6e2;
+                        border-radius: 10px;
+                        padding: 2rem;
+                        margin: 3.5rem 0;
+                        position: relative;
+                    }
+                    
+                    .topic-content-body .note::before {
+                        content: '💡';
+                        position: absolute;
+                        left: -12px;
+                        top: -12px;
+                        background-color: #4a6fa5;
+                        color: white;
+                        width: 32px;
+                        height: 32px;
+                        border-radius: 50%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        font-size: 16px;
+                    }
+                    
+                    .topic-content-body .note p {
+                        margin: 0;
+                        color: #2c3e50;
+                        font-size: 1.05rem;
+                        line-height: 1.8;
+                    }
+                    
+                    /* Адаптивность */
+                    @media (max-width: 768px) {
+                        .topic-content-body {
+                            padding: 32px 20px;
+                            background-image: none;
+                        }
+                        
+                        .topic-content-body h1 {
+                            font-size: 2.25rem;
+                        }
+                        
+                        .topic-content-body h2 {
+                            font-size: 1.5rem;
+                            margin: 2.5rem 0 1.5rem;
+                        }
+                        
+                        .topic-content-body ul ul {
+                            margin-left: 1rem;
+                            padding: 1rem;
+                        }
+                    }
+                `;
+                document.head.appendChild(style);
+            }
 
-// Функция для создания выпадающих кнопок по областям
-    function createAreaButtons() {
-        const container = document.createElement('div');
-        container.id = 'areas-container';
-        container.style.display = 'flex'; // Используем flexbox для расположения кнопок
-        container.style.flexWrap = 'wrap'; // Перенос кнопок на новую строку, если не хватает места
-        container.style.gap = '20px'; // Отступы между кнопками
-        container.style.padding = '20px'; // Отступы внутри контейнера
-        container.style.justifyContent = 'center'; // Центрируем кнопки
+            // Очищаем встроенные стили из HTML контента
+            const contentBody = document.querySelector('.topic-content-body');
+            if (contentBody) {
+                // Удаляем все теги <style>
+                const styleTags = contentBody.querySelectorAll('style');
+                styleTags.forEach(tag => tag.remove());
 
-        // Получаем все значения Enum (области тем)
-        const areas = Object.values(TopicArea);
+                // Удаляем атрибуты style у всех элементов
+                const styledElements = contentBody.querySelectorAll('[style]');
+                styledElements.forEach(el => {
+                    el.removeAttribute('style');
 
-        areas.forEach(area => {
-            const areaButton = document.createElement('button');
-            areaButton.textContent = area; // Название области
-            areaButton.className = 'area-button'; // Добавляем класс для стилизации
-            areaButton.dataset.area = area; // Сохраняем область в data-атрибуте
-            areaButton.addEventListener('click', () => loadTopicsByArea(area)); // Обработчик клика
-            container.appendChild(areaButton);
-        });
-
-        // Добавляем контейнер на страницу
-        document.body.appendChild(container);
-    }
-
-// Функция для загрузки тем по области
-    function loadTopicsByArea(area) {
-        clearContainers();
-        clearContainersFull();
-        fetch(`/api/topics/by-area/${area}`)
-            .then(response => response.json())
-            .then(topics => {
-                displayTopics(topics); // Отображаем темы
-            })
-            .catch(error => {
-                console.error('Ошибка:', error);
-                alert('Произошла ошибка при загрузке тем.');
-            });
-    }
-
-
-// Функция для отображения тем с пагинацией
-    function displayTopics(topics, page = 1, itemsPerPage = 12) {
-        const container = document.createElement('div');
-        container.id = 'topics-list-container';
-        container.className = 'topics-list-container';
-        container.innerHTML = '';
-
-        if (topics.length === 0) {
-            container.innerHTML = '<p>Темы не найдены.</p>';
-            return;
-        }
-
-        // Вычисляем начальный и конечный индексы для текущей страницы
-        const startIndex = (page - 1) * itemsPerPage;
-        const endIndex = startIndex + itemsPerPage;
-        const paginatedTopics = topics.slice(startIndex, endIndex);
-
-        // Отображаем темы для текущей страницы
-        paginatedTopics.forEach(topic => {
-            const topicDiv = document.createElement('div');
-            topicDiv.className = 'topic-item';
-            topicDiv.innerHTML = `
-            <p class="topic-title" data-topic-id="${topic.id}">${topic.tableOfContent}</p>`;
-            topicDiv.querySelector('.topic-title').addEventListener('click', () => {
-                loadTopicContent(topic.id); // Загружаем содержимое темы
-                setActiveTopic(topicDiv); // Выделяем активную тему
-            });
-            container.appendChild(topicDiv);
-        });
-
-        // Очищаем старые контейнеры и добавляем новый
-       clearContainersLibrary();
-        document.body.appendChild(container);
-
-
-        // Добавляем пагинацию
-        addPagination(topics, page, itemsPerPage);
-
-        // Выделяем первую тему после добавления контейнера в DOM
-        if (paginatedTopics.length > 0) {
-            const firstTopic = container.querySelector('.topic-item'); // Теперь контейнер в DOM
-            if (firstTopic) {
-                setActiveTopic(firstTopic); // Выделяем первую тему
+                    // Добавляем классы вместо инлайн-стилей
+                    if (el.tagName === 'H1' || el.tagName === 'H2') {
+                        el.className = 'topic-heading';
+                    } else if (el.tagName === 'CODE') {
+                        el.className = 'code-inline';
+                    } else if (el.tagName === 'PRE') {
+                        el.className = 'code-block';
+                    }
+                });
+            }
+        },
+        willClose: () => {
+            // Очищаем динамически добавленные стили при закрытии
+            const dynamicStyle = document.getElementById('topic-content-styles');
+            if (dynamicStyle) {
+                dynamicStyle.remove();
             }
         }
+    });
+}
+
+// Функция для форматирования контента
+function formatContent(content) {
+    return content
+}
+
+// Функция для получения текста сложности
+function getDifficultyText(difficulty) {
+    switch(difficulty) {
+        case 'EASY': return 'Лёгкий';
+        case 'AVERAGE': return 'Средний';
+        case 'DEVOPS': return 'DevOps';
+        default: return difficulty;
     }
-
-// Функция для добавления пагинации
-    function addPagination(topics, currentPage, itemsPerPage) {
-        const totalPages = Math.ceil(topics.length / itemsPerPage);
-
-        const paginationContainer = document.createElement('div');
-        paginationContainer.className = 'pagination-container';
-
-// Кнопка "Назад"
-        const prevButton = document.createElement('button');
-        clearPagination();
-        prevButton.innerHTML = '&larr;'; // Левый стрелка (←)
-        prevButton.disabled = currentPage === 1;
-        prevButton.classList.add('pagination-button', 'prev-button');
-        prevButton.addEventListener('click', () => {
-            displayTopics(topics, currentPage - 1, itemsPerPage);
-        });
-        paginationContainer.appendChild(prevButton);
-
-// Кнопка "Вперед"
-        const nextButton = document.createElement('button');
-        clearPagination();
-        nextButton.innerHTML = '&rarr;'; // Правый стрелка (→)
-        nextButton.disabled = currentPage === totalPages;
-        nextButton.classList.add('pagination-button', 'next-button');
-        nextButton.addEventListener('click', () => {
-            displayTopics(topics, currentPage + 1, itemsPerPage);
-        });
-        paginationContainer.appendChild(nextButton);
-
-// Добавляем пагинацию в DOM
-        document.body.appendChild(paginationContainer);
-    }
+}
 
 
+// // Функция для создания выпадающих кнопок по областям
+//     function createAreaButtons() {
+//         const container = document.createElement('div');
+//         container.id = 'areas-container';
+//         container.style.display = 'flex'; // Используем flexbox для расположения кнопок
+//         container.style.flexWrap = 'wrap'; // Перенос кнопок на новую строку, если не хватает места
+//         container.style.gap = '20px'; // Отступы между кнопками
+//         container.style.padding = '20px'; // Отступы внутри контейнера
+//         container.style.justifyContent = 'center'; // Центрируем кнопки
+//
+//         // Получаем все значения Enum (области тем)
+//         const areas = Object.values(TopicArea);
+//
+//         areas.forEach(area => {
+//             const areaButton = document.createElement('button');
+//             areaButton.textContent = area; // Название области
+//             areaButton.className = 'area-button'; // Добавляем класс для стилизации
+//             areaButton.dataset.area = area; // Сохраняем область в data-атрибуте
+//             areaButton.addEventListener('click', () => loadTopicsByArea(area)); // Обработчик клика
+//             container.appendChild(areaButton);
+//         });
+//
+//         // Добавляем контейнер на страницу
+//         document.body.appendChild(container);
+//     }
 
-// Функция для выделения активной темы
-    function setActiveTopic(activeTopic) {
-        const allTopics = document.querySelectorAll('.topic-item');
-        allTopics.forEach(topic => topic.classList.remove('active'));
-        activeTopic.classList.add('active');
-    }
+// // Функция для загрузки тем по области
+//     function loadTopicsByArea(area) {
+//         clearContainers();
+//         clearContainersFull();
+//         fetch(`/api/topics/by-area/${area}`)
+//             .then(response => response.json())
+//             .then(topics => {
+//                 displayTopics(topics); // Отображаем темы
+//             })
+//             .catch(error => {
+//                 console.error('Ошибка:', error);
+//                 alert('Произошла ошибка при загрузке тем.');
+//             });
+//     }
 
 
-// Функция для загрузки содержимого темы
-    function loadTopicContent(topicId) {
-        fetch(`/api/topics/${topicId}`)
-            .then(response => response.json())
-            .then(topic => {
-                displayTopicContent(topic); // Отображаем содержимое темы
-            })
-            .catch(error => {
-                console.error('Ошибка:', error);
-                alert('Произошла ошибка при загрузке содержимого темы.');
-            });
-    }
+// // Функция для отображения тем с пагинацией
+//     function displayTopics(topics, page = 1, itemsPerPage = 12) {
+//         const container = document.createElement('div');
+//         container.id = 'topics-list-container';
+//         container.className = 'topics-list-container';
+//         container.innerHTML = '';
+//
+//         if (topics.length === 0) {
+//             container.innerHTML = '<p>Темы не найдены.</p>';
+//             return;
+//         }
+//
+//         // Вычисляем начальный и конечный индексы для текущей страницы
+//         const startIndex = (page - 1) * itemsPerPage;
+//         const endIndex = startIndex + itemsPerPage;
+//         const paginatedTopics = topics.slice(startIndex, endIndex);
+//
+//         // Отображаем темы для текущей страницы
+//         paginatedTopics.forEach(topic => {
+//             const topicDiv = document.createElement('div');
+//             topicDiv.className = 'topic-item';
+//             topicDiv.innerHTML = `
+//             <p class="topic-title" data-topic-id="${topic.id}">${topic.tableOfContent}</p>`;
+//             topicDiv.querySelector('.topic-title').addEventListener('click', () => {
+//                 loadTopicContent(topic.id); // Загружаем содержимое темы
+//                 setActiveTopic(topicDiv); // Выделяем активную тему
+//             });
+//             container.appendChild(topicDiv);
+//         });
+//
+//         // Очищаем старые контейнеры и добавляем новый
+//        clearContainersLibrary();
+//         document.body.appendChild(container);
+//
+//
+//         // Добавляем пагинацию
+//         addPagination(topics, page, itemsPerPage);
+//
+//         // Выделяем первую тему после добавления контейнера в DOM
+//         if (paginatedTopics.length > 0) {
+//             const firstTopic = container.querySelector('.topic-item'); // Теперь контейнер в DOM
+//             if (firstTopic) {
+//                 setActiveTopic(firstTopic); // Выделяем первую тему
+//             }
+//         }
+//     }
+
+// // Функция для добавления пагинации
+//     function addPagination(topics, currentPage, itemsPerPage) {
+//         const totalPages = Math.ceil(topics.length / itemsPerPage);
+//
+//         const paginationContainer = document.createElement('div');
+//         paginationContainer.className = 'pagination-container';
+//
+// // Кнопка "Назад"
+//         const prevButton = document.createElement('button');
+//         clearPagination();
+//         prevButton.innerHTML = '&larr;'; // Левый стрелка (←)
+//         prevButton.disabled = currentPage === 1;
+//         prevButton.classList.add('pagination-button', 'prev-button');
+//         prevButton.addEventListener('click', () => {
+//             displayTopics(topics, currentPage - 1, itemsPerPage);
+//         });
+//         paginationContainer.appendChild(prevButton);
+//
+// // Кнопка "Вперед"
+//         const nextButton = document.createElement('button');
+//         clearPagination();
+//         nextButton.innerHTML = '&rarr;'; // Правый стрелка (→)
+//         nextButton.disabled = currentPage === totalPages;
+//         nextButton.classList.add('pagination-button', 'next-button');
+//         nextButton.addEventListener('click', () => {
+//             displayTopics(topics, currentPage + 1, itemsPerPage);
+//         });
+//         paginationContainer.appendChild(nextButton);
+//
+// // Добавляем пагинацию в DOM
+//         document.body.appendChild(paginationContainer);
+//     }
 
 
-// Функция для отображения содержимого темы
-    function displayTopicContent(topic) {
-        const container = document.createElement('div');
-        container.id = 'topic-content-container';
-        container.className = 'topic-content-container';
-        container.innerHTML = `
-        <p><strong>Название темы:</strong> ${topic.tableOfContent}</p>
-        <p>${topic.content}</p>
-    `;
 
-        // Очищаем старые контейнеры и добавляем новый
-        clearContainers();
-        document.body.appendChild(container);
-    }
+// // Функция для выделения активной темы
+//     function setActiveTopic(activeTopic) {
+//         const allTopics = document.querySelectorAll('.topic-item');
+//         allTopics.forEach(topic => topic.classList.remove('active'));
+//         activeTopic.classList.add('active');
+//     }
+
+//
+// // Функция для загрузки содержимого темы
+//     function loadTopicContent(topicId) {
+//         fetch(`/api/topics/${topicId}`)
+//             .then(response => response.json())
+//             .then(topic => {
+//                 displayTopicContent(topic); // Отображаем содержимое темы
+//             })
+//             .catch(error => {
+//                 console.error('Ошибка:', error);
+//                 alert('Произошла ошибка при загрузке содержимого темы.');
+//             });
+//     }
+
+//
+// // Функция для отображения содержимого темы
+//     function displayTopicContent(topic) {
+//         const container = document.createElement('div');
+//         container.id = 'topic-content-container';
+//         container.className = 'topic-content-container';
+//         container.innerHTML = `<p>${topic.content}</p>`;
+//
+//         // Очищаем старые контейнеры и добавляем новый
+//         clearContainers();
+//         document.body.appendChild(container);
+//     }
 
 
 // Функция для очистки старых контейнеров
@@ -950,7 +1596,7 @@ function enableEditMode(row, topic) {
 
     const areaOptions = [
         'OOP', 'JAVA_CORE', 'GIT', 'SPRING', 'DATA_BASE', 'MULTITHREADING', 'OTHER',
-        'COLLECTIONS', 'TEST', 'STREAM', 'SQL', 'HIBERNATE', 'HTTP', 'ALGORITHMS', 'ORM', 'SYSTEM_DESIGN'
+        'COLLECTIONS', 'TEST', 'STREAM', 'SQL', 'HIBERNATE', 'HTTP', 'ALGORITHMS', 'ORM', 'SYSTEM_DESIGN','BASIC_CONCEPTS','DOCKER','KUBERNETES'
     ];
 
     areaOptions.forEach(optionValue => {
@@ -974,7 +1620,7 @@ function enableEditMode(row, topic) {
     difficultySelect.style.borderRadius = '4px';
     difficultySelect.style.fontSize = '14px';
 
-    const difficultyOptions = ['EASY', 'AVERAGE', 'HARD']; // Варианты сложности
+    const difficultyOptions = ['EASY', 'AVERAGE', 'DEVOPS']; // Варианты сложности
     difficultyOptions.forEach(optionValue => {
         const option = document.createElement('option');
         option.value = optionValue;
@@ -994,11 +1640,6 @@ function enableEditMode(row, topic) {
 
     editingRow = null;
 }
-
-
-// // // Определяем переменную currentLanguage
-// let currentLanguage = 'en'; // По умолчанию русский язык
-
 
 const language = {
     en: 'en',
@@ -1160,37 +1801,70 @@ async function confirmDelete(topic) {
 
 
 
-document.getElementById('user-button-4').addEventListener('click', async () => {
-    clearContainersForEdit(); // Очищаем контейнеры
-    hideAddTestForm(); // Скрываем форму добавления теста
+// document.getElementById('user-button-4').addEventListener('click', async () => {
+//     clearContainersForEdit(); // Очищаем контейнеры
+//     hideAddTestForm(); // Скрываем форму добавления теста
+//
+//     // Открываем таблицу для редактирования
+//     const tableContainer = document.getElementById('table-container');
+//     tableContainer.style.display = 'block';
+//
+//     // Устанавливаем флаг, что таблица для редактирования открыта
+//     isEditTableOpen = true;
+//
+//     try {
+//         // Загружаем данные для таблицы редактирования
+//         const response = await fetch('/api/topics/all');
+//         if (!response.ok) throw new Error('Ошибка при загрузке данных');
+//
+//         allData = await response.json(); // Сохраняем данные в глобальный массив
+//         displayData(); // Отображаем данные в таблице
+//     } catch (error) {
+//         console.error('Ошибка:', error);
+//         alert('Произошла ошибка при загрузке данных.');
+//     }
+// });
+//
 
-    // Открываем таблицу для редактирования
-    const tableContainer = document.getElementById('table-container');
-    tableContainer.style.display = 'block';
+const editButton = document.getElementById('user-button-4');
+if (editButton) {
+    editButton.addEventListener('click', async (event) => {
+        event.preventDefault();
+        event.stopPropagation();
 
-    // Устанавливаем флаг, что таблица для редактирования открыта
-    isEditTableOpen = true;
+        console.log('Кнопка "Редактировать темы" нажата');
 
-    try {
-        // Загружаем данные для таблицы редактирования
-        const response = await fetch('/api/topics/all');
-        if (!response.ok) throw new Error('Ошибка при загрузке данных');
+        clearContainersForEdit();
 
-        allData = await response.json(); // Сохраняем данные в глобальный массив
-        displayData(); // Отображаем данные в таблице
-    } catch (error) {
-        console.error('Ошибка:', error);
-        alert('Произошла ошибка при загрузке данных.');
-    }
-});
+        hideAddTestForm();
 
+        const tableContainer = document.getElementById('table-container');
+        if (tableContainer) {
+            tableContainer.style.display = 'block';
 
+            isEditTableOpen = true;
 
+            try {
+                const response = await fetch('/api/topics/all');
+                if (!response.ok) throw new Error('Ошибка при загрузке данных');
 
+                allData = await response.json();
+                displayData();
 
-
-
-
+                console.log('Таблица для редактирования успешно загружена');
+            } catch (error) {
+                console.error('Ошибка:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Ошибка',
+                    text: 'Произошла ошибка при загрузке данных.',
+                });
+            }
+        }
+    });
+} else {
+    console.log('Кнопка "Редактировать темы" не найдена (пользователь не админ)');
+}
 
 // Обработчик для выбора количества элементов на странице
 document.getElementById('items-per-page').addEventListener('change', (e) => {
@@ -1214,9 +1888,6 @@ document.getElementById('next-page').addEventListener('click', () => {
     }
 });
 
-
-
-
 document.addEventListener('DOMContentLoaded', () => {
     const modal = document.getElementById('user-menu-modal');
     const selectLanguageButton = document.getElementById('select-language-button');
@@ -1225,8 +1896,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const languageSelectionForm = document.getElementById('language-selection-form');
     const editProfileForm = document.getElementById('edit-profile-form');
     const difficultyProfileForm = document.getElementById('difficulty-selection-form');
-
-
 
     // Обработчик клика на кнопку "Редактировать профиль"
     editProfileButton.addEventListener('click', () => {
@@ -1248,10 +1917,6 @@ document.addEventListener('DOMContentLoaded', () => {
         languageSelectionForm.classList.add('hidden'); // Скрываем меню выбора языка
         editProfileForm.classList.add('hidden'); // Скрываем форму редактирования
     });
-
-
-
-
 
     // Обработка выбора языка
     document.querySelectorAll('.language-option').forEach(button => {
@@ -1357,8 +2022,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-
-
 function changeLanguage(lang) {
     // Отправляем запрос на сервер для изменения языка
     fetch(`/change-language?language=${lang}`, {
@@ -1381,37 +2044,6 @@ document.querySelectorAll('.language-option').forEach(button => {
         document.getElementById('language-selection-form').classList.add('hidden'); // Скрываем меню выбора языка
     });
 });
-
-const difficulty = {
-    EASY: 'EASY',
-    AVERAGE: 'AVERAGE',
-    HARD: 'HARD'
-};
-
-let selectedDifficulty = localStorage.getItem('difficulty') || 'EASY'; // По умолчанию 'EASY'
-
-// // Обработчики для кнопок выбора сложности
-// document.querySelectorAll('.difficulty-option').forEach(button => {
-//     button.addEventListener('click', () => {
-//         // Получаем выбранную сложность из атрибута data-difficulty
-//         selectedDifficulty = button.getAttribute('data-difficulty');
-//         highlightSelectedDifficulty();
-//         console.log(selectedDifficulty);
-//         Swal.fire({
-//             title: `Выбрана сложность: ${selectedDifficulty}`,
-//             icon: 'success', // Иконка успеха
-//             confirmButtonText: 'OK',
-//             timer: null, // Отключаем автоматическое закрытие
-//             customClass: {
-//                 popup: 'custom-swal-popup', // Класс для кастомного стиля
-//             },
-//         })
-//     });
-// });
-
-
-
-
 
 function highlightSelectedDifficulty() {
     const selectedDifficulty = localStorage.getItem('difficulty') || 'EASY';
@@ -1567,15 +2199,3 @@ document.getElementById('save-profile-button').addEventListener('click', functio
             });
         });
 });
-
-
-
-
-
-
-
-
-
-
-
-

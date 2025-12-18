@@ -1,7 +1,7 @@
 package org.example.lib.handler.exeptions.question;
 
 import org.example.lib.handler.exeptions.NotFoundException;
-import org.example.lib.model.TopicArea;
+import org.example.lib.model.enums.TopicArea;
 
 import java.util.UUID;
 

@@ -2,7 +2,7 @@ package org.example.lib.mapper;
 
 
 import org.example.lib.dto.QuestionRequestDTO;
-import org.example.lib.model.Question;
+import org.example.lib.model.entity.Question;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

@@ -1,4 +1,4 @@
-package org.example.lib.model;
+package org.example.lib.model.enums;
 
 public enum TopicArea {
     OOP,
@@ -16,5 +16,8 @@ public enum TopicArea {
     HTTP,
     ALGORITHMS,
     ORM,
-    SYSTEM_DESIGN
+    SYSTEM_DESIGN,
+    BASIC_CONCEPTS,
+    DOCKER,
+    KUBERNETES
 }

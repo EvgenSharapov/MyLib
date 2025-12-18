@@ -1,4 +1,4 @@
-package org.example.lib.model;
+package org.example.lib.model.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -12,9 +12,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
-
 
 @Data
 @Entity
@@ -58,9 +58,17 @@ public class User implements UserDetails {
     @Column(nullable = false, updatable = false)
     private LocalDateTime registrationDate;
 
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+        name = "user_roles",
+        joinColumns = @JoinColumn(name = "user_id"),
+        inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private Set<Role> roles = new HashSet<>();
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.emptyList(); // Добавьте роли, если необходимо
+        return roles;
     }
 
     @Override
@@ -81,5 +89,10 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public boolean isAdmin() {
+        return roles.stream()
+            .anyMatch(role -> role.getName() == Role.RoleType.ADMIN);
     }
 }

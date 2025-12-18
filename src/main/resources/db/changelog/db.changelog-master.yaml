@@ -1,40 +1,18 @@
 databaseChangeLog:
   - include:
-          file: db/changelog/db.changelog12-03-2025.yaml
+      file: db/changelog/db.changelog-initial.yaml
   - include:
-          file: db/changelog/db.changelog15-03-2025.yaml
-  - logicalFilePath: db/changelog/db.changelog-master.yaml
+      file: db/changelog/db.changelog12-03-2025.yaml
+  - include:
+      file: db/changelog/db.changelog15-03-2025.yaml
+  - include:
+      file: db/changelog/db.changelog-fix-themes-length.yaml
+  - include:
+      file: db/changelog/db.changelog-roles.yaml
+  - include:
+      file: db/changelog/db.changelog-user-roles.yaml
+  - include:
+      file: db/changelog/db.changelog-update-user-info.yaml
 
-  - changeSet:
-      id: 1
-      author: evgeny_sharapov
-      changes:
-        - createTable:
-            tableName: topic_library
-            columns:
-              - column:
-                  name: topic_library_id
-                  type: UUID
-                  remarks: "topic_library topic_library_id"
-                  constraints:
-                    primaryKey: true
-                    nullable: false
-
-              - column:
-                  name: themes
-                  type: varchar(50)
-                  remarks: "topic_library themes"
-                  constraints:
-                    nullable: true
-              - column:
-                  name: content
-                  type: TEXT
-                  remarks: "topic_library content"
-                  constraints:
-                    nullable: true
-              - column:
-                  name: topic_area
-                  type: varchar(50)
-                  remarks: "topic_library topic_area"
-                  constraints:
-                    nullable: true
+  - include:
+      file: db/changelog/db.changelog-insert-topics.yaml

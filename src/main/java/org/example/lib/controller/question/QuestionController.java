@@ -1,12 +1,12 @@
 package org.example.lib.controller.question;
 
-
 import jakarta.validation.Valid;
+import java.util.Map;
 import org.example.lib.dto.QuestionRequestDTO;
-import org.example.lib.model.Question;
-import org.example.lib.model.TopicArea;
+import org.example.lib.model.entity.Question;
+import org.example.lib.model.enums.TopicArea;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,10 +31,13 @@ public interface QuestionController {
             @RequestBody Question question);
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     void deleteQuestion(
             @PathVariable UUID id);
+
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     QuestionRequestDTO saveQuestion(@Valid @RequestBody Question question,
             @PathVariable UUID id);
 
@@ -55,4 +58,7 @@ public interface QuestionController {
 
     @GetMapping("/random")
     QuestionRequestDTO getRandomQuestion(@Valid @RequestParam(required = false) String difficulty);
+
+    @GetMapping("/topic-counts")
+    Map<TopicArea, Long> getQuestionCounts();
 }

@@ -1,8 +1,8 @@
 package org.example.lib.dto;
 
 import lombok.Builder;
-import org.example.lib.model.Difficulty;
-import org.example.lib.model.TopicArea;
+import org.example.lib.model.enums.Difficulty;
+import org.example.lib.model.enums.TopicArea;
 
 import java.util.UUID;
 
