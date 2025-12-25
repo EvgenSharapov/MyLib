@@ -1,3 +1,305 @@
+<!--<!DOCTYPE html>-->
+<!--<html lang="ru" xmlns:th="http://www.thymeleaf.org">-->
+<!--<head>-->
+<!--  <meta charset="UTF-8">-->
+<!--  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">-->
+<!--  <meta name="_csrf" th:content="${_csrf.token}" />-->
+<!--  <meta name="_csrf_header" th:content="${_csrf.headerName}" />-->
+<!--  <title>Библиотека</title>-->
+<!--  <link rel="stylesheet" href="/css/index.css">-->
+<!--  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">-->
+<!--  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>-->
+<!--  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">-->
+<!--  <style>-->
+<!--    /* Дополнительные адаптивные стили */-->
+<!--    @media screen and (max-width: 768px) {-->
+<!--      header {-->
+<!--        padding: 10px 15px;-->
+<!--      }-->
+
+<!--      .search-container {-->
+<!--        margin: 10px 0;-->
+<!--      }-->
+
+<!--      #search-input {-->
+<!--        width: 100% !important;-->
+<!--      }-->
+
+<!--      .right-section {-->
+<!--        justify-content: center;-->
+<!--      }-->
+
+<!--      #main-container {-->
+<!--        padding: 10px;-->
+<!--      }-->
+
+<!--      #table-container, #content-display {-->
+<!--        width: 100% !important;-->
+<!--        margin-bottom: 20px;-->
+<!--      }-->
+<!--    }-->
+
+<!--    @media screen and (max-width: 480px) {-->
+<!--      .user-menu button {-->
+<!--        width: 40px;-->
+<!--        height: 40px;-->
+<!--      }-->
+
+<!--      #user-button-1 img {-->
+<!--        width: 18px;-->
+<!--        height: 18px;-->
+<!--      }-->
+
+<!--      .pagination button {-->
+<!--        padding: 8px 12px;-->
+<!--        font-size: 14px;-->
+<!--      }-->
+<!--    }-->
+<!--  </style>-->
+<!--</head>-->
+<!--<body>-->
+
+<!--<header>-->
+<!--  <div id="user-menu-modal" class="modal">-->
+<!--    <div class="modal-content">-->
+<!--      <span class="close">&times;</span>-->
+<!--      <div class="user-info">-->
+<!--        <p>-->
+<!--          <strong th:text="#{firstName}">Имя</strong>-->
+<!--          <span id="user-first-name">${userData.firstName}</span>-->
+<!--        </p>-->
+<!--        <p>-->
+<!--          <strong th:text="#{lastName}">Фамилия</strong>-->
+<!--          <span id="user-last-name">${userData.lastName}</span>-->
+<!--        </p>-->
+<!--        <p>-->
+<!--          <strong th:text="#{email}">Email</strong>-->
+<!--          <span id="user-email">${userData.email}</span>-->
+<!--        </p>-->
+<!--        <p>-->
+<!--          <strong th:text="#{registrationDate}">Дата регистрации</strong>-->
+<!--          <span id="user-registration-date">${registrationDate}</span>-->
+<!--        </p>-->
+<!--      </div>-->
+<!--      <div class="action-buttons">-->
+<!--        <button id="edit-profile-button" th:text="#{editProfile}">Редактировать профиль</button>-->
+<!--        <button id="select-language-button" th:text="#{selectLanguage}">Выбрать язык</button>-->
+<!--        <button id="difficulty-profile-button" th:text="#{difficulty}">Сложность</button>-->
+<!--      </div>-->
+<!--      <div id="edit-profile-form" class="hidden">-->
+<!--        <input type="text" id="edit-first-name" th:placeholder="#{firstName}" autocomplete="off">-->
+<!--        <input type="text" id="edit-last-name" th:placeholder="#{lastName}" autocomplete="off">-->
+<!--        <input type="password" id="edit-password" th:placeholder="#{passwordPlaceholder}" autocomplete="new-password">-->
+<!--        <button id="save-profile-button" th:text="#{saveProfile}">Сохранить</button>-->
+<!--      </div>-->
+<!--      <div id="language-selection-form" class="hidden">-->
+<!--        <button class="language-option" data-lang="en">English</button>-->
+<!--        <button class="language-option" data-lang="ru">Русский</button>-->
+<!--        <button class="language-option" data-lang="de">Deutsch</button>-->
+<!--      </div>-->
+<!--      <div id="difficulty-selection-form" class="hidden">-->
+<!--        <button class="difficulty-option" th:text="#{liteDifficulty}" data-difficulty="EASY">Лёгкий</button>-->
+<!--        <button class="difficulty-option" th:text="#{averageDifficulty}" data-difficulty="AVERAGE">Средний</button>-->
+<!--        <button class="difficulty-option" th:text="#{hardDifficulty}" data-difficulty="DEVOPS">Devops</button>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--  </div>-->
+
+<!--  &lt;!&ndash; Левая часть с логотипом &ndash;&gt;-->
+<!--  <div class="left-section">-->
+<!--    <div class="user-menu">-->
+<!--      <a href="/">-->
+<!--        <img src="/images/Shey1.png" alt="Shey1" class="hover-zoom" width="25" height="25">-->
+<!--      </a>-->
+<!--    </div>-->
+<!--  </div>-->
+
+<!--  &lt;!&ndash; Поиск &ndash;&gt;-->
+<!--  <div class="search-container">-->
+<!--    <input type="text" id="search-input" class="search-input" autocomplete="off"-->
+<!--           th:placeholder="#{searchPlaceholder}" placeholder="Введите текст для поиска...">-->
+<!--    <div class="search-buttons">-->
+<!--      <button id="search-theme-button" class="search-toggle-button"-->
+<!--              th:title="#{searchThemeButtonTitle}" title="Поиск по темам">-->
+<!--        <i class="fas fa-book"></i>-->
+<!--      </button>-->
+<!--      <button id="search-content-button" class="search-toggle-button"-->
+<!--              th:title="#{searchContentButtonTitle}" title="Поиск по содержанию">-->
+<!--        <i class="fas fa-search"></i>-->
+<!--      </button>-->
+<!--    </div>-->
+<!--  </div>-->
+
+<!--  &lt;!&ndash; Правая часть с кнопками &ndash;&gt;-->
+<!--  <div class="right-section">-->
+<!--    &lt;!&ndash; Кнопка "Случайный вопрос" &ndash;&gt;-->
+<!--    <div class="user-menu">-->
+<!--      <button id="user-button-6" th:title="#{randomQuestionTitle}" title="Случайный вопрос">-->
+<!--        <i class="fas fa-cube"></i>-->
+<!--      </button>-->
+<!--    </div>-->
+
+<!--    &lt;!&ndash; Кнопка "Редактировать темы" (только для админа) &ndash;&gt;-->
+<!--    <div class="user-menu" th:if="${isAdmin}">-->
+<!--      <button id="user-button-4" th:title="#{editTopicsTitle}" title="Редактировать темы">-->
+<!--        <i class="fas fa-edit"></i>-->
+<!--      </button>-->
+<!--    </div>-->
+
+<!--    &lt;!&ndash; Кнопка "Добавить контент" &ndash;&gt;-->
+<!--    <div class="user-menu center-menu">-->
+<!--      <button id="user-button-3">-->
+<!--        <i class="fas fa-plus"></i>-->
+<!--      </button>-->
+<!--      <div class="dropdown-menu center-dropdown" th:id="menu3">-->
+<!--        <a href="#" id="add-test-button" th:text="#{addTest}"></a>-->
+<!--        <a href="#" id="add-library-button" th:text="#{addTopic}"></a>-->
+<!--      </div>-->
+<!--    </div>-->
+
+<!--    &lt;!&ndash; Кнопка "Библиотека" &ndash;&gt;-->
+<!--    <div class="user-menu center-menu">-->
+<!--      <button id="user-button-1">-->
+<!--        <img src="https://cdn-icons-png.flaticon.com/512/2169/2169840.png" alt="Книга">-->
+<!--      </button>-->
+<!--      <div class="dropdown-menu center-dropdown" th:id="menu1">-->
+<!--        <a href="/test" th:text="#{takeTest}"></a>-->
+<!--        <a href="#" id="show-library-button" th:text="#{library}"></a>-->
+<!--      </div>-->
+<!--    </div>-->
+
+<!--    &lt;!&ndash; Кнопка "Профиль пользователя" &ndash;&gt;-->
+<!--    <div class="user-menu right-menu">-->
+<!--      <button id="user-button-2">-->
+<!--        <i class="fas fa-user"></i>-->
+<!--      </button>-->
+<!--      <div class="dropdown-menu right-dropdown" th:id="menu2">-->
+<!--        <a href="#" id="user-profile" th:text="#{userProfile}"></a>-->
+<!--        <a href="#" id="logout-button" th:text="#{logout}"></a>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--  </div>-->
+<!--</header>-->
+
+<!--&lt;!&ndash; Форма для добавления теста &ndash;&gt;-->
+<!--<div id="add-test-form" class="add-test-form">-->
+<!--  <h2 th:text="#{addTestTitle}">Добавить новый тест</h2>-->
+<!--  <form id="test-form">-->
+<!--    <div class="form-group">-->
+<!--      <label for="question" th:text="#{questionLabel}">Вопрос:</label>-->
+<!--      <input type="text" id="question" name="question" required>-->
+<!--    </div>-->
+<!--    <div class="form-group">-->
+<!--      <label for="option1" th:text="#{optionLabel(1)}">Вариант ответа 1:</label>-->
+<!--      <input type="text" id="option1" name="option1" required>-->
+<!--      <input type="radio" id="correct-answer-1" name="correct-answer" value="1">-->
+<!--      <label for="correct-answer-1" th:text="#{correctAnswerLabel}">Правильный</label>-->
+<!--    </div>-->
+<!--    <div class="form-group">-->
+<!--      <label for="option2" th:text="#{optionLabel(2)}">Вариант ответа 2:</label>-->
+<!--      <input type="text" id="option2" name="option2" required>-->
+<!--      <input type="radio" id="correct-answer-2" name="correct-answer" value="2">-->
+<!--      <label for="correct-answer-2" th:text="#{correctAnswerLabel}">Правильный</label>-->
+<!--    </div>-->
+<!--    <div class="form-group">-->
+<!--      <label for="option3" th:text="#{optionLabel(3)}">Вариант ответа 3:</label>-->
+<!--      <input type="text" id="option3" name="option3" required>-->
+<!--      <input type="radio" id="correct-answer-3" name="correct-answer" value="3">-->
+<!--      <label for="correct-answer-3" th:text="#{correctAnswerLabel}">Правильный</label>-->
+<!--    </div>-->
+<!--    <div class="form-group">-->
+<!--      <label for="option4" th:text="#{optionLabel(4)}">Вариант ответа 4:</label>-->
+<!--      <input type="text" id="option4" name="option4" required>-->
+<!--      <input type="radio" id="correct-answer-4" name="correct-answer" value="4">-->
+<!--      <label for="correct-answer-4" th:text="#{correctAnswerLabel}">Правильный</label>-->
+<!--    </div>-->
+<!--    <button type="submit" class="create-button" th:text="#{createButton}">Создать</button>-->
+<!--  </form>-->
+<!--</div>-->
+
+<!--<div id="app">-->
+<!--  <div id="topic-content-container" class="column" style="display: none;">-->
+<!--    &lt;!&ndash; Содержимое темы будет здесь &ndash;&gt;-->
+<!--  </div>-->
+<!--  <div id="topics-list-container" class="column" style="display: none;">-->
+<!--    &lt;!&ndash; Список тем будет здесь &ndash;&gt;-->
+<!--  </div>-->
+<!--</div>-->
+
+<!--<div id="add-topic-form" style="display: none;">-->
+<!--  <h2 th:text="#{addTopicTitle}">Добавить новую тему</h2>-->
+<!--  <form id="topic-form">-->
+<!--    <label for="topic-title" th:text="#{topicTitleLabel}">Название темы:</label>-->
+<!--    <input type="text" id="topic-title" name="topic-title" required>-->
+
+<!--    <label for="topic-content" th:text="#{topicContentLabel}">Содержимое темы:</label>-->
+<!--    <textarea id="topic-content" name="topic-content" rows="10" required></textarea>-->
+
+<!--    <label for="topic-area" th:text="#{topicAreaLabel}">Область темы:</label>-->
+<!--    <select id="topic-area" name="topic-area" required>-->
+<!--      &lt;!&ndash; Опции будут добавлены динамически &ndash;&gt;-->
+<!--    </select>-->
+
+<!--    <label for="topic-difficulty" th:text="#{difficulty}">Сложность:</label>-->
+<!--    <select id="topic-difficulty" name="topic-difficulty" required>-->
+<!--      <option value="EASY" th:text="#{liteDifficulty}">Лёгкий</option>-->
+<!--      <option value="AVERAGE" th:text="#{averageDifficulty}">Средний</option>-->
+<!--      <option value="DEVOPS" th:text="#{hardDifficulty}">Devops</option>-->
+<!--    </select>-->
+
+<!--    <button type="submit" th:text="#{saveButton}">Сохранить</button>-->
+<!--    <button type="button" id="cancel-topic-button" th:text="#{cancelButton}">Отмена</button>-->
+<!--  </form>-->
+<!--</div>-->
+
+<!--<div id="main-container">-->
+<!--  &lt;!&ndash; Таблица для отображения данных &ndash;&gt;-->
+<!--  <div id="table-container" style="display: none;">-->
+<!--    <div class="pagination-controls-container">-->
+<!--      <div class="pagination-controls">-->
+<!--        <label for="items-per-page"></label>-->
+<!--        <select id="items-per-page">-->
+<!--          <option value="10">10</option>-->
+<!--          <option value="15">15</option>-->
+<!--          <option value="20">20</option>-->
+<!--        </select>-->
+<!--      </div>-->
+<!--      <div class="pagination">-->
+<!--        <button id="prev-page" th:text="#{prevPageButton}">Назад</button>-->
+<!--        <span id="page-info" th:text="${#messages.msg('pageInfo', 1, 1)}">1 ... 1</span>-->
+<!--        <button id="next-page" th:text="#{nextPageButton}">Вперед</button>-->
+<!--      </div>-->
+<!--    </div>-->
+
+<!--    <table id="topics-table">-->
+<!--      <thead>-->
+<!--      <tr>-->
+<!--        <th style="width: 55%;" th:text="#{topicNameColumn}">Название темы</th>-->
+<!--        <th style="width: 15%;" th:text="#{sectionColumn}">Раздел</th>-->
+<!--        <th style="width: 15%;" th:text="#{difficulty}">Сложность</th>-->
+<!--        <th style="width: 30%;" th:text="#{actionsColumn}">Действия</th>-->
+<!--      </tr>-->
+<!--      </thead>-->
+<!--      <tbody>-->
+<!--      &lt;!&ndash; Данные будут добавлены сюда &ndash;&gt;-->
+<!--      </tbody>-->
+<!--    </table>-->
+<!--  </div>-->
+
+<!--  &lt;!&ndash; Поле для отображения content &ndash;&gt;-->
+<!--  <div id="content-display">-->
+<!--    <h3 th:text="#{contentTitle}">Содержание темы:</h3>-->
+<!--    <textarea id="content-text" style="width: 100%; height: 650px;" disabled></textarea>-->
+<!--  </div>-->
+<!--</div>-->
+
+<!--<script src="/js/script.js">-->
+<!--  highlightSelectedLanguage();-->
+<!--</script>-->
+
+<!--</body>-->
+<!--</html>-->
+
 <!DOCTYPE html>
 <html lang="ru" xmlns:th="http://www.thymeleaf.org">
 <head>
@@ -293,9 +595,8 @@
   </div>
 </div>
 
-<script src="/js/script.js">
-  highlightSelectedLanguage();
-</script>
+<script type="module" src="/js/modules/main.js"></script>
+<script type="module" src="/js/legacy-adapter.js"></script>
 
 </body>
 </html>
