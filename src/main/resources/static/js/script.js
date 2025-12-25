@@ -277,23 +277,62 @@ userButton6.addEventListener('click', function(event) {
 });
 
 
-// Обработчик для кнопки "Библиотека"
+// // Обработчик для кнопки "Библиотека"
+// document.addEventListener('click', function (event) {
+//     if (event.target.id === 'show-library-button') {
+//         event.preventDefault();
+//
+//         clearAllContainers();
+//
+//         setTimeout(() => {
+//             hideAddTestForm();
+//
+//             createAreaButtons();
+//
+//             loadAllTopics();
+//         }, 50);
+//     }
+// });
+
+
 document.addEventListener('click', function (event) {
     if (event.target.id === 'show-library-button') {
         event.preventDefault();
 
-        clearAllContainers();
+        const topicsAreaContainer = document.getElementById('topics-area-container');
+        if (topicsAreaContainer) {
+            console.log('Удаляем контейнер со списком тем');
+            topicsAreaContainer.remove();
+        }
 
-        setTimeout(() => {
-            hideAddTestForm();
+        // 2. Удаляем ВСЕ карточки тем, если они есть
+        document.querySelectorAll('.topic-card, .topics-grid').forEach(el => {
+            el.remove();
+        });
 
+        // 3. Показываем главную библиотеку, если её нет
+        const mainLibrary = document.getElementById('areas-container');
+        if (!mainLibrary) {
+            console.log('Создаём главную библиотеку');
             createAreaButtons();
+        } else {
+            console.log('Главная библиотека уже есть, просто показываем её');
+            mainLibrary.style.display = 'flex'; // или 'block'
+        }
 
-            loadAllTopics();
-        }, 50);
+        // 4. Сбрасываем текущую область
+        currentArea = null;
+
+        // 5. Убираем выделение с активных карточек
+        document.querySelectorAll('.area-card.active, .topic-card.active').forEach(el => {
+            el.classList.remove('active');
+        });
+
+        // 6. Скрываем формы
+        hideAddTestForm();
+        hideAddTopicForm();
     }
 });
-
 // // Универсальная функция для полной очистки всех контейнеров
 // function clearAllContainers() {
 //     isEditTableOpen = false;
@@ -364,16 +403,22 @@ document.addEventListener('click', function (event) {
 function clearAllContainers() {
     isEditTableOpen = false;
 
+    currentArea = null;
+
+    document.querySelectorAll('.area-card.active, .topic-card.active').forEach(el => {
+        el.classList.remove('active');
+    });
+
     const containerIds = [
+        'areas-container',
+        'topics-area-container',
         'questions-container',
         'topics-container',
         'topic-content-container',
-        'areas-container',
         'topics-list-container',
         'areas-containerEdit',
         'topics-list-containerEdit',
         'content-display',
-        'topics-area-container',
         'areas-grid',
         'topics-grid'
     ];
@@ -381,6 +426,7 @@ function clearAllContainers() {
     containerIds.forEach(id => {
         const container = document.getElementById(id);
         if (container) {
+            console.log(`Удаляем контейнер по ID: ${id}`);
             container.remove();
         }
     });
@@ -398,26 +444,19 @@ function clearAllContainers() {
 
     classSelectors.forEach(selector => {
         document.querySelectorAll(selector).forEach(element => {
+            console.log(`Удаляем элемент по классу: ${selector}`);
             element.remove();
         });
     });
 
-    const tableContainer = document.getElementById('table-container');
-    if (tableContainer) {
-        tableContainer.style.display = 'none';
-    }
-
-    const contentDisplay = document.getElementById('content-display');
-    if (contentDisplay) {
-        contentDisplay.style.display = 'none';
+    if (typeof Swal !== 'undefined') {
+        Swal.close();
     }
 
     hideAddTestForm();
     hideAddTopicForm();
 
-    clearPagination();
-
-    Swal.close();
+    console.log('Очистка завершена');
 }
 
 
