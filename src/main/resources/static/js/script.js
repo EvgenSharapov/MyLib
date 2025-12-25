@@ -203,6 +203,7 @@ userButton6.addEventListener('click', function(event) {
     event.stopPropagation(); // Останавливаем всплытие события
     // Очищаем старые контейнеры
     clearContainersFull();
+    clearAllContainers();
 
     // Скрываем форму добавления теста
     hideAddTestForm();
@@ -362,19 +363,17 @@ document.addEventListener('click', function (event) {
 
 function clearAllContainers() {
     isEditTableOpen = false;
-    currentArea = null;
 
-    // 1. Удаляем все динамически созданные контейнеры по ID
     const containerIds = [
-        'areas-container',
-        'topics-area-container',
         'questions-container',
         'topics-container',
         'topic-content-container',
+        'areas-container',
         'topics-list-container',
         'areas-containerEdit',
         'topics-list-containerEdit',
         'content-display',
+        'topics-area-container',
         'areas-grid',
         'topics-grid'
     ];
@@ -386,34 +385,23 @@ function clearAllContainers() {
         }
     });
 
-    // 2. Удаляем все контейнеры по классам (более агрессивно)
-    const dynamicClasses = [
-        'areas-container',
-        'topics-area-container',
-        'areas-grid',
-        'topics-grid',
-        'area-card',
-        'topic-card',
-        'topics-list-container',
-        'topic-content-container'
+    const classSelectors = [
+        '.areas-container',
+        '.topics-area-container',
+        '.topics-list-container',
+        '.topic-content-container',
+        '.areas-grid',
+        '.topics-grid',
+        '.area-card',
+        '.topic-card'
     ];
 
-    dynamicClasses.forEach(className => {
-        const elements = document.querySelectorAll(`.${className}`);
-        elements.forEach(el => el.remove());
+    classSelectors.forEach(selector => {
+        document.querySelectorAll(selector).forEach(element => {
+            element.remove();
+        });
     });
 
-    // 3. Ищем любые контейнеры, которые могли быть созданы без ID
-    const potentialContainers = document.querySelectorAll('div[class*="container"], div[class*="grid"], div[class*="card"]');
-    potentialContainers.forEach(el => {
-        // Проверяем, не является ли это статическим элементом
-        const isStatic = el.id && ['table-container', 'content-display', 'add-test-form', 'add-topic-form'].includes(el.id);
-        if (!isStatic && el.parentElement === document.body) {
-            el.remove();
-        }
-    });
-
-    // 4. Скрываем фиксированные элементы
     const tableContainer = document.getElementById('table-container');
     if (tableContainer) {
         tableContainer.style.display = 'none';
@@ -424,20 +412,12 @@ function clearAllContainers() {
         contentDisplay.style.display = 'none';
     }
 
-    // 5. Скрываем формы
     hideAddTestForm();
     hideAddTopicForm();
 
-    // 6. Очищаем пагинацию
     clearPagination();
 
-    // 7. Закрываем SweetAlert
     Swal.close();
-
-    // 8. Снимаем выделение
-    document.querySelectorAll('.active').forEach(el => el.classList.remove('active'));
-
-    console.log('Все контейнеры очищены');
 }
 
 
