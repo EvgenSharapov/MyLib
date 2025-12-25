@@ -282,7 +282,8 @@ userButton6.addEventListener('click', function(event) {
             event.preventDefault(); // Предотвращаем стандартное поведение ссылки
 
             // Очищаем старые контейнеры
-            clearContainersFull()
+            // clearContainersFull();
+            clearAllContainers();
 
             // Скрываем форму добавления теста
             hideAddTestForm();
@@ -300,6 +301,73 @@ userButton6.addEventListener('click', function(event) {
 
         }
     });
+
+// Универсальная функция для полной очистки всех контейнеров
+function clearAllContainers() {
+    isEditTableOpen = false;
+
+    // Массив всех возможных ID контейнеров
+    const containerIds = [
+        'questions-container',
+        'topics-container',
+        'topic-content-container',
+        'areas-container',
+        'topics-list-container',
+        'areas-containerEdit',
+        'topics-list-containerEdit',
+        'content-display',
+        'topics-area-container', // Добавить этот контейнер
+        'areas-grid', // Если есть такой
+        'topics-grid' // Если есть такой
+    ];
+
+    // 1. Очищаем контейнеры по ID
+    containerIds.forEach(id => {
+        const container = document.getElementById(id);
+        if (container) {
+            container.remove();
+        }
+    });
+
+    // 2. Очищаем контейнеры по классам
+    const classSelectors = [
+        '.areas-container',
+        '.topics-area-container',
+        '.topics-list-container',
+        '.topic-content-container',
+        '.areas-grid',
+        '.topics-grid',
+        '.area-card', // Если карточки создаются отдельно
+        '.topic-card' // Если карточки создаются отдельно
+    ];
+
+    classSelectors.forEach(selector => {
+        document.querySelectorAll(selector).forEach(element => {
+            element.remove();
+        });
+    });
+
+    // 3. Скрываем таблицу и другие фиксированные элементы
+    const tableContainer = document.getElementById('table-container');
+    if (tableContainer) {
+        tableContainer.style.display = 'none';
+    }
+
+    const contentDisplay = document.getElementById('content-display');
+    if (contentDisplay) {
+        contentDisplay.style.display = 'none';
+    }
+
+    // 4. Скрываем формы
+    hideAddTestForm();
+    hideAddTopicForm();
+
+    // 5. Очищаем пагинацию
+    clearPagination();
+
+    // 6. Очищаем SweetAlert модалки, если они есть
+    Swal.close();
+}
 
 
 // Функция для отображения колонок
