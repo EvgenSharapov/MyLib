@@ -204,6 +204,7 @@ userButton6.addEventListener('click', function(event) {
     // Очищаем старые контейнеры
     clearContainersFull();
     clearAllContainers();
+    removeTopicsAreaContainer();
 
     // Скрываем форму добавления теста
     hideAddTestForm();
@@ -304,6 +305,7 @@ document.addEventListener('click', function (event) {
             console.log('Удаляем контейнер со списком тем');
             topicsAreaContainer.remove();
         }
+        removeTopicsAreaContainer();
 
         // 2. Удаляем ВСЕ карточки тем, если они есть
         document.querySelectorAll('.topic-card, .topics-grid').forEach(el => {
@@ -404,6 +406,7 @@ function clearAllContainers() {
     isEditTableOpen = false;
 
     currentArea = null;
+    removeTopicsAreaContainer();
 
     document.querySelectorAll('.area-card.active, .topic-card.active').forEach(el => {
         el.classList.remove('active');
@@ -1395,6 +1398,18 @@ function clearContainersFull() {
 
     hideAddTopicForm();
     clearPagination();
+}
+
+function removeTopicsAreaContainer() {
+    const topicsContainer = document.getElementById('topics-area-container');
+    if (topicsContainer) {
+        console.log('Удаляем контейнер со списком тем');
+        topicsContainer.remove();
+    }
+    // Также удаляем все карточки тем
+    document.querySelectorAll('.topic-card, .topics-grid').forEach(el => {
+        el.remove();
+    });
 }
 
 
