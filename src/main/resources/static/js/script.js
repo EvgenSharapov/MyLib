@@ -278,61 +278,84 @@ userButton6.addEventListener('click', function(event) {
 });
 
 
-// // Обработчик для кнопки "Библиотека"
 // document.addEventListener('click', function (event) {
 //     if (event.target.id === 'show-library-button') {
 //         event.preventDefault();
 //
-//         clearAllContainers();
+//         const topicsAreaContainer = document.getElementById('topics-area-container');
+//         if (topicsAreaContainer) {
+//             console.log('Удаляем контейнер со списком тем');
+//             topicsAreaContainer.remove();
+//         }
+//         removeTopicsAreaContainer();
 //
-//         setTimeout(() => {
-//             hideAddTestForm();
+//         // 2. Удаляем ВСЕ карточки тем, если они есть
+//         document.querySelectorAll('.topic-card, .topics-grid').forEach(el => {
+//             el.remove();
+//         });
 //
+//         // 3. Показываем главную библиотеку, если её нет
+//         const mainLibrary = document.getElementById('areas-container');
+//         if (!mainLibrary) {
+//             console.log('Создаём главную библиотеку');
 //             createAreaButtons();
+//         } else {
+//             console.log('Главная библиотека уже есть, просто показываем её');
+//             mainLibrary.style.display = 'flex'; // или 'block'
+//         }
 //
-//             loadAllTopics();
-//         }, 50);
+//         // 4. Сбрасываем текущую область
+//         currentArea = null;
+//
+//         // 5. Убираем выделение с активных карточек
+//         document.querySelectorAll('.area-card.active, .topic-card.active').forEach(el => {
+//             el.classList.remove('active');
+//         });
+//
+//         // 6. Скрываем формы
+//         hideAddTestForm();
+//         hideAddTopicForm();
 //     }
 // });
-
 
 document.addEventListener('click', function (event) {
     if (event.target.id === 'show-library-button') {
         event.preventDefault();
+        console.log('Нажата кнопка Библиотека');
 
-        const topicsAreaContainer = document.getElementById('topics-area-container');
-        if (topicsAreaContainer) {
-            console.log('Удаляем контейнер со списком тем');
-            topicsAreaContainer.remove();
-        }
         removeTopicsAreaContainer();
 
-        // 2. Удаляем ВСЕ карточки тем, если они есть
-        document.querySelectorAll('.topic-card, .topics-grid').forEach(el => {
+        document.querySelectorAll('.topic-card, .topics-grid, .topic-item').forEach(el => {
             el.remove();
         });
 
-        // 3. Показываем главную библиотеку, если её нет
-        const mainLibrary = document.getElementById('areas-container');
-        if (!mainLibrary) {
-            console.log('Создаём главную библиотеку');
-            createAreaButtons();
-        } else {
-            console.log('Главная библиотека уже есть, просто показываем её');
-            mainLibrary.style.display = 'flex'; // или 'block'
+        const topicsAreaContainer = document.querySelector('#topics-area-container, .topics-area-container');
+        if (topicsAreaContainer) {
+            console.log('Удаляем topics-area-container');
+            topicsAreaContainer.remove();
         }
 
-        // 4. Сбрасываем текущую область
+        const oldLibraryContainers = document.querySelectorAll('#areas-container, .areas-container');
+        oldLibraryContainers.forEach(container => {
+            container.remove();
+        });
+
         currentArea = null;
 
-        // 5. Убираем выделение с активных карточек
         document.querySelectorAll('.area-card.active, .topic-card.active').forEach(el => {
             el.classList.remove('active');
         });
 
-        // 6. Скрываем формы
         hideAddTestForm();
         hideAddTopicForm();
+
+        createAreaButtons();
+
+        const tableContainer = document.getElementById('table-container');
+        if (tableContainer) {
+            tableContainer.style.display = 'none';
+            isEditTableOpen = false;
+        }
     }
 });
 // // Универсальная функция для полной очистки всех контейнеров
@@ -465,26 +488,31 @@ function clearAllContainers() {
 
 
 
-// Функция для отображения колонок
-    function showColumns() {
-        const contentContainer = document.getElementById('topic-content-container');
-        const topicsContainer = document.getElementById('topics-list-container');
-        contentContainer.style.display = 'block'; // Показываем левую колонку
-        topicsContainer.style.display = 'block'; // Показываем правую колонку
-    }
-
-// Функция для загрузки всех тем
-    function loadAllTopics() {
-        fetch('/api/topics/all')
-            .then(response => response.json())
-            .then(topics => {
-                displayTopic(topics); // Отображаем список тем
-            })
-            .catch(error => {
-                console.error('Ошибка:', error);
-                alert('Произошла ошибка при загрузке тем.');
-            });
-    }
+// // Функция для отображения колонок
+// function showColumns() {
+//     const contentContainer = document.getElementById('topic-content-container');
+//     const topicsContainer = document.getElementById('topics-list-container');
+//
+//     if (contentContainer) {
+//         contentContainer.style.display = 'block';
+//     }
+//     if (topicsContainer) {
+//         topicsContainer.style.display = 'block';
+//     }
+// }
+//
+// // Функция для загрузки всех тем
+//     function loadAllTopics() {
+//         fetch('/api/topics/all')
+//             .then(response => response.json())
+//             .then(topics => {
+//                 displayTopic(topics); // Отображаем список тем
+//             })
+//             .catch(error => {
+//                 console.error('Ошибка:', error);
+//                 alert('Произошла ошибка при загрузке тем.');
+//             });
+//     }
 
 function displayTopic(topics) {
     const container = document.createElement('div');
@@ -1414,15 +1442,24 @@ function clearContainersFull() {
 }
 
 function removeTopicsAreaContainer() {
-    const topicsContainer = document.getElementById('topics-area-container');
+    const topicsContainer = document.querySelector('#topics-area-container, .topics-area-container');
     if (topicsContainer) {
         console.log('Удаляем контейнер со списком тем');
         topicsContainer.remove();
     }
-    // Также удаляем все карточки тем
-    document.querySelectorAll('.topic-card, .topics-grid').forEach(el => {
-        el.remove();
-    });
+
+    const topicCards = document.querySelectorAll('.topic-card, .topics-grid');
+    if (topicCards.length > 0) {
+        topicCards.forEach(el => {
+            if (el.parentNode) {
+                el.remove();
+            }
+        });
+    }
+    const pagination = document.querySelector('.pagination-container, .pagination');
+    if (pagination) {
+        pagination.remove();
+    }
 }
 
 
@@ -1628,27 +1665,118 @@ let isEditTableOpen = false; // По умолчанию таблица для р
 //
 // Функция для загрузки тем по поисковому запросу
 function loadTopicsBySearchs(query, searchType) {
-    clearContainers(); // Очищаем контейнеры перед загрузкой новых данных
+    clearContainers();
     clearContainersFull();
     const addTestForm = document.getElementById('add-test-form');
-    addTestForm.style.display = 'none'; // Скрываем форму
+    addTestForm.style.display = 'none';
 
-    // Определяем URL в зависимости от типа поиска
     const url = searchType === 'theme'
         ? `/api/topics/search/theme?query=${encodeURIComponent(query)}`
         : `/api/topics/search/content?query=${encodeURIComponent(query)}`;
 
-    fetch(url) // Отправляем запрос на сервер
-        .then(response => response.json())
-        .then(topics => {
-            displayTopics(topics); // Отображаем темы
-        })
-        .catch(error => {
-            console.error('Ошибка:', error);
-            alert('Произошла ошибка при загрузке тем.');
-        });
+    fetch(url)
+    .then(response => response.json())
+    .then(topics => {
+        displaySearchResults(topics, query, searchType);
+    })
+    .catch(error => {
+        console.error('Ошибка:', error);
+        alert('Произошла ошибка при загрузке тем.');
+    });
 }
 
+function displaySearchResults(topics, query, searchType) {
+    // Удаляем все старые контейнеры
+    removeTopicsAreaContainer();
+    clearAllContainers();
+
+    const container = document.createElement('div');
+    container.id = 'search-results-container';
+    container.className = 'topics-area-container';
+
+    const backButton = document.createElement('button');
+    backButton.className = 'back-button';
+    backButton.innerHTML = '<i class="fas fa-arrow-left"></i> Назад';
+    backButton.addEventListener('click', () => {
+        container.remove();
+        // Если была открыта библиотека - показываем её
+        const libraryContainer = document.getElementById('areas-container');
+        if (libraryContainer) {
+            libraryContainer.style.display = 'flex';
+        }
+    });
+
+    const title = document.createElement('h2');
+    title.className = 'area-topics-title';
+    title.textContent = `Результаты поиска "${query}" (${topics.length} тем)`;
+
+    const searchTypeBadge = document.createElement('span');
+    searchTypeBadge.className = 'search-type-badge';
+    searchTypeBadge.textContent = searchType === 'theme' ? 'По темам' : 'По содержанию';
+    title.appendChild(searchTypeBadge);
+
+    const grid = document.createElement('div');
+    grid.className = 'topics-grid';
+
+    if (topics.length === 0) {
+        grid.innerHTML = '<div class="no-topics">Темы не найдены</div>';
+    } else {
+        topics.forEach(topic => {
+            const topicCard = document.createElement('div');
+            topicCard.className = 'topic-card';
+            topicCard.dataset.topicId = topic.id;
+
+            const topicHeader = document.createElement('div');
+            topicHeader.className = 'topic-header';
+
+            const topicTitle = document.createElement('h3');
+            topicTitle.className = 'topic-title';
+            topicTitle.textContent = topic.tableOfContent;
+
+            const difficultyBadge = document.createElement('span');
+            difficultyBadge.className = `difficulty-badge ${topic.difficulty.toLowerCase()}`;
+            difficultyBadge.textContent = getDifficultyText(topic.difficulty);
+
+            topicHeader.appendChild(topicTitle);
+            topicHeader.appendChild(difficultyBadge);
+
+            const topicPreview = document.createElement('div');
+            topicPreview.className = 'topic-preview';
+            const previewText = topic.content.length > 150
+                ? topic.content.substring(0, 150) + '...'
+                : topic.content;
+            topicPreview.textContent = previewText;
+
+            const topicFooter = document.createElement('div');
+            topicFooter.className = 'topic-footer';
+
+            const readMoreBtn = document.createElement('button');
+            readMoreBtn.className = 'read-more-btn';
+            readMoreBtn.innerHTML = '<i class="fas fa-book-open"></i> Читать';
+            readMoreBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                showTopicContent(topic);
+            });
+
+            topicFooter.appendChild(readMoreBtn);
+
+            topicCard.appendChild(topicHeader);
+            topicCard.appendChild(topicPreview);
+            topicCard.appendChild(topicFooter);
+
+            topicCard.addEventListener('click', () => {
+                showTopicContent(topic);
+            });
+
+            grid.appendChild(topicCard);
+        });
+    }
+
+    container.appendChild(backButton);
+    container.appendChild(title);
+    container.appendChild(grid);
+    document.body.appendChild(container);
+}
 
 
 function loadTopicsBySearch(query, searchType) {
