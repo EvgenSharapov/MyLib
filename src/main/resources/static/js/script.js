@@ -509,6 +509,19 @@ function displayTopic(topics) {
 let currentArea = null;
 
 async function createAreaButtons() {
+
+    const topicsContainer = document.getElementById('topics-area-container');
+    if (topicsContainer) {
+        console.log('Удаляем старый контейнер тем перед созданием библиотеки');
+        topicsContainer.remove();
+    }
+
+    // Удаляем старую библиотеку
+    const oldLibrary = document.getElementById('areas-container');
+    if (oldLibrary) {
+        oldLibrary.remove();
+    }
+
     const libraryContainers = document.querySelectorAll('#areas-container, .areas-container, .topics-area-container');
     libraryContainers.forEach(container => {
         container.remove();
