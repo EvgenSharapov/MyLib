@@ -277,51 +277,108 @@ userButton6.addEventListener('click', function(event) {
 
 
 // Обработчик для кнопки "Библиотека"
-    document.addEventListener('click', function (event) {
-        if (event.target.id === 'show-library-button') {
-            event.preventDefault(); // Предотвращаем стандартное поведение ссылки
+document.addEventListener('click', function (event) {
+    if (event.target.id === 'show-library-button') {
+        event.preventDefault();
 
-            // Очищаем старые контейнеры
-            // clearContainersFull();
-            clearAllContainers();
+        clearAllContainers();
 
-            // Скрываем форму добавления теста
+        setTimeout(() => {
             hideAddTestForm();
 
-            // Создаем выпадающие кнопки для каждой области
             createAreaButtons();
 
-
-            // Показываем колонки
-            showColumns();
-
-            // Загружаем все темы
             loadAllTopics();
+        }, 50);
+    }
+});
 
+// // Универсальная функция для полной очистки всех контейнеров
+// function clearAllContainers() {
+//     isEditTableOpen = false;
+//
+//     // Массив всех возможных ID контейнеров
+//     const containerIds = [
+//         'questions-container',
+//         'topics-container',
+//         'topic-content-container',
+//         'areas-container',
+//         'topics-list-container',
+//         'areas-containerEdit',
+//         'topics-list-containerEdit',
+//         'content-display',
+//         'topics-area-container', // Добавить этот контейнер
+//         'areas-grid', // Если есть такой
+//         'topics-grid' // Если есть такой
+//     ];
+//
+//     // 1. Очищаем контейнеры по ID
+//     containerIds.forEach(id => {
+//         const container = document.getElementById(id);
+//         if (container) {
+//             container.remove();
+//         }
+//     });
+//
+//     // 2. Очищаем контейнеры по классам
+//     const classSelectors = [
+//         '.areas-container',
+//         '.topics-area-container',
+//         '.topics-list-container',
+//         '.topic-content-container',
+//         '.areas-grid',
+//         '.topics-grid',
+//         '.area-card', // Если карточки создаются отдельно
+//         '.topic-card' // Если карточки создаются отдельно
+//     ];
+//
+//     classSelectors.forEach(selector => {
+//         document.querySelectorAll(selector).forEach(element => {
+//             element.remove();
+//         });
+//     });
+//
+//     // 3. Скрываем таблицу и другие фиксированные элементы
+//     const tableContainer = document.getElementById('table-container');
+//     if (tableContainer) {
+//         tableContainer.style.display = 'none';
+//     }
+//
+//     const contentDisplay = document.getElementById('content-display');
+//     if (contentDisplay) {
+//         contentDisplay.style.display = 'none';
+//     }
+//
+//     // 4. Скрываем формы
+//     hideAddTestForm();
+//     hideAddTopicForm();
+//
+//     // 5. Очищаем пагинацию
+//     clearPagination();
+//
+//     // 6. Очищаем SweetAlert модалки, если они есть
+//     Swal.close();
+// }
 
-        }
-    });
-
-// Универсальная функция для полной очистки всех контейнеров
 function clearAllContainers() {
     isEditTableOpen = false;
+    currentArea = null;
 
-    // Массив всех возможных ID контейнеров
+    // 1. Удаляем все динамически созданные контейнеры по ID
     const containerIds = [
+        'areas-container',
+        'topics-area-container',
         'questions-container',
         'topics-container',
         'topic-content-container',
-        'areas-container',
         'topics-list-container',
         'areas-containerEdit',
         'topics-list-containerEdit',
         'content-display',
-        'topics-area-container', // Добавить этот контейнер
-        'areas-grid', // Если есть такой
-        'topics-grid' // Если есть такой
+        'areas-grid',
+        'topics-grid'
     ];
 
-    // 1. Очищаем контейнеры по ID
     containerIds.forEach(id => {
         const container = document.getElementById(id);
         if (container) {
@@ -329,25 +386,34 @@ function clearAllContainers() {
         }
     });
 
-    // 2. Очищаем контейнеры по классам
-    const classSelectors = [
-        '.areas-container',
-        '.topics-area-container',
-        '.topics-list-container',
-        '.topic-content-container',
-        '.areas-grid',
-        '.topics-grid',
-        '.area-card', // Если карточки создаются отдельно
-        '.topic-card' // Если карточки создаются отдельно
+    // 2. Удаляем все контейнеры по классам (более агрессивно)
+    const dynamicClasses = [
+        'areas-container',
+        'topics-area-container',
+        'areas-grid',
+        'topics-grid',
+        'area-card',
+        'topic-card',
+        'topics-list-container',
+        'topic-content-container'
     ];
 
-    classSelectors.forEach(selector => {
-        document.querySelectorAll(selector).forEach(element => {
-            element.remove();
-        });
+    dynamicClasses.forEach(className => {
+        const elements = document.querySelectorAll(`.${className}`);
+        elements.forEach(el => el.remove());
     });
 
-    // 3. Скрываем таблицу и другие фиксированные элементы
+    // 3. Ищем любые контейнеры, которые могли быть созданы без ID
+    const potentialContainers = document.querySelectorAll('div[class*="container"], div[class*="grid"], div[class*="card"]');
+    potentialContainers.forEach(el => {
+        // Проверяем, не является ли это статическим элементом
+        const isStatic = el.id && ['table-container', 'content-display', 'add-test-form', 'add-topic-form'].includes(el.id);
+        if (!isStatic && el.parentElement === document.body) {
+            el.remove();
+        }
+    });
+
+    // 4. Скрываем фиксированные элементы
     const tableContainer = document.getElementById('table-container');
     if (tableContainer) {
         tableContainer.style.display = 'none';
@@ -358,16 +424,23 @@ function clearAllContainers() {
         contentDisplay.style.display = 'none';
     }
 
-    // 4. Скрываем формы
+    // 5. Скрываем формы
     hideAddTestForm();
     hideAddTopicForm();
 
-    // 5. Очищаем пагинацию
+    // 6. Очищаем пагинацию
     clearPagination();
 
-    // 6. Очищаем SweetAlert модалки, если они есть
+    // 7. Закрываем SweetAlert
     Swal.close();
+
+    // 8. Снимаем выделение
+    document.querySelectorAll('.active').forEach(el => el.classList.remove('active'));
+
+    console.log('Все контейнеры очищены');
 }
+
+
 
 
 // Функция для отображения колонок
@@ -414,56 +487,73 @@ function displayTopic(topics) {
 let currentArea = null;
 
 async function createAreaButtons() {
-    const container = document.createElement('div');
-    container.id = 'areas-container';
-    container.className = 'areas-container';
-
-    const title = document.createElement('h2');
-    title.className = 'areas-title';
-    container.appendChild(title);
-
-    const grid = document.createElement('div');
-    grid.className = 'areas-grid';
-
-    // Показываем loader сразу
-    const loader = document.createElement('div');
-    loader.className = 'loader';
-    loader.innerHTML = '<div class="spinner"></div><p>Загрузка областей...</p>';
-    container.appendChild(loader);
-
-    document.body.appendChild(container);
-
     try {
-        // ОДИН быстрый запрос для получения счетчиков всех областей
-        const response = await fetch('/api/topics/topic-counts');
-        if (!response.ok) {
-            throw new Error('Ошибка загрузки статистики областей');
+        // Сначала проверяем, нет ли уже контейнера библиотеки
+        const existingContainer = document.getElementById('areas-container');
+        if (existingContainer) {
+            console.log('Библиотека уже существует, пропускаем создание');
+            return; // Не создаем дубликат
         }
 
-        const counts = await response.json(); // Получаем Map<TopicArea, Long>
+        // Создаем новый контейнер
+        const container = document.createElement('div');
+        container.id = 'areas-container';
+        container.className = 'areas-container';
 
-        // Убираем loader
-        loader.remove();
+        const title = document.createElement('h2');
+        title.className = 'areas-title';
+        title.textContent = 'Выберите раздел';
+        container.appendChild(title);
 
-        // Создаем карточки для всех областей
-        Object.keys(counts).forEach(area => {
-            const topicCount = counts[area] || 0;
-            const areaCard = createAreaCard(area, topicCount);
-            grid.appendChild(areaCard);
-        });
+        const grid = document.createElement('div');
+        grid.className = 'areas-grid';
+
+        // Показываем loader
+        const loader = document.createElement('div');
+        loader.className = 'loader';
+        loader.innerHTML = '<div class="spinner"></div><p>Загрузка областей...</p>';
+        container.appendChild(loader);
+
+        // Добавляем контейнер на страницу СРАЗУ
+        document.body.appendChild(container);
+
+        try {
+            const response = await fetch('/api/topics/topic-counts');
+            if (!response.ok) {
+                throw new Error('Ошибка загрузки статистики областей');
+            }
+
+            const counts = await response.json();
+            loader.remove();
+
+            // Создаем карточки для всех областей
+            Object.keys(counts).forEach(area => {
+                const topicCount = counts[area] || 0;
+                const areaCard = createAreaCard(area, topicCount);
+                grid.appendChild(areaCard);
+            });
+
+        } catch (error) {
+            console.error('Ошибка загрузки статистики областей:', error);
+            loader.remove();
+
+            // Fallback
+            Object.values(TopicArea).forEach(area => {
+                const areaCard = createAreaCard(area, 0);
+                grid.appendChild(areaCard);
+            });
+        }
+
+        container.appendChild(grid);
 
     } catch (error) {
-        console.error('Ошибка загрузки статистики областей:', error);
-
-        // Fallback: создаем карточки без счетчиков
-        loader.remove();
-        Object.values(TopicArea).forEach(area => {
-            const areaCard = createAreaCard(area, 0);
-            grid.appendChild(areaCard);
+        console.error('Ошибка создания библиотеки:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Ошибка',
+            text: 'Не удалось создать библиотеку',
         });
     }
-
-    container.appendChild(grid);
 }
 
 // Функция для создания карточки области
