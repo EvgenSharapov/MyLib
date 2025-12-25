@@ -487,12 +487,16 @@ function displayTopic(topics) {
 let currentArea = null;
 
 async function createAreaButtons() {
-    try {
-        // Сначала проверяем, нет ли уже контейнера библиотеки
-        const existingContainer = document.getElementById('areas-container');
-        if (existingContainer) {
-            console.log('Библиотека уже существует, пропускаем создание');
-            return; // Не создаем дубликат
+    const libraryContainers = document.querySelectorAll('#areas-container, .areas-container, .topics-area-container');
+    libraryContainers.forEach(container => {
+        container.remove();
+    });
+
+        await new Promise(resolve => setTimeout(resolve, 0));
+        const existingContainerAfterRemoval = document.getElementById('areas-container');
+        if (existingContainerAfterRemoval) {
+            console.warn('Контейнер библиотеки всё ещё существует, принудительно удаляем');
+            existingContainerAfterRemoval.remove();
         }
 
         // Создаем новый контейнер
@@ -545,15 +549,6 @@ async function createAreaButtons() {
         }
 
         container.appendChild(grid);
-
-    } catch (error) {
-        console.error('Ошибка создания библиотеки:', error);
-        Swal.fire({
-            icon: 'error',
-            title: 'Ошибка',
-            text: 'Не удалось создать библиотеку',
-        });
-    }
 }
 
 // Функция для создания карточки области
