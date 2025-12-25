@@ -545,6 +545,11 @@ function getTopicWord(count) {
 
 // Оптимизированная функция загрузки тем
 function loadTopicsByArea(area) {
+    const libraryContainer = document.getElementById('areas-container');
+    if (libraryContainer) {
+        libraryContainer.style.display = 'none';
+    }
+
     clearContainers();
     clearContainersFull();
 
@@ -651,6 +656,7 @@ function showAreaStats() {
 
 // Функция для отображения тем в выбранной области
 function displayAreaTopics(topics, area) {
+    const libraryContainer = document.getElementById('areas-container');
     const container = document.createElement('div');
     container.id = 'topics-area-container';
     container.className = 'topics-area-container';
@@ -660,6 +666,9 @@ function displayAreaTopics(topics, area) {
     backButton.innerHTML = '<i class="fas fa-arrow-left"></i> Назад к разделам';
     backButton.addEventListener('click', () => {
         container.remove();
+        if (libraryContainer) {
+            libraryContainer.style.display = 'flex';
+        }
         createAreaButtons();
     });
 
